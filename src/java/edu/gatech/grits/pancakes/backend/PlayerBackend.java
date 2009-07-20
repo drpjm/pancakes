@@ -3,7 +3,7 @@ package edu.gatech.grits.pancakes.backend;
 import javaclient2.PlayerClient;
 import javaclient2.structures.PlayerConstants;
 
-public class PlayerBackend extends Backend implements Runnable {
+public class PlayerBackend extends Backend {
 
 	private PlayerClient handle;
 	
@@ -12,7 +12,7 @@ public class PlayerBackend extends Backend implements Runnable {
 		
 		handle = new PlayerClient("127.0.0.1", port);
 
-		//device.runThreaded(-1, -1);
+		handle.runThreaded(-1, -1);
 		
 		handle.requestDataDeliveryMode(PlayerConstants.PLAYER_DATAMODE_PULL);
 		handle.readAll();
@@ -27,13 +27,6 @@ public class PlayerBackend extends Backend implements Runnable {
 	}
 	
 	public void update() {
-		handle.readAll();
-	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		System.out.println("PlayerBackend is updating.");
 		handle.readAll();
 	}
 

@@ -4,7 +4,9 @@ import org.jetlang.core.Callback;
 import org.jetlang.fibers.Fiber;
 
 import edu.gatech.grits.pancakes.kernel.Kernel;
+import edu.gatech.grits.pancakes.kernel.Scheduler.SchedulingException;
 import edu.gatech.grits.pancakes.kernel.Stream.CommunicationException;
+import edu.gatech.grits.pancakes.structures.MotorPacket;
 import edu.gatech.grits.pancakes.structures.Packet;
 import edu.gatech.grits.pancakes.util.Properties;
 
@@ -28,6 +30,22 @@ public class Sandbox {
 		};
 		
 		Kernel.stream.subscribe("system", fiber, callback);
+		
+		Runnable runnable = new Runnable() {
+			public void run() {
+				MotorPacket mp = new MotorPacket();
+				mp.setVelocity(0.5f);
+				mp.setRotationalVelocity(1.0f);
+				try {
+					Kernel.stream.publish("user", mp);
+				} catch (CommunicationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		};
+		
+		Kernel.scheduler.exectute(runnable);
 		
 		while(true) {
 			// do nothing
