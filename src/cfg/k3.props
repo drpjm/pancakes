@@ -1,0 +1,9 @@
+network.port = 2413
+network.address = 192.168.13.22
+devices.device.2 = local
+devices.device.1 = sonar
+devices.device.0 = motors
+kernel.frequency = 10
+backend.type = player
+kernel.id = 8
+backend.port = 6665
