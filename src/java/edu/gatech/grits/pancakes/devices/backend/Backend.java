@@ -1,4 +1,4 @@
-package edu.gatech.grits.pancakes.backend;
+package edu.gatech.grits.pancakes.devices.backend;
 
 import java.lang.reflect.Constructor;
 

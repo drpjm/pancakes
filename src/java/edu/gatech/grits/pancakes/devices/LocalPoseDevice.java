@@ -1,20 +1,20 @@
 /**
  * 
  */
-package edu.gatech.grits.pancakes.device;
+package edu.gatech.grits.pancakes.devices;
 
-import edu.gatech.grits.pancakes.backend.Backend;
-import edu.gatech.grits.pancakes.driver.HardwareDriver;
-import edu.gatech.grits.pancakes.kernel.Kernel;
-import edu.gatech.grits.pancakes.kernel.Stream.CommunicationException;
-import edu.gatech.grits.pancakes.structures.LocalPosePacket;
-import edu.gatech.grits.pancakes.structures.Packet;
+import edu.gatech.grits.pancakes.core.Kernel;
+import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
+import edu.gatech.grits.pancakes.devices.backend.Backend;
+import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
+import edu.gatech.grits.pancakes.lang.LocalPosePacket;
+import edu.gatech.grits.pancakes.lang.Packet;
 
 /**
  * @author jean-pierre
  *
  */
-public class LocalPoseDevice implements HardwareDevice, Runnable {
+public class LocalPoseDevice implements Device, Runnable {
 
 	private HardwareDriver<LocalPosePacket> driver;
 	

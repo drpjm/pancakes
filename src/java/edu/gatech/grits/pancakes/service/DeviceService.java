@@ -4,15 +4,15 @@ import java.util.ArrayList;
 
 import javolution.util.FastMap;
 
-import edu.gatech.grits.pancakes.backend.*;
-import edu.gatech.grits.pancakes.device.*;
-import edu.gatech.grits.pancakes.kernel.Kernel;
-import edu.gatech.grits.pancakes.kernel.Scheduler.SchedulingException;
+import edu.gatech.grits.pancakes.core.Kernel;
+import edu.gatech.grits.pancakes.core.Scheduler.SchedulingException;
+import edu.gatech.grits.pancakes.devices.*;
+import edu.gatech.grits.pancakes.devices.backend.*;
 import edu.gatech.grits.pancakes.util.Properties;
 
 public class DeviceService {
 
-	private FastMap<String, HardwareDevice> deviceRegistry;
+	private FastMap<String, Device> deviceRegistry;
 	private Backend deviceBackend;
 	
 	public DeviceService(Properties props) {

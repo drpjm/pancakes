@@ -1,16 +1,16 @@
-package edu.gatech.grits.pancakes.device;
+package edu.gatech.grits.pancakes.devices;
 
 import org.jetlang.core.Callback;
 import org.jetlang.fibers.Fiber;
 
-import edu.gatech.grits.pancakes.structures.MotorPacket;
-import edu.gatech.grits.pancakes.structures.Packet;
-import edu.gatech.grits.pancakes.backend.Backend;
-import edu.gatech.grits.pancakes.driver.HardwareDriver;
-import edu.gatech.grits.pancakes.kernel.Kernel;
-import edu.gatech.grits.pancakes.kernel.Stream.CommunicationException;
+import edu.gatech.grits.pancakes.lang.MotorPacket;
+import edu.gatech.grits.pancakes.lang.Packet;
+import edu.gatech.grits.pancakes.core.Kernel;
+import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
+import edu.gatech.grits.pancakes.devices.backend.Backend;
+import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
 
-public class MotorDevice implements HardwareDevice {
+public class MotorDevice implements Device {
 	
 	private HardwareDriver<MotorPacket> driver;
 	private final Fiber fiber = Kernel.scheduler.newFiber();

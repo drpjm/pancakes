@@ -1,13 +1,13 @@
-package edu.gatech.grits.pancakes.driver.player;
+package edu.gatech.grits.pancakes.devices.driver.player;
 
 import javaclient2.SonarInterface;
 import javaclient2.structures.PlayerConstants;
 import javaclient2.structures.sonar.PlayerSonarData;
 
-import edu.gatech.grits.pancakes.backend.Backend;
-import edu.gatech.grits.pancakes.backend.PlayerBackend;
-import edu.gatech.grits.pancakes.driver.HardwareDriver;
-import edu.gatech.grits.pancakes.structures.SonarPacket;
+import edu.gatech.grits.pancakes.devices.backend.Backend;
+import edu.gatech.grits.pancakes.devices.backend.PlayerBackend;
+import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
+import edu.gatech.grits.pancakes.lang.SonarPacket;
 
 public class SonarDriver implements HardwareDriver<SonarPacket> {
 

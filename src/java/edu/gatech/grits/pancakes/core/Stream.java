@@ -1,4 +1,4 @@
-package edu.gatech.grits.pancakes.kernel;
+package edu.gatech.grits.pancakes.core;
 
 import javolution.util.FastMap;
 
@@ -7,7 +7,7 @@ import org.jetlang.channels.MemoryChannel;
 import org.jetlang.core.Callback;
 import org.jetlang.fibers.Fiber;
 
-import edu.gatech.grits.pancakes.structures.Packet;
+import edu.gatech.grits.pancakes.lang.Packet;
 
 public class Stream {
 

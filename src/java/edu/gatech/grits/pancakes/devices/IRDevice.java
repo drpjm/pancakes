@@ -1,13 +1,13 @@
-package edu.gatech.grits.pancakes.device;
+package edu.gatech.grits.pancakes.devices;
 
-import edu.gatech.grits.pancakes.backend.Backend;
-import edu.gatech.grits.pancakes.driver.HardwareDriver;
-import edu.gatech.grits.pancakes.structures.IRPacket;
-import edu.gatech.grits.pancakes.structures.Packet;
-import edu.gatech.grits.pancakes.kernel.Kernel;
-import edu.gatech.grits.pancakes.kernel.Stream.CommunicationException;
+import edu.gatech.grits.pancakes.core.Kernel;
+import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
+import edu.gatech.grits.pancakes.devices.backend.Backend;
+import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
+import edu.gatech.grits.pancakes.lang.IRPacket;
+import edu.gatech.grits.pancakes.lang.Packet;
 
-public class IRDevice implements HardwareDevice, Runnable {
+public class IRDevice implements Device, Runnable {
 
 	private HardwareDriver<IRPacket> driver;
 	

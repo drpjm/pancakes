@@ -1,4 +1,4 @@
-package edu.gatech.grits.pancakes.structures;
+package edu.gatech.grits.pancakes.lang;
 
 import java.io.Serializable;
 import java.util.Map.Entry;

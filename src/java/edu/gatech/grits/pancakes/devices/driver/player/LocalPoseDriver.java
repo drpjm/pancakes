@@ -1,13 +1,13 @@
-package edu.gatech.grits.pancakes.driver.player;
+package edu.gatech.grits.pancakes.devices.driver.player;
 
 import javaclient2.Position2DInterface;
 import javaclient2.structures.PlayerConstants;
 import javaclient2.structures.PlayerPose;
 
-import edu.gatech.grits.pancakes.backend.Backend;
-import edu.gatech.grits.pancakes.backend.PlayerBackend;
-import edu.gatech.grits.pancakes.driver.HardwareDriver;
-import edu.gatech.grits.pancakes.structures.LocalPosePacket;
+import edu.gatech.grits.pancakes.devices.backend.Backend;
+import edu.gatech.grits.pancakes.devices.backend.PlayerBackend;
+import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
+import edu.gatech.grits.pancakes.lang.LocalPosePacket;
 
 public class LocalPoseDriver implements HardwareDriver<LocalPosePacket> {
 	

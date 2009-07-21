@@ -1,13 +1,13 @@
-package edu.gatech.grits.pancakes.driver.player;
+package edu.gatech.grits.pancakes.devices.driver.player;
 
 import javaclient2.IRInterface;
 import javaclient2.structures.PlayerConstants;
 import javaclient2.structures.ir.PlayerIrData;
 
-import edu.gatech.grits.pancakes.backend.Backend;
-import edu.gatech.grits.pancakes.backend.PlayerBackend;
-import edu.gatech.grits.pancakes.driver.HardwareDriver;
-import edu.gatech.grits.pancakes.structures.IRPacket;
+import edu.gatech.grits.pancakes.devices.backend.Backend;
+import edu.gatech.grits.pancakes.devices.backend.PlayerBackend;
+import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
+import edu.gatech.grits.pancakes.lang.IRPacket;
 
 public class IRDriver implements HardwareDriver<IRPacket> {
 

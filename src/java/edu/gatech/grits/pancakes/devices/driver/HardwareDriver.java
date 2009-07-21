@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.gatech.grits.pancakes.driver;
+package edu.gatech.grits.pancakes.devices.driver;
 
 /**
  * @author jean-pierre

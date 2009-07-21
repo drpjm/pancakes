@@ -1,4 +1,4 @@
-package edu.gatech.grits.pancakes.structures;
+package edu.gatech.grits.pancakes.lang;
 
 public class IRPacket extends Packet { /**
 	 * 

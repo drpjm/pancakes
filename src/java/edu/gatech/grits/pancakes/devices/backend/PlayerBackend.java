@@ -1,4 +1,4 @@
-package edu.gatech.grits.pancakes.backend;
+package edu.gatech.grits.pancakes.devices.backend;
 
 import javaclient2.PlayerClient;
 import javaclient2.structures.PlayerConstants;

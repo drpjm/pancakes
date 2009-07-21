@@ -1,4 +1,4 @@
-package edu.gatech.grits.pancakes.kernel;
+package edu.gatech.grits.pancakes.core;
 
 import edu.gatech.grits.pancakes.service.DeviceService;
 import edu.gatech.grits.pancakes.util.Properties;
