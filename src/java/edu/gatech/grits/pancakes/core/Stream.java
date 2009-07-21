@@ -27,8 +27,6 @@ public class Stream {
 			chl = channels.get(channel);
 		}
 		if(chl != null) {
-			//System.out.println("Something is being published");
-			//pkt.debug();
 			chl.publish(pkt);
 		} else {
 			throw new CommunicationException("Channel does not exist.");
