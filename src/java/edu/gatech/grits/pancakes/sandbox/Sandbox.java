@@ -45,7 +45,7 @@ public class Sandbox {
 			}
 		};
 		
-		Kernel.scheduler.exectute(runnable);
+		Kernel.scheduler.execute(runnable);
 		
 		while(true) {
 			// do nothing

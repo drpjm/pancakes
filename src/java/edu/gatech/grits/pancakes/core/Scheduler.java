@@ -21,7 +21,7 @@ public class Scheduler {
 	
 	private FastMap<Runnable, ScheduledFuture<?>> taskList = new FastMap<Runnable, ScheduledFuture<?>>();	
 	
-	public final void exectute(Runnable r) {
+	public final void execute(Runnable r) {
 		executor.execute(r);
 	}
 	
