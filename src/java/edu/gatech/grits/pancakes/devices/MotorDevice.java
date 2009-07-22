@@ -22,7 +22,7 @@ public class MotorDevice implements Device {
 		fiber.start();
 		callback = new Callback<Packet>() {
 			public void onMessage(Packet pkt) {
-				if(pkt.getPacketType().equals("motor"))
+				if(pkt.getPacketType().equals("motors"))
 					driver.request((MotorPacket) pkt);
 			}
 		};

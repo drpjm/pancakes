@@ -7,7 +7,9 @@ import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Scheduler.SchedulingException;
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
 import edu.gatech.grits.pancakes.lang.MotorPacket;
+import edu.gatech.grits.pancakes.lang.NetworkPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
+import edu.gatech.grits.pancakes.service.NetworkService;
 import edu.gatech.grits.pancakes.util.Properties;
 
 public class Sandbox {
@@ -24,8 +26,10 @@ public class Sandbox {
 		fiber.start();
 		Callback<Packet> callback = new Callback<Packet>() {
 			public void onMessage(Packet pkt) {
-				System.err.println("Incoming packet(s):");
-				pkt.debug();
+				//System.err.println("Incoming packet(s):");
+				//pkt.debug();
+				if(pkt.getPacketType().equals("network"))
+					pkt.debug();
 			}
 		};
 		
@@ -49,6 +53,14 @@ public class Sandbox {
 		
 		while(true) {
 			// do nothing
+			NetworkService.neighborhood.debug();
+			Kernel.stream.publish("network", new NetworkPacket("8", "8"));
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}

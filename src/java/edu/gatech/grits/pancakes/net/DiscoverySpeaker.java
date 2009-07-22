@@ -16,7 +16,7 @@ public class DiscoverySpeaker implements Runnable {
 	
 	public DiscoverySpeaker(String hostname, int network_port, String id) {
 		BROADCAST = hostname + ":" + id + ":" + network_port;
-		//System.out.println(BROADCAST);
+		System.out.println(BROADCAST);
 	}
 	
 	public void run() {
@@ -44,8 +44,8 @@ public class DiscoverySpeaker implements Runnable {
 		}
 
 
-		//System.err.println("Sending " + b.length + " bytes to " +
-		//		  dgram.getAddress() + ':' + dgram.getPort());
+//		System.err.println("Sending " + b.length + " bytes to " +
+//				  dgram.getAddress() + ':' + dgram.getPort());
 		try {
 			socket.send(dgram);
 		} catch (IOException e) {

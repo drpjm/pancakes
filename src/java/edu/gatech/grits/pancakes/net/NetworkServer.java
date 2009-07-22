@@ -1,17 +1,17 @@
 package edu.gatech.grits.pancakes.net;
 
 import java.net.*;
-import java.util.ArrayList;
 import java.io.*;
 
 import edu.gatech.grits.pancakes.core.Kernel;
-import edu.gatech.grits.pancakes.lang.SafeQueue;
+import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
 import edu.gatech.grits.pancakes.lang.Packet;
 
 public class NetworkServer extends Thread {
 
 	private ServerSocket listener;
-	private SafeQueue packets = new SafeQueue();
+	private Thread mainThread;
+	private volatile boolean stopRequested = false;
 	
 	
 	public NetworkServer(int port) {
@@ -20,26 +20,29 @@ public class NetworkServer extends Thread {
 		} catch (IOException e) {
 			System.out.println("Error!");
 		}
-		this.start();
-	}
-	
-	public void run() {
-		while(true) {
-			try {
-				//System.out.println("Server waiting for client!");
-				final Socket client = listener.accept();
-				//System.out.println("Client found!");
-				Runnable task = new Runnable() {
-					public void run() {
-						handleConnection(client);
+		
+		Runnable task = new Runnable() {
+			public void run() {
+				while(!stopRequested) {
+					try {
+						//System.out.println("Server waiting for client!");
+						final Socket client = listener.accept();
+						//System.out.println("Client found!");
+						Runnable task = new Runnable() {
+							public void run() {
+								handleConnection(client);
+							}
+						};
+						Kernel.scheduler.execute(task);		
+					} catch (IOException e) {
+						System.out.println("Error receiving object");
+						e.printStackTrace();
 					}
-				};
-				Kernel.scheduler.execute(task);		
-			} catch (IOException e) {
-				System.out.println("Error receiving object");
-				e.printStackTrace();
+				}
 			}
-		}
+		};
+		mainThread = new Thread(task);
+		mainThread.start();
 	}
 	
 	public void handleConnection(Socket client) {
@@ -48,22 +51,19 @@ public class NetworkServer extends Thread {
 			in = client.getInputStream();
 			ObjectInputStream oin = new ObjectInputStream(in);
 			Packet pkt = (Packet) oin.readObject();
-			packets.enqueue(pkt);
+			Kernel.stream.publish("system", pkt);
 		} catch (IOException e) {
 			System.err.println("Error receiving object.");
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (CommunicationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-		
 	}
 	
-	public ArrayList<Packet> getAllData() {
-		return packets.drain();
-	}
-	
-	public int getSize() {
-		return packets.size();
+	public final void close() {
+		stopRequested = true;
 	}
 }

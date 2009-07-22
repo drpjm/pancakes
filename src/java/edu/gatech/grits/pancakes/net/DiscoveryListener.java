@@ -11,15 +11,15 @@ import java.util.Date;
 import java.util.StringTokenizer;
 //import edu.gatech.grits.pancakes.log.Syslogp;
 import edu.gatech.grits.pancakes.lang.NetworkNeighbor;
+import edu.gatech.grits.pancakes.service.NetworkService;
 
 public class DiscoveryListener extends Thread {
 	
 	private final String MCAST_ADDR = "224.224.224.224";
 	private final int DEST_PORT = 1337;
-	private final int BUFFER_LENGTH = 24;
+	private final int BUFFER_LENGTH = 16;
 	private MulticastSocket socket;
 	private boolean isRunning;	
-	private NetworkNeighborhood neighborhood = new NetworkNeighborhood();
 	
 	public DiscoveryListener() {
 		try {
@@ -70,7 +70,7 @@ public class DiscoveryListener extends Thread {
 		
 		if(p != null) {
 			NetworkNeighbor n = new NetworkNeighbor(p.get(1), p.get(0), Integer.valueOf(p.get(2)), new Date(System.currentTimeMillis()));
-			neighborhood.addNeighbor(p.get(1), n);
+			NetworkService.neighborhood.addNeighbor(p.get(1), n);
 		}
 		return;
 	}

@@ -17,16 +17,9 @@ public class DeviceService {
 	
 	public DeviceService(Properties props) {
 		String backend = props.getBackend();
-		int port = props.getBackendPort();
 
 		if(backend.equals("player")) {
-			deviceBackend = new PlayerBackend(port);
-//			try {
-//				Kernel.scheduler.schedule((PlayerBackend) deviceBackend, 100);
-//			} catch (SchedulingException e) {
-//				// TODO Auto-generated catch block
-//				System.out.println(e.getMessage());
-//			}
+			deviceBackend = new PlayerBackend(props.getBackendPort());
 		}
 //		if(backend.equals("k3"))
 //			deviceBackend = new K3Backend();

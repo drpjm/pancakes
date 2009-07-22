@@ -19,7 +19,7 @@ public abstract class Backend {
 	@SuppressWarnings("unchecked")
 	public Object getDriver(String driverName) {
 		try {
-			Class cls = Class.forName("edu.gatech.grits.pancakes.driver." + backendType + "." + driverName);
+			Class cls = Class.forName("edu.gatech.grits.pancakes.devices.driver." + backendType + "." + driverName);
 			Class partypes = Backend.class;
 	        Constructor ct = cls.getConstructor(partypes);
 	        Object arglist = this;

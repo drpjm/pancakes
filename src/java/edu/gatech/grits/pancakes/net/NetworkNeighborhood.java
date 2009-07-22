@@ -14,6 +14,10 @@ public class NetworkNeighborhood implements Runnable {
 		neighbors.put(id, n);
 	}
 	
+	public synchronized NetworkNeighbor getNeighbor(String id) {
+		return neighbors.get(id);
+	}
+	
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
@@ -35,6 +39,16 @@ public class NetworkNeighborhood implements Runnable {
 		synchronized(this) {
 			for(String key : expired) {
 				neighbors.remove(key);
+			}
+		}
+	}
+
+	public final void debug() {
+		// TODO Auto-generated method stub
+		synchronized(this) {
+			for(String key : neighbors.keySet()) {
+				NetworkNeighbor n = neighbors.get(key);
+				System.out.println(n.getID() + ":" + n.getHostname() + ":" + n.getNetworkPort());
 			}
 		}
 	}
