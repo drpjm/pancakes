@@ -35,7 +35,6 @@ public class SonarDevice implements Device, Runnable {
 		
 	}
 	
-	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 		try {

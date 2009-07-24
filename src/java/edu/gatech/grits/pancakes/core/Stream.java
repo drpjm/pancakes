@@ -7,6 +7,7 @@ import org.jetlang.channels.MemoryChannel;
 import org.jetlang.core.Callback;
 import org.jetlang.fibers.Fiber;
 
+import edu.gatech.grits.pancakes.lang.LogPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
 
 public class Stream {
@@ -17,6 +18,7 @@ public class Stream {
 		channels.put("system", new MemoryChannel<Packet>());
 		channels.put("network", new MemoryChannel<Packet>());
 		channels.put("user", new MemoryChannel<Packet>());
+		channels.put("log", new MemoryChannel<Packet>());
 	}
 	
 	

@@ -8,6 +8,7 @@ public class Kernel {
 
 	public static Scheduler scheduler = new Scheduler();
 	public static Stream stream = new Stream();
+	public static Syslogp syslog = new Syslogp();
 	private DeviceService ds;
 	private NetworkService ns;
 	

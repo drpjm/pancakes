@@ -38,7 +38,6 @@ public class LocalPoseDevice implements Device, Runnable {
 		System.err.println("Robot pose: (" + pkt.getPositionX() + "," + pkt.getPositionY() + "," + pkt.getTheta() + ")");
 	}
 
-	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 		try {

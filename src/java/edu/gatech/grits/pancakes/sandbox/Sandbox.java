@@ -1,11 +1,13 @@
 package edu.gatech.grits.pancakes.sandbox;
 
+import org.apache.log4j.Level;
 import org.jetlang.core.Callback;
 import org.jetlang.fibers.Fiber;
 
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Scheduler.SchedulingException;
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
+import edu.gatech.grits.pancakes.lang.LogPacket;
 import edu.gatech.grits.pancakes.lang.MotorPacket;
 import edu.gatech.grits.pancakes.lang.NetworkPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
@@ -26,12 +28,14 @@ public class Sandbox {
 		fiber.start();
 		Callback<Packet> callback = new Callback<Packet>() {
 			public void onMessage(Packet pkt) {
-				//System.err.println("Incoming packet(s):");
+				System.err.println("Incoming packet(s):");
 				//pkt.debug();
-				if(pkt.getPacketType().equals("network"))
+				//if(pkt.getPacketType().equals("network"))
 					pkt.debug();
 			}
 		};
+		
+		Kernel.syslog.log(new LogPacket(new Sandbox(), Level.INFO, "Starting sandbox."));
 		
 		Kernel.stream.subscribe("system", fiber, callback);
 		

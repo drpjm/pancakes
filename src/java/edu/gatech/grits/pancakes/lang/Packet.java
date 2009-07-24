@@ -33,7 +33,7 @@ public class Packet implements Serializable {
 		for(Entry<String,String> e : dataMap.entrySet()) {
 			System.out.print("<" + e.getKey() + ">" + e.getValue() + "</" + e.getKey() + ">");
 		}
-		System.out.print("\n");
+		System.out.println("</" + typeOfPacket + ">");
 	}
 	
 	public final int getSize() {

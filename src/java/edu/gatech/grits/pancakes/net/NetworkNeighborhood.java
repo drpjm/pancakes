@@ -18,11 +18,15 @@ public class NetworkNeighborhood implements Runnable {
 		return neighbors.get(id);
 	}
 	
-	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 		Date d = new Date(System.currentTimeMillis()-TIMEOUT);
-		FastList<String> expired = new FastList<String>(neighbors.size());
+		
+		FastList<String> expired;
+		
+		synchronized(this) {
+			expired = new FastList<String>(neighbors.size());
+		}
 		
 		for(String key : neighbors.keySet()) {
 			NetworkNeighbor n;
