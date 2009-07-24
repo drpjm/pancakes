@@ -28,13 +28,30 @@ public class DeviceService {
 		
 		if(!backend.equals("none"))
 			buildDeviceRegistry(props.getDevices());
+		
+		if(backend.equals("player")) {
+			((PlayerBackend) deviceBackend).finalize();
+		}
 
+		for(String key : deviceRegistry.keySet()) {
+			Device d = deviceRegistry.get(key);
+			if(d.isRunnable()) {
+				try {
+					Kernel.scheduler.schedule((Runnable) d, 250);
+				} catch (SchedulingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
 	}
 
 	public void buildDeviceRegistry(ArrayList<String> sensors) {
 		deviceRegistry = FastMap.newInstance();
 		// load sensors
-		System.out.println(sensors.toString());
+		Kernel.syslog.debug("DeviceService is initializing devices...");
+		//System.out.println(sensors.toString());
 		for(String s : sensors){
 
 			if(deviceBackend.getBackendType().equals("player")) {
@@ -44,30 +61,30 @@ public class DeviceService {
 			String currSensor = s.toLowerCase();
 			if(currSensor.equals("sonar")){
 				deviceRegistry.put("sonar", new SonarDevice(deviceBackend));
-				try {
-					Kernel.scheduler.schedule((Runnable) deviceRegistry.get("sonar"), 250);
-				} catch (SchedulingException e) {
-					// TODO Auto-generated catch block
-					System.err.println(e.getMessage());
-				}
+//				try {
+//					Kernel.scheduler.schedule((Runnable) deviceRegistry.get("sonar"), 250);
+//				} catch (SchedulingException e) {
+//					// TODO Auto-generated catch block
+//					System.err.println(e.getMessage());
+//				}
 			}
 			else if(currSensor.equals("ir")){
 				deviceRegistry.put("ir", new IRDevice(deviceBackend));
-				try {
-					Kernel.scheduler.schedule((Runnable) deviceRegistry.get("ir"), 250);
-				} catch (SchedulingException e) {
-					// TODO Auto-generated catch block
-					System.err.println(e.getMessage());
-				}
+//				try {
+//					Kernel.scheduler.schedule((Runnable) deviceRegistry.get("ir"), 250);
+//				} catch (SchedulingException e) {
+//					// TODO Auto-generated catch block
+//					System.err.println(e.getMessage());
+//				}
 			}
 			else if(currSensor.equals("local")){
 				deviceRegistry.put("local", new LocalPoseDevice(deviceBackend));
-				try {
-					Kernel.scheduler.schedule((Runnable) deviceRegistry.get("local"), 1000);
-				} catch (SchedulingException e) {
-					// TODO Auto-generated catch block
-					System.err.println(e.getMessage());
-				}
+//				try {
+//					Kernel.scheduler.schedule((Runnable) deviceRegistry.get("local"), 1000);
+//				} catch (SchedulingException e) {
+//					// TODO Auto-generated catch block
+//					System.err.println(e.getMessage());
+//				}
 			}
 			else if(currSensor.equals("motors")){
 				deviceRegistry.put("motors", new MotorDevice(deviceBackend));

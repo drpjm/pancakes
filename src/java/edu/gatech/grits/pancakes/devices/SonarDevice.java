@@ -16,6 +16,10 @@ public class SonarDevice implements Device, Runnable {
 		driver = (HardwareDriver<SonarPacket>) backend.getDriver("SonarDriver");
 	}
 	
+	public final boolean isRunnable() {
+		return true;
+	}
+	
 	public Packet query() {
 		return driver.query();
 	}

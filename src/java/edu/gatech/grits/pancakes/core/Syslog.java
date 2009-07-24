@@ -10,13 +10,13 @@ import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
 import edu.gatech.grits.pancakes.lang.LogPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
 
-public class Syslogp {
+public class Syslog {
 
 	private static final String CFG_FILE = "cfg/log4j.cfg";
 	private final Fiber fiber = Kernel.scheduler.newFiber();
 	private Callback<Packet> callback;
 	
-	public Syslogp() {
+	public Syslog() {
 		PropertyConfigurator.configure(CFG_FILE);
 		fiber.start();
 		callback = new Callback<Packet>() {
@@ -33,7 +33,7 @@ public class Syslogp {
 		}
 	}
 	
-	public final void log(LogPacket pkt) {
+	private final void log(LogPacket pkt) {
 		try {
 			Kernel.stream.publish("log", pkt);
 		} catch (CommunicationException e) {
@@ -41,5 +41,12 @@ public class Syslogp {
 			e.printStackTrace();
 		}
 	}
+	
+	public final void debug(String m) {
+		//String src = (new Throwable()).getStackTrace()[1].getClassName();
+		log(new LogPacket("pancakes", Level.DEBUG, m));
+	}
+	
+	
 	
 }

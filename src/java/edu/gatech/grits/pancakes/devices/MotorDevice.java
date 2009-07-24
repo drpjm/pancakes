@@ -8,6 +8,7 @@ import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
 import edu.gatech.grits.pancakes.devices.backend.Backend;
+import edu.gatech.grits.pancakes.devices.backend.PlayerBackend;
 import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
 
 public class MotorDevice implements Device {
@@ -33,6 +34,10 @@ public class MotorDevice implements Device {
 			// TODO Auto-generated catch block
 			System.err.println(e.getMessage());
 		}
+	}
+	
+	public final boolean isRunnable() {
+		return false;
 	}
 	
 	public Packet query() {

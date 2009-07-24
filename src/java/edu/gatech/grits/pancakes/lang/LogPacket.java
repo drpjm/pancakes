@@ -6,10 +6,10 @@ public class LogPacket extends Packet {
 
 	private static final long serialVersionUID = 2357367909093730373L;
 
-	public LogPacket(Object o, Level l, String m) {
+	public LogPacket(String s, Level l, String m) {
 		super("log");
 		add("message", m);
-		add("source", o.getClass());
+		add("source", s);
 		add("level", l.toString());
 	}
 	

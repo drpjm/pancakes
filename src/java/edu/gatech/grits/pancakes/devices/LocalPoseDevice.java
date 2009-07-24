@@ -23,6 +23,10 @@ public class LocalPoseDevice implements Device, Runnable {
 		driver = (HardwareDriver<LocalPosePacket>) backend.getDriver("LocalPoseDriver");
 	}
 	
+	public final boolean isRunnable() {
+		return true;
+	}
+	
 	public Packet query() {
 		return driver.query();
 	}

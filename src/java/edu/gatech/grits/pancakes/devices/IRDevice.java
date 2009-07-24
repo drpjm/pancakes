@@ -16,6 +16,10 @@ public class IRDevice implements Device, Runnable {
 		driver = (HardwareDriver<IRPacket>) backend.getDriver("IRDriver");
 	}
 	
+	public final boolean isRunnable() {
+		return true;
+	}
+	
 	public Packet query() {
 		return driver.query();
 	}

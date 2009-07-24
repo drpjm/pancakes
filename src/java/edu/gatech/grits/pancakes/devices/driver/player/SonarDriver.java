@@ -4,6 +4,7 @@ import javaclient2.SonarInterface;
 import javaclient2.structures.PlayerConstants;
 import javaclient2.structures.sonar.PlayerSonarData;
 
+import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.devices.backend.Backend;
 import edu.gatech.grits.pancakes.devices.backend.PlayerBackend;
 import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
@@ -16,7 +17,11 @@ public class SonarDriver implements HardwareDriver<SonarPacket> {
 	
 	public SonarDriver(Backend backend) {
 		this.backend = (PlayerBackend) backend;
-		device = ((PlayerBackend) backend).getHandle().requestInterfaceSonar(0, PlayerConstants.PLAYER_OPEN_MODE);
+		while(!((PlayerBackend) backend).getHandle().isReadyRequestDevice()) {
+			Kernel.syslog.debug("Trying to get an interface for the SonarDevice.");
+			device = ((PlayerBackend) backend).getHandle().requestInterfaceSonar(0, PlayerConstants.PLAYER_OPEN_MODE);
+		}
+		Kernel.syslog.debug("Received an interface!");
 //		if(device == null)
 //			System.out.println("Driver failed to initialize!");
 	}

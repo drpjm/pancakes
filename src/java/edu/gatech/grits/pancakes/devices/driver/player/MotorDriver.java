@@ -6,6 +6,7 @@ import javaclient2.Position2DInterface;
 import javaclient2.structures.PlayerConstants;
 import javaclient2.structures.PlayerPose;
 
+import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.devices.backend.Backend;
 import edu.gatech.grits.pancakes.devices.backend.PlayerBackend;
 import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
@@ -16,7 +17,11 @@ public class MotorDriver implements HardwareDriver<MotorPacket> {
 	private Position2DInterface device;
 	
 	public MotorDriver(Backend backend) {
-		device = ((PlayerBackend) backend).getHandle().requestInterfacePosition2D(0, PlayerConstants.PLAYER_OPEN_MODE);
+		while(!((PlayerBackend) backend).getHandle().isReadyRequestDevice()) {
+			Kernel.syslog.debug("Trying to get an interface for the MotorDevice.");
+			device = ((PlayerBackend) backend).getHandle().requestInterfacePosition2D(0, PlayerConstants.PLAYER_OPEN_MODE);
+		}
+		Kernel.syslog.debug("Received an interface.");
 		device.setControlMode(PlayerConstants.PLAYER_POSITION2D_REQ_VELOCITY_MODE);
 		device.setMotorPower(1);
 	}

@@ -35,7 +35,7 @@ public class Sandbox {
 			}
 		};
 		
-		Kernel.syslog.log(new LogPacket(new Sandbox(), Level.INFO, "Starting sandbox."));
+		Kernel.syslog.debug("Starting sandbox.");
 		
 		Kernel.stream.subscribe("system", fiber, callback);
 		

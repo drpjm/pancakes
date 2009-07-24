@@ -6,14 +6,17 @@ import edu.gatech.grits.pancakes.util.Properties;
 
 public class Kernel {
 
-	public static Scheduler scheduler = new Scheduler();
-	public static Stream stream = new Stream();
-	public static Syslogp syslog = new Syslogp();
+	public static Scheduler scheduler;// = new Scheduler();
+	public static Stream stream;// = new Stream();
+	public static Syslog syslog;// = new Syslogp();
 	private DeviceService ds;
 	private NetworkService ns;
 	
 	public Kernel(Properties properties) {
+		scheduler = new Scheduler();
+		stream = new Stream();
+		syslog = new Syslog();
 		ds = new DeviceService(properties);
-		ns = new NetworkService(properties);
+		//ns = new NetworkService(properties);
 	}
 }

@@ -7,5 +7,5 @@ public interface Device {
 	public void debug();
 	public Packet query();
 	public void request(Packet pkt);
-	
+	public boolean isRunnable();
 }
