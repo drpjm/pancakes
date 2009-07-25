@@ -13,13 +13,14 @@ import java.util.StringTokenizer;
 import edu.gatech.grits.pancakes.lang.NetworkNeighbor;
 import edu.gatech.grits.pancakes.service.NetworkService;
 
-public class DiscoveryListener extends Thread {
+public class DiscoveryListener {
 	
 	private final String MCAST_ADDR = "224.224.224.224";
 	private final int DEST_PORT = 1337;
 	private final int BUFFER_LENGTH = 16;
 	private MulticastSocket socket;
-	private boolean isRunning;	
+	private volatile boolean isRunning;	
+	private Thread mainThread;
 	
 	public DiscoveryListener() {
 		try {
@@ -40,29 +41,35 @@ public class DiscoveryListener extends Thread {
 		}
 		
 		isRunning = true;
+		
+		Runnable task = new Runnable() {
+			public void run() {
+				byte[] b = new byte[BUFFER_LENGTH];
+				DatagramPacket dgram = new DatagramPacket(b, b.length);
+				
+				while(isRunning) {
+					try {
+						socket.receive(dgram);
+						addNetworkNeighbor(dgram);
+					
+					} catch (IOException e) {
+						//Syslogp.ref(this).error("Unable to receive datagram.");
+					} // blocks until a datagram is received
+					
+//					System.err.println("Received " + dgram.getLength() +
+//							" bytes from " + dgram.getAddress());
+//							dgram.setLength(b.length); // must reset length field!
+				}
+			}
+		};
+		
+		mainThread = new Thread(task);
+		mainThread.start();
+		
 	}
 	
 	public void close() {
 		isRunning = false;
-	}
-	
-	public void run() {
-		byte[] b = new byte[BUFFER_LENGTH];
-		DatagramPacket dgram = new DatagramPacket(b, b.length);
-		
-		while(isRunning) {
-			try {
-				socket.receive(dgram);
-				addNetworkNeighbor(dgram);
-			
-			} catch (IOException e) {
-				//Syslogp.ref(this).error("Unable to receive datagram.");
-			} // blocks until a datagram is received
-			
-//			System.err.println("Received " + dgram.getLength() +
-//					" bytes from " + dgram.getAddress());
-//					dgram.setLength(b.length); // must reset length field!
-		}
 	}
 	
 	private void addNetworkNeighbor(DatagramPacket dgram) {
