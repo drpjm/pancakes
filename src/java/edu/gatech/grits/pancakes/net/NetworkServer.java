@@ -7,12 +7,11 @@ import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
 import edu.gatech.grits.pancakes.lang.Packet;
 
-public class NetworkServer extends Thread {
+public class NetworkServer {
 
 	private ServerSocket listener;
 	private Thread mainThread;
 	private volatile boolean stopRequested = false;
-	
 	
 	public NetworkServer(int port) {
 		try {

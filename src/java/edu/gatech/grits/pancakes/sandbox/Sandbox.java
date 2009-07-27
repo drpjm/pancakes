@@ -1,13 +1,10 @@
 package edu.gatech.grits.pancakes.sandbox;
 
-import org.apache.log4j.Level;
 import org.jetlang.core.Callback;
 import org.jetlang.fibers.Fiber;
 
 import edu.gatech.grits.pancakes.core.Kernel;
-import edu.gatech.grits.pancakes.core.Scheduler.SchedulingException;
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
-import edu.gatech.grits.pancakes.lang.LogPacket;
 import edu.gatech.grits.pancakes.lang.MotorPacket;
 import edu.gatech.grits.pancakes.lang.NetworkPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
