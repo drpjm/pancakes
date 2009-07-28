@@ -6,9 +6,10 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 
 import edu.gatech.grits.pancakes.devices.driver.NetworkDriver;
+import edu.gatech.grits.pancakes.lang.LocalPosePacket;
 
 
-public class ViconRTEDriver implements NetworkDriver {
+public class ViconRTEDriver implements NetworkDriver<LocalPosePacket> {
 
 	/**
 	 * @param args
@@ -19,6 +20,9 @@ public class ViconRTEDriver implements NetworkDriver {
 	private DatagramSocket socket = null;
 	private int ID = 0;
 	private String data = null;
+	
+	private Thread mainThread;
+	private volatile boolean stopRequested = false;
 	
 	//private byte[] data = null;
 	
@@ -34,24 +38,23 @@ public class ViconRTEDriver implements NetworkDriver {
 			e1.printStackTrace();
 		}
 		
+		Runnable task = new Runnable() {
+			public void run() {
+				while(!stopRequested) {
+					listen();
+				}
+			}
+			
+		};
+		
+		mainThread = new Thread(task);
+		mainThread.start();
+		
 		System.out.println("I'M A POORLY WRITTEN DRIVER!");
 	}
 	
-	public void run() {
-		while(true) {
-			listen();
-			
-//			try {
-//				Thread.sleep(100);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-		}
-	}
-	
-	public String getData() {
-		return data;
+	public LocalPosePacket query() {
+		return processData(data);
 	}
 	
 	private void listen() {
@@ -89,5 +92,29 @@ public class ViconRTEDriver implements NetworkDriver {
 		if( (new Integer(ID)).equals(Integer.valueOf(tokens[0])) ) {
 			data = msg;
 		}
+	}
+	
+	public LocalPosePacket processData(String data) {
+		LocalPosePacket pkt = new LocalPosePacket();
+		
+		String[] tokens = data.split(",");
+		
+		float yaw = (Float.valueOf(tokens[3])).floatValue();
+		
+//		if (yaw < 0.0f) {
+//			yaw += 2.0f * ((float) Math.PI);
+//		}
+		
+		float x = (Float.valueOf(tokens[1])).floatValue();
+		float y = (Float.valueOf(tokens[2])).floatValue();
+		
+		pkt.setPose(x, y, yaw);
+		
+		return pkt;
+	}
+
+	public void request(LocalPosePacket pkt) {
+		// TODO Auto-generated method stub
+		// do nothing
 	}
 }
