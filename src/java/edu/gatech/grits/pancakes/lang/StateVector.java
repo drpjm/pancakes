@@ -7,7 +7,7 @@ import javolution.util.FastMap;
 public class StateVector {
 	
 	private FastMap<String, Packet> stateVector;
-	private Date timeStamp = new Date(System.currentTimeMillis());
+	private final Date timeStamp = new Date(System.currentTimeMillis());
 	
 	public StateVector() {
 		stateVector.setShared(true);

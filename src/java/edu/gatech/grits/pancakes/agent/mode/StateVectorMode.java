@@ -1,4 +1,4 @@
-package edu.gatech.grits.pancakes.agent;
+package edu.gatech.grits.pancakes.agent.mode;
 
 import javolution.util.FastList;
 
@@ -19,7 +19,7 @@ public class StateVectorMode {
 	private FastList<StateVector> stateVectors;
 	private StateVector currentState = new StateVector();
 		
-	
+		
 	public StateVectorMode(int history) {
 		fiber.start();
 		
