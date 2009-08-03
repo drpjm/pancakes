@@ -1,6 +1,7 @@
 package edu.gatech.grits.pancakes.devices.driver.k3;
 
-import swig.korebot.k3.k3ctrl;
+
+import org.swig.k3i.k3i;
 
 import edu.gatech.grits.pancakes.devices.backend.Backend;
 import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
@@ -33,7 +34,7 @@ public class IRDriver implements HardwareDriver<IRPacket> {
 		float ranges[] = new float[9];
 		
 		for(int i=0; i<8; i++) {
-			double reading = (double) k3ctrl.getIR(i+1);
+			double reading = (double) k3i.queryIR(i);
 			
 			if(reading < 0.0 || reading > 4000.0) {
 				ranges[i] = -1.0f;

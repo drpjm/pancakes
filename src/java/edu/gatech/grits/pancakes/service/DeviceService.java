@@ -20,6 +20,7 @@ public class DeviceService {
 
 		if(backend.equals("player")) {
 			deviceBackend = new PlayerBackend(props.getBackendPort());
+			System.err.println("eeek!");
 		}
 //		if(backend.equals("k3"))
 //			deviceBackend = new K3Backend();

@@ -18,22 +18,26 @@ public class Syslog {
 	
 	public final void debug(String m) {
 		//String src = (new Throwable()).getStackTrace()[1].getClassName();
-		log(new LogPacket("pancakes", Level.DEBUG, m));
+		log(new LogPacket("syslog", Level.DEBUG, m));
 	}
 	
 	public final void warn(String m) {
-		log(new LogPacket("pancakes", Level.WARN, m));
+		log(new LogPacket("syslog", Level.WARN, m));
 	}
 	
 	public final void info(String m) {
-		log(new LogPacket("pancakes", Level.INFO, m));
+		log(new LogPacket("syslog", Level.INFO, m));
 	}
 	
 	public final void fatal(String m) {
-		log(new LogPacket("pancakes", Level.FATAL, m));
+		log(new LogPacket("syslog", Level.FATAL, m));
 	}
 	
 	public final void error(String m) {
-		log(new LogPacket("pancakes", Level.ERROR, m));
+		log(new LogPacket("syslog", Level.ERROR, m));
+	}
+	
+	public final void tweet(String m) {
+		log(new LogPacket("twitter", Level.INFO, m));
 	}
 }
