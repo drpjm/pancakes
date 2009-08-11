@@ -8,4 +8,5 @@ public interface Device {
 	public Packet query();
 	public void request(Packet pkt);
 	public boolean isRunnable();
+	public long delay();
 }

@@ -1,31 +1,35 @@
 package edu.gatech.grits.pancakes.devices.driver.k3;
 
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
+import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.devices.backend.Backend;
 import edu.gatech.grits.pancakes.devices.backend.K3Backend;
 import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
-import edu.gatech.grits.pancakes.lang.IRPacket;
+import edu.gatech.grits.pancakes.lang.BatteryPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
 
-public class IRDriver implements HardwareDriver<IRPacket> {
+public class BatteryDriver implements HardwareDriver<BatteryPacket> {
 
 	private K3Backend backend;
 	
-	public IRDriver(Backend backend) {
+	public BatteryDriver(Backend backend) {
+		// do nothing
 		this.backend = (K3Backend) backend;
 	}
 	
-	public void request(IRPacket pkt) {
+	public void request(BatteryPacket pkt) {
 		// does nothing, since IR is not an actuator
 		return;
 	}
 	
-	public IRPacket query() {
+	public BatteryPacket query() {		
 		for(Packet p : backend.update()) {
-			if(p.getPacketType().equals("ir"))
-				return (IRPacket) p;
+			if(p.getPacketType().equals("battery"))
+				return (BatteryPacket) p;
 		}
 		
-		return new IRPacket();
+		return new BatteryPacket();
 	}
 }

@@ -39,8 +39,8 @@ public class Sandbox {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				MotorPacket mp = new MotorPacket();
-				mp.setVelocity(0.5f);
-				mp.setRotationalVelocity(1.0f);
+				mp.setVelocity(0.0f);
+				mp.setRotationalVelocity(0.0f);
 				try {
 					Kernel.stream.publish("user", mp);
 				} catch (CommunicationException e) {

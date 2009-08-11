@@ -1,16 +1,24 @@
 package edu.gatech.grits.pancakes.devices.driver.k3;
 
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
 import org.swig.k3i.k3i;
 
+import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.devices.backend.Backend;
+import edu.gatech.grits.pancakes.devices.backend.K3Backend;
 import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
+import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.SonarPacket;
 
 public class SonarDriver implements HardwareDriver<SonarPacket> {
 	
+	private K3Backend backend;
+	
 	public SonarDriver(Backend backend) {
-		// do nothing
-		k3i.enableUSs();
+		this.backend = (K3Backend) backend;
+		Kernel.scheduler.execute("ultrasound_enable --mask 31");
 	}
 	
 	public void request(SonarPacket pkt) {
@@ -18,19 +26,13 @@ public class SonarDriver implements HardwareDriver<SonarPacket> {
 		return;
 	}
 	
+
 	public SonarPacket query() {
-		SonarPacket pkt = new SonarPacket();
-		
-		float ranges[] = new float[5];
-		
-		for(int i=0; i<5; i++) {
-			ranges[i] = (float) k3i.queryUS(i);
-			//System.out.println("Range #" + (i+1) + ": " + ranges[i]);
+		for(Packet p : backend.update()) {
+			if(p.getPacketType().equals("sonar"))
+				return (SonarPacket) p;
 		}
 		
-		pkt.setSonarReadings(ranges);
-		//pkt.setDataReady(true);
-
-		return pkt;
+		return new SonarPacket();
 	}
 }

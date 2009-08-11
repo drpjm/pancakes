@@ -1,5 +1,8 @@
 package edu.gatech.grits.pancakes.core;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -20,6 +23,29 @@ public class Scheduler {
 	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(CORE_POOL_SIZE);
 	
 	private FastMap<Runnable, ScheduledFuture<?>> taskList = new FastMap<Runnable, ScheduledFuture<?>>();	
+	
+	public synchronized String execute(String command) {
+
+		String s = null, result = null;
+		
+		try {
+			Process p = Runtime.getRuntime().exec(command);
+			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            // read the output from the command
+            
+			
+            while ((s = stdInput.readLine()) != null && result == null) {
+            	result = s;
+            }
+        } catch (IOException e) {
+            System.out.println("exception happened - here's what I know: ");
+            e.printStackTrace();
+            System.exit(-1);
+        }
+        
+        
+        return result;
+	}
 	
 	public final void execute(Runnable r) {
 		executor.execute(r);

@@ -22,8 +22,9 @@ public class DeviceService {
 			deviceBackend = new PlayerBackend(props.getBackendPort());
 			System.err.println("eeek!");
 		}
-//		if(backend.equals("k3"))
-//			deviceBackend = new K3Backend();
+
+		if(backend.equals("k3"))
+			deviceBackend = new K3Backend();
 //		if(backend.equals("simbad"))
 //			deviceBackend = new SimbadBackend();
 		
@@ -38,7 +39,7 @@ public class DeviceService {
 			Device d = deviceRegistry.get(key);
 			if(d.isRunnable()) {
 				try {
-					Kernel.scheduler.schedule((Runnable) d, 250);
+					Kernel.scheduler.schedule((Runnable) d, d.delay());
 				} catch (SchedulingException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -53,6 +54,8 @@ public class DeviceService {
 		deviceRegistry = FastMap.newInstance();
 		
 		for(String s : sensors){
+			
+			Kernel.syslog.debug("Adding sensor: " + s);
 
 			if(deviceBackend.getBackendType().equals("player")) {
 				((PlayerBackend) deviceBackend).update();
@@ -67,6 +70,9 @@ public class DeviceService {
 			}
 			else if(currSensor.equals("local")){
 				deviceRegistry.put("local", new LocalPoseDevice(deviceBackend));
+			}
+			else if(currSensor.equals("battery")){
+				deviceRegistry.put("battery", new BatteryDevice(deviceBackend));
 			}
 			else if(currSensor.equals("motors")){
 				deviceRegistry.put("motors", new MotorDevice(deviceBackend));

@@ -17,7 +17,7 @@ public class DiscoveryListener {
 	
 	private final String MCAST_ADDR = "224.224.224.224";
 	private final int DEST_PORT = 1337;
-	private final int BUFFER_LENGTH = 16;
+	private final int BUFFER_LENGTH = 32;
 	private MulticastSocket socket;
 	private volatile boolean isRunning;	
 	private Thread mainThread;
@@ -75,6 +75,8 @@ public class DiscoveryListener {
 	private void addNetworkNeighbor(DatagramPacket dgram) {
 		ArrayList<String> p = parse(dgram.getData());
 		
+		System.out.println("Length: " + p.size());
+		
 		if(p != null) {
 			NetworkNeighbor n = new NetworkNeighbor(p.get(1), p.get(0), Integer.valueOf(p.get(2)), new Date(System.currentTimeMillis()));
 			NetworkService.neighborhood.addNeighbor(p.get(1), n);
@@ -87,6 +89,7 @@ public class DiscoveryListener {
 		
 		try {
 			String message = new String(data, "US-ASCII");
+			System.out.println("Message :" + message);
 			StringTokenizer st = new StringTokenizer(message, ":");
 			while(st.hasMoreTokens()) {
 				parameters.add(st.nextToken().trim());

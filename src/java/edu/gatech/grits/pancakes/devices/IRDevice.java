@@ -10,10 +10,15 @@ import edu.gatech.grits.pancakes.lang.Packet;
 public class IRDevice implements Device, Runnable {
 
 	private HardwareDriver<IRPacket> driver;
+	private final long delay = 250l;
 	
 	@SuppressWarnings("unchecked")
 	public IRDevice(Backend backend) {
 		driver = (HardwareDriver<IRPacket>) backend.getDriver("IRDriver");
+	}
+	
+	public long delay() {
+		return delay;
 	}
 	
 	public final boolean isRunnable() {

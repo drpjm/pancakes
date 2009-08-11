@@ -15,6 +15,7 @@ public class NetworkService {
 	
 	public NetworkService(Properties properties) {
 		server = new NetworkServer(properties.getNetworkPort());
+		System.out.println("Network Port: " + properties.getNetworkPort());
 		speaker = new DiscoverySpeaker(properties.getNetworkAddress(), properties.getNetworkPort(), properties.getID());		
 		try {
 			Kernel.scheduler.schedule(speaker, 1000);

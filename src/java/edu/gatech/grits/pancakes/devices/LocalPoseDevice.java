@@ -17,10 +17,15 @@ import edu.gatech.grits.pancakes.lang.Packet;
 public class LocalPoseDevice implements Device, Runnable {
 
 	private HardwareDriver<LocalPosePacket> driver;
+	private final long delay = 250l;
 	
 	@SuppressWarnings("unchecked")
 	public LocalPoseDevice(Backend backend) {
 		driver = (HardwareDriver<LocalPosePacket>) backend.getDriver("LocalPoseDriver");
+	}
+	
+	public final long delay() {
+		return delay;
 	}
 	
 	public final boolean isRunnable() {

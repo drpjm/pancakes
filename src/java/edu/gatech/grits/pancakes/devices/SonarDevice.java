@@ -10,6 +10,7 @@ import edu.gatech.grits.pancakes.lang.SonarPacket;
 public class SonarDevice implements Device, Runnable {
 
 	private HardwareDriver<SonarPacket> driver;
+	private final long delay = 500l;
 	
 	@SuppressWarnings("unchecked")
 	public SonarDevice(Backend backend) {
@@ -18,6 +19,10 @@ public class SonarDevice implements Device, Runnable {
 	
 	public final boolean isRunnable() {
 		return true;
+	}
+	
+	public final long delay() {
+		return delay;
 	}
 	
 	public Packet query() {

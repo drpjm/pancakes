@@ -17,9 +17,9 @@ public class Kernel {
 		scheduler = new Scheduler();
 		stream = new Stream();
 		syslog = new Syslog();
+		l4j = new Log4jService();
 		ds = new DeviceService(properties);
 		ns = new NetworkService(properties);
-		l4j = new Log4jService();
 		twitter = new TwitterService(properties);
 	}
 }

@@ -16,6 +16,7 @@ public class MotorDevice implements Device {
 	private HardwareDriver<MotorPacket> driver;
 	private final Fiber fiber = Kernel.scheduler.newFiber();
 	private Callback<Packet> callback;
+	private final long delay = 0l;
 	
 	@SuppressWarnings("unchecked")
 	public MotorDevice(Backend backend) {
@@ -34,6 +35,10 @@ public class MotorDevice implements Device {
 			// TODO Auto-generated catch block
 			System.err.println(e.getMessage());
 		}
+	}
+	
+	public final long delay () {
+		return delay;
 	}
 	
 	public final boolean isRunnable() {
