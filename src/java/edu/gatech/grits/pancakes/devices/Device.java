@@ -9,4 +9,5 @@ public interface Device {
 	public void request(Packet pkt);
 	public boolean isRunnable();
 	public long delay();
+	public void close();
 }

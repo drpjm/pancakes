@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,7 +18,7 @@ public class DiscoveryListener {
 	
 	private final String MCAST_ADDR = "224.224.224.224";
 	private final int DEST_PORT = 1337;
-	private final int BUFFER_LENGTH = 32;
+	private final int BUFFER_LENGTH = 19;
 	private MulticastSocket socket;
 	private volatile boolean isRunning;	
 	private Thread mainThread;
@@ -53,8 +54,9 @@ public class DiscoveryListener {
 						addNetworkNeighbor(dgram);
 					
 					} catch (IOException e) {
-						//Syslogp.ref(this).error("Unable to receive datagram.");
-					} // blocks until a datagram is received
+						System.err.println("Unable to receive datagram or interrupted.");
+						return;
+					}
 					
 //					System.err.println("Received " + dgram.getLength() +
 //							" bytes from " + dgram.getAddress());
@@ -70,12 +72,13 @@ public class DiscoveryListener {
 	
 	public void close() {
 		isRunning = false;
+		socket.close();
 	}
 	
 	private void addNetworkNeighbor(DatagramPacket dgram) {
 		ArrayList<String> p = parse(dgram.getData());
 		
-		System.out.println("Length: " + p.size());
+		//System.out.println("Length: " + p.size());
 		
 		if(p != null) {
 			NetworkNeighbor n = new NetworkNeighbor(p.get(1), p.get(0), Integer.valueOf(p.get(2)), new Date(System.currentTimeMillis()));
@@ -89,7 +92,7 @@ public class DiscoveryListener {
 		
 		try {
 			String message = new String(data, "US-ASCII");
-			System.out.println("Message :" + message);
+			//System.out.println("Message :" + message);
 			StringTokenizer st = new StringTokenizer(message, ":");
 			while(st.hasMoreTokens()) {
 				parameters.add(st.nextToken().trim());

@@ -1,5 +1,6 @@
 package edu.gatech.grits.pancakes.core;
 
+import javolution.util.FastList;
 import javolution.util.FastMap;
 
 import org.jetlang.channels.Channel;
@@ -9,11 +10,12 @@ import org.jetlang.fibers.Fiber;
 
 import edu.gatech.grits.pancakes.lang.LogPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
+import edu.gatech.grits.pancakes.lang.Subscription;
 
 public class Stream {
 
 	private FastMap<String, Channel<Packet>> channels = new FastMap<String, Channel<Packet>>();
-
+	
 	public Stream() {
 		channels.put("system", new MemoryChannel<Packet>());
 		channels.put("network", new MemoryChannel<Packet>());
@@ -35,18 +37,22 @@ public class Stream {
 		}
 	}
 	
-	public final void subscribe(String channel, Fiber fiber, Callback<Packet> callback) throws CommunicationException {
+	public final void subscribe(Subscription s) throws CommunicationException {
 		Channel<Packet> chl = null;
 		
 		synchronized(this) {
-			chl = channels.get(channel);
+			chl = channels.get(s.getChannel());
 		}
 		
 		if(chl != null) {
-			chl.subscribe(fiber, callback);
+			s.setDisposable(chl.subscribe(s.getFiber(), s.getCallback()));
 		} else {
 			throw new CommunicationException("Channel does not exist.");
 		}
+	}
+	
+	public final void unsubscribe(Subscription s) {
+		s.getDisposable().dispose();
 	}
 	
 	public class CommunicationException extends Exception {

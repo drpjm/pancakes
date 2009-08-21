@@ -40,4 +40,8 @@ public class IRDriver implements HardwareDriver<IRPacket> {
 		}
 		return pkt;
 	}
+	
+	public void close() {
+		// do nothing
+	}
 }

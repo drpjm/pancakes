@@ -56,5 +56,10 @@ public class LocalPoseDevice implements Device, Runnable {
 			System.err.println(e.getMessage());
 		}
 	}
+
+	public void close() {
+		// TODO Auto-generated method stub
+		
+	}
 }
 

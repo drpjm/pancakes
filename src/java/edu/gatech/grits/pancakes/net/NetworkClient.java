@@ -11,16 +11,17 @@ import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
 import edu.gatech.grits.pancakes.lang.NetworkNeighbor;
 import edu.gatech.grits.pancakes.lang.NetworkPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
+import edu.gatech.grits.pancakes.lang.Subscription;
 import edu.gatech.grits.pancakes.service.NetworkService;
 
 public class NetworkClient {
 
-	private Fiber fiber = Kernel.scheduler.newFiber();
-	private Callback<Packet> callback;
+	private final Subscription subscription;
 	
 	public NetworkClient() {
+		Fiber fiber = Kernel.scheduler.newFiber();
 		fiber.start();
-		callback = new Callback<Packet>() {
+		Callback<Packet> callback = new Callback<Packet>() {
 			public void onMessage(Packet packet) {
 				final NetworkNeighbor n = NetworkService.neighborhood.getNeighbor(((NetworkPacket) packet).getDestination());
 				if(n != null) {
@@ -42,12 +43,18 @@ public class NetworkClient {
 			}
 		};
 		
+		subscription = new Subscription("network", fiber, callback);
+		
 		try {
-			Kernel.stream.subscribe("network", fiber, callback);
+			Kernel.stream.subscribe(subscription);
 		} catch (CommunicationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
+	public void close() {
+		Kernel.stream.unsubscribe(subscription);
+		subscription.getFiber().dispose();
+	}
 }

@@ -25,4 +25,19 @@ public class NetworkService {
 			e.printStackTrace();
 		}
 	}
+	
+	public void close() {
+		server.close();
+		client.close();
+		listener.close();
+		
+		try {
+			Kernel.scheduler.cancel(speaker);
+			Kernel.scheduler.cancel(neighborhood);
+		} catch (SchedulingException e) {
+			System.err.println("Unable to cancel runnables.");
+		}
+		
+		speaker.close();
+	}
 }

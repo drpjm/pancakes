@@ -10,4 +10,5 @@ package edu.gatech.grits.pancakes.devices.driver;
 public interface HardwareDriver<T> {
 	public T query();
 	public void request(T pkt);
+	public void close();
 }

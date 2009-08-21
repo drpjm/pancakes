@@ -1,9 +1,5 @@
 package edu.gatech.grits.pancakes.devices.driver.k3;
 
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-
-import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.devices.backend.Backend;
 import edu.gatech.grits.pancakes.devices.backend.K3Backend;
 import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
@@ -31,5 +27,9 @@ public class BatteryDriver implements HardwareDriver<BatteryPacket> {
 		}
 		
 		return new BatteryPacket();
+	}
+	
+	public void close() {
+		// do nothing
 	}
 }

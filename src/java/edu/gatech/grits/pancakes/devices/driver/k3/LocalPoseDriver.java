@@ -22,5 +22,9 @@ public class LocalPoseDriver implements HardwareDriver<LocalPosePacket> {
 		return device.query();
 	}
 	
+	public void close() {
+		device.close();
+	}
+	
 	
 }

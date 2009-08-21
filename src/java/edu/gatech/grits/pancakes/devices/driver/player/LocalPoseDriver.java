@@ -45,4 +45,8 @@ public class LocalPoseDriver implements HardwareDriver<LocalPosePacket> {
 		
 		return pkt;
 	}
+	
+	public void close() {
+		// do nothing
+	}
 }

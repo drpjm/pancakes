@@ -57,6 +57,10 @@ public class ViconRTEDriver implements NetworkDriver<LocalPosePacket> {
 		return processData(data);
 	}
 	
+	public void close() {
+		socket.close();
+	}
+	
 	private void listen() {
 		// TODO Auto-generated method stub
 		byte[] b = new byte[BUFFER_LENGTH];

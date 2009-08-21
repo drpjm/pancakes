@@ -36,4 +36,8 @@ public class MotorDriver implements HardwareDriver<MotorPacket> {
 		// actuators return nothing here
 		return null;
 	}
+	
+	public void close() {
+		k3i.stopMotors();
+	}
 }

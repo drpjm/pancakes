@@ -13,25 +13,24 @@ public class DiscoverySpeaker implements Runnable {
 	private final String MCAST_ADDR = "224.224.224.224";
 	private final int DEST_PORT = 1337;
 	private String BROADCAST;
+	private DatagramSocket socket;
 	
 	public DiscoverySpeaker(String hostname, int network_port, String id) {
+		try {
+			socket = new DatagramSocket();
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		BROADCAST = hostname + ":" + id + ":" + network_port;
-		System.out.println(BROADCAST);
+		//System.out.println(BROADCAST);
 	}
 	
 	public void run() {
 		sendDiscovery();
 	}
 	
-	public void sendDiscovery() {
-		DatagramSocket socket = null;
-		
-		try {
-			socket = new DatagramSocket();
-		} catch (SocketException e) {
-			e.printStackTrace();
-		}
-		
+	public void sendDiscovery() {		
 		Charset charSet = Charset.forName("US-ASCII");
 		
 		byte[] b = BROADCAST.getBytes(charSet);
@@ -51,6 +50,10 @@ public class DiscoverySpeaker implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void close() {
+		socket.close();
 	}
 	
 }

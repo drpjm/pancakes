@@ -46,4 +46,8 @@ public class MotorDriver implements HardwareDriver<MotorPacket> {
 		
 		return pkt;
 	}
+	
+	public void close() {
+		// do nothing
+	}
 }

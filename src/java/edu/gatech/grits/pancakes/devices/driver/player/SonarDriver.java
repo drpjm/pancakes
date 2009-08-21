@@ -55,4 +55,9 @@ public class SonarDriver implements HardwareDriver<SonarPacket> {
 		}
 		return pkt;
 	}
+
+
+	public void close() {
+		// do nothing	
+	}
 }

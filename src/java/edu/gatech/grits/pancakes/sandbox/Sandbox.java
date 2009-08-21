@@ -8,6 +8,7 @@ import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
 import edu.gatech.grits.pancakes.lang.MotorPacket;
 import edu.gatech.grits.pancakes.lang.NetworkPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
+import edu.gatech.grits.pancakes.lang.Subscription;
 import edu.gatech.grits.pancakes.service.NetworkService;
 import edu.gatech.grits.pancakes.util.Properties;
 
@@ -26,21 +27,30 @@ public class Sandbox {
 		Callback<Packet> callback = new Callback<Packet>() {
 			public void onMessage(Packet pkt) {
 				System.err.println("Incoming packet(s):");
-				//pkt.debug();
-				//if(pkt.getPacketType().equals("network"))
-					pkt.debug();
+				pkt.debug();
+//				if(pkt.getPacketType().equals("battery")) {
+//					//pkt.debug();
+//					NetworkPacket n = new NetworkPacket("8", "9");
+//					n.addPacket(pkt);
+//					try {
+//						Kernel.stream.publish("network", n);
+//					} catch (CommunicationException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//				}
 			}
 		};
 		
 		Kernel.syslog.debug("Starting sandbox.");
-		
-		Kernel.stream.subscribe("system", fiber, callback);
+		Subscription s = new Subscription("system", fiber, callback);
+		Kernel.stream.subscribe(s);
 		
 		Runnable runnable = new Runnable() {
 			public void run() {
 				MotorPacket mp = new MotorPacket();
-				mp.setVelocity(0.0f);
-				mp.setRotationalVelocity(0.0f);
+				mp.setVelocity(0.25f);
+				mp.setRotationalVelocity(1.0f);
 				try {
 					Kernel.stream.publish("user", mp);
 				} catch (CommunicationException e) {
@@ -55,7 +65,7 @@ public class Sandbox {
 		while(true) {
 			// do nothing
 			NetworkService.neighborhood.debug();
-			Kernel.stream.publish("network", new NetworkPacket("8", "8"));
+			//Kernel.stream.publish("network", new NetworkPacket("8", "8"));
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {

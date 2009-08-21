@@ -11,27 +11,34 @@ import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
 import edu.gatech.grits.pancakes.lang.LogPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
+import edu.gatech.grits.pancakes.lang.Subscription;
 
 public class Log4jService {
 
 	private static final String CFG_FILE = "cfg/log4j.cfg";
-	private final Fiber fiber = Kernel.scheduler.newFiber();
-	private Callback<Packet> callback;
+	private final Subscription subscription;
 	
 	public Log4jService() {
 		PropertyConfigurator.configure(CFG_FILE);
+		Fiber fiber = Kernel.scheduler.newFiber();
 		fiber.start();
-		callback = new Callback<Packet>() {
+		Callback<Packet> callback = new Callback<Packet>() {
 			public void onMessage(Packet packet) {
 				LogPacket p = (LogPacket) packet;
 				Logger.getLogger(p.getSource()).log(Level.toLevel(p.getLevel()), p.getMessage());
 			}
 		};
 		
+		subscription = new Subscription("log", fiber, callback);
+		
 		try {
-			Kernel.stream.subscribe("log", fiber, callback);
+			Kernel.stream.subscribe(subscription);
 		} catch (CommunicationException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void close() {
+		Kernel.stream.unsubscribe(subscription);
 	}
 }

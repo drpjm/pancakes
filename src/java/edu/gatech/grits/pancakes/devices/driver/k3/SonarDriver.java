@@ -1,10 +1,5 @@
 package edu.gatech.grits.pancakes.devices.driver.k3;
 
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-
-import org.swig.k3i.k3i;
-
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.devices.backend.Backend;
 import edu.gatech.grits.pancakes.devices.backend.K3Backend;
@@ -34,5 +29,9 @@ public class SonarDriver implements HardwareDriver<SonarPacket> {
 		}
 		
 		return new SonarPacket();
+	}
+	
+	public void close() {
+		Kernel.scheduler.execute("ultrasound_enable --mask 0");
 	}
 }

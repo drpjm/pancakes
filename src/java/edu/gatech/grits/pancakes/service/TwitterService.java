@@ -7,17 +7,19 @@ import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
 import edu.gatech.grits.pancakes.lang.LogPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
+import edu.gatech.grits.pancakes.lang.Subscription;
 import edu.gatech.grits.pancakes.social.twitter.Tweeter;
 import edu.gatech.grits.pancakes.util.Properties;
 
 public class TwitterService {
 
 	private Tweeter tweeter;
-	private final Fiber fiber = Kernel.scheduler.newFiber();
+	private final Subscription subscription;
 	
 	
 	public TwitterService(Properties properties) {
 		tweeter = new Tweeter(properties);
+		Fiber fiber = Kernel.scheduler.newFiber();
 		fiber.start();
 		
 		Callback<Packet> callback = new Callback<Packet>() {
@@ -29,11 +31,18 @@ public class TwitterService {
 			}
 		};
 		
+		subscription = new Subscription("log", fiber, callback);
+		
 		try {
-			Kernel.stream.subscribe("log", fiber, callback);
+			Kernel.stream.subscribe(subscription);
 		} catch (CommunicationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public void close() {
+		Kernel.stream.unsubscribe(subscription);
+		subscription.getFiber().dispose();
 	}
 }

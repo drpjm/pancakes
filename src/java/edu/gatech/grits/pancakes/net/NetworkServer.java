@@ -34,8 +34,9 @@ public class NetworkServer {
 						};
 						Kernel.scheduler.execute(task);		
 					} catch (IOException e) {
-						System.out.println("Error receiving object");
-						e.printStackTrace();
+						System.out.println("Error receiving object or socket closed.");
+						//e.printStackTrace();
+						return;
 					}
 				}
 			}
@@ -64,5 +65,11 @@ public class NetworkServer {
 	
 	public final void close() {
 		stopRequested = true;
+		try {
+			listener.close();
+		} catch (IOException e) {
+			System.err.println("Unable to close socket");
+		}
+		//mainThread.interrupt();
 	}
 }

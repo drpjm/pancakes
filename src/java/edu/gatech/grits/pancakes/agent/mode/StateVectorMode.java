@@ -10,10 +10,11 @@ import edu.gatech.grits.pancakes.core.Scheduler.SchedulingException;
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.StateVector;
+import edu.gatech.grits.pancakes.lang.Subscription;
 
 public class StateVectorMode {
 	
-	private Fiber fiber = Kernel.scheduler.newFiber();
+	private final Subscription subscription;
 	private long delay = 1000l;
 	
 	private FastList<StateVector> stateVectors;
@@ -21,6 +22,7 @@ public class StateVectorMode {
 		
 		
 	public StateVectorMode(int history) {
+		Fiber fiber = Kernel.scheduler.newFiber();
 		fiber.start();
 		
 		Callback<Packet> callback = new Callback<Packet>() {
@@ -29,8 +31,10 @@ public class StateVectorMode {
 			}
 		};
 		
+		subscription = new Subscription("system", fiber, callback);
+		
 		try {
-			Kernel.stream.subscribe("system", fiber, callback);
+			Kernel.stream.subscribe(subscription);
 		} catch (CommunicationException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -56,6 +60,9 @@ public class StateVectorMode {
 		delay = d;
 	}
 	
+	public void close() {
+		Kernel.stream.unsubscribe(subscription);
+	}
 	
 
 }

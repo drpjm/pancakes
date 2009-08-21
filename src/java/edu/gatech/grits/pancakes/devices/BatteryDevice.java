@@ -47,4 +47,9 @@ public class BatteryDevice implements Device, Runnable {
 		return delay;
 	}
 
+	public void close() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

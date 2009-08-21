@@ -18,22 +18,17 @@ public class DeviceService {
 	public DeviceService(Properties props) {
 		String backend = props.getBackend();
 
-		if(backend.equals("player")) {
+		if(backend.equals("player"))
 			deviceBackend = new PlayerBackend(props.getBackendPort());
-			System.err.println("eeek!");
-		}
 
 		if(backend.equals("k3"))
 			deviceBackend = new K3Backend();
-//		if(backend.equals("simbad"))
-//			deviceBackend = new SimbadBackend();
 		
 		if(!backend.equals("none"))
 			buildDeviceRegistry(props.getDevices());
 		
-		if(backend.equals("player")) {
+		if(backend.equals("player"))
 			((PlayerBackend) deviceBackend).finalize();
-		}
 
 		for(String key : deviceRegistry.keySet()) {
 			Device d = deviceRegistry.get(key);
@@ -41,8 +36,7 @@ public class DeviceService {
 				try {
 					Kernel.scheduler.schedule((Runnable) d, d.delay());
 				} catch (SchedulingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Kernel.syslog.error("Unable to schedule " + key + ".");
 				}
 			}
 		}
@@ -51,7 +45,7 @@ public class DeviceService {
 
 	public void buildDeviceRegistry(ArrayList<String> sensors) {
 		
-		deviceRegistry = FastMap.newInstance();
+		deviceRegistry = new FastMap<String, Device>();
 		
 		for(String s : sensors){
 			
@@ -80,9 +74,19 @@ public class DeviceService {
 		}
 	}
 
-	// should be moved into the Player backend
 	public void close() {
-		((PlayerBackend) deviceBackend).getHandle().close();
+		((PlayerBackend) deviceBackend).close();
+		for(String key : deviceRegistry.keySet()) {
+			Device d = deviceRegistry.get(key);
+			if(d.isRunnable()) {
+				try {
+					Kernel.scheduler.cancel((Runnable) d);
+				} catch (SchedulingException e) {
+					Kernel.syslog.warn("Unable to terminate " + key + ".");
+				}
+			}
+			d.close();
+		}
 	}
 
 }
