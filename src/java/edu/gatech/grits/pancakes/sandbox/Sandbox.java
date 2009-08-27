@@ -5,6 +5,7 @@ import org.jetlang.fibers.Fiber;
 
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
+import edu.gatech.grits.pancakes.lang.BatteryPacket;
 import edu.gatech.grits.pancakes.lang.MotorPacket;
 import edu.gatech.grits.pancakes.lang.NetworkPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
@@ -26,9 +27,9 @@ public class Sandbox {
 		fiber.start();
 		Callback<Packet> callback = new Callback<Packet>() {
 			public void onMessage(Packet pkt) {
-				System.err.println("Incoming packet(s):");
+				//System.err.println("Incoming packet(s):");
 				pkt.debug();
-//				if(pkt.getPacketType().equals("battery")) {
+				//if(pkt.getPacketType().equals("battery")) {
 //					//pkt.debug();
 //					NetworkPacket n = new NetworkPacket("8", "9");
 //					n.addPacket(pkt);
@@ -38,7 +39,8 @@ public class Sandbox {
 //						// TODO Auto-generated catch block
 //						e.printStackTrace();
 //					}
-//				}
+				//	System.out.println(((BatteryPacket) pkt).getVoltage());
+				//}
 			}
 		};
 		
@@ -64,7 +66,7 @@ public class Sandbox {
 		
 		while(true) {
 			// do nothing
-			NetworkService.neighborhood.debug();
+			//NetworkService.neighborhood.debug();
 			//Kernel.stream.publish("network", new NetworkPacket("8", "8"));
 			try {
 				Thread.sleep(5000);
