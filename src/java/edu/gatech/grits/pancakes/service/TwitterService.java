@@ -11,7 +11,7 @@ import edu.gatech.grits.pancakes.lang.Subscription;
 import edu.gatech.grits.pancakes.social.twitter.Tweeter;
 import edu.gatech.grits.pancakes.util.Properties;
 
-public class TwitterService {
+public class TwitterService implements Service {
 
 	private Tweeter tweeter;
 	private final Subscription subscription;

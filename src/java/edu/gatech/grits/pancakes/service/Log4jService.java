@@ -13,7 +13,7 @@ import edu.gatech.grits.pancakes.lang.LogPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.Subscription;
 
-public class Log4jService {
+public class Log4jService implements Service {
 
 	private static final String CFG_FILE = "cfg/log4j.cfg";
 	private final Subscription subscription;

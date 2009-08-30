@@ -10,7 +10,7 @@ import edu.gatech.grits.pancakes.devices.*;
 import edu.gatech.grits.pancakes.devices.backend.*;
 import edu.gatech.grits.pancakes.util.Properties;
 
-public class DeviceService {
+public class DeviceService implements Service {
 
 	private FastMap<String, Device> deviceRegistry;
 	private Backend deviceBackend;

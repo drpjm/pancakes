@@ -5,7 +5,7 @@ import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Scheduler.SchedulingException;
 import edu.gatech.grits.pancakes.util.Properties;
 
-public class NetworkService {
+public class NetworkService implements Service {
 
 	private NetworkServer server;
 	private NetworkClient client = new NetworkClient();

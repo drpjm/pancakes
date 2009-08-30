@@ -59,10 +59,19 @@ public class Properties {
 	
 	
 	public ArrayList<String> getDevices() {
+		String result = "";
 		ArrayList<String> list = new ArrayList<String>();
 		for(String key : propertyTable.keySet()) {
-			if(key.startsWith("devices.device"))
-				list.add(propertyTable.get(key));
+			if(key.startsWith("service.devices.device.list"))
+				result = propertyTable.get(key);
+		}
+		
+		if(result != null) {
+			StringTokenizer st = new StringTokenizer(result, ",");
+			ArrayList<String> tokens = new ArrayList<String>(2);
+			while(st.hasMoreTokens()) {
+				list.add(st.nextToken());
+			}
 		}
 		return list;
 	}
@@ -78,41 +87,71 @@ public class Properties {
 		return propertyTable.get("kernel.id");
 	}
 	
-	public int getFrequency() {
-		return new Integer(propertyTable.get("kernel.frequency"));
+	public String getBackend() {
+		return propertyTable.get("service.devices.backend.type");
 	}
 	
-	public String getBackend() {
-		return propertyTable.get("backend.type");
+	public long getDelay(String device) {
+		String result = propertyTable.get("service.devices.device." + device + ".delay");
+		if(result != null) {
+			return new Long(result);
+		} else {
+			return 0l;
+		}
+	}
+	
+	public boolean isDevicesEnabled() {
+		if(propertyTable.get("service.devices.enabled").equals("true")) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	public int getBackendPort() {
-		System.out.println(propertyTable.get("backend.port"));
-		return new Integer(propertyTable.get("backend.port"));
+		//System.out.println(propertyTable.get("service.backend.port"));
+		return new Integer(propertyTable.get("service.backend.port"));
+	}
+	
+	public boolean isNetworkEnabled() {
+		if(propertyTable.get("service.network.enabled").equals("true")) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	public String getNetworkAddress() {
-		return propertyTable.get("network.address");
+		return propertyTable.get("service.network.address");
 	}
 	
 	public int getNetworkPort() {
-		return new Integer(propertyTable.get("network.port"));
+		return new Integer(propertyTable.get("service.network.port"));
+	}
+	
+	// log4j
+	
+	public boolean isLog4jEnabled() {
+		if(propertyTable.get("service.log4j.enabled").equals("true"))
+			return true;
+		else
+			return false;
 	}
 	
 	// Twitter
 	
 	public boolean isTwitterEnabled() {
-		if(propertyTable.get("twitter.enabled").equals("true"))
+		if(propertyTable.get("service.twitter.enabled").equals("true"))
 			return true;
 		else
 			return false;
 	}
 	
 	public String getTwitterID() {
-		return propertyTable.get("twitter.username");
+		return propertyTable.get("service.twitter.username");
 	}
 	
 	public String getTwitterPasswd() {
-		return propertyTable.get("twitter.password");
+		return propertyTable.get("service.twitter.password");
 	}
 }
