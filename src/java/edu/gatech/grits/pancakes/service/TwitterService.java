@@ -11,13 +11,14 @@ import edu.gatech.grits.pancakes.lang.Subscription;
 import edu.gatech.grits.pancakes.social.twitter.Tweeter;
 import edu.gatech.grits.pancakes.util.Properties;
 
-public class TwitterService implements Service {
+public class TwitterService extends Service {
 
 	private Tweeter tweeter;
 	private final Subscription subscription;
 	
 	
 	public TwitterService(Properties properties) {
+		super("twitter");
 		tweeter = new Tweeter(properties);
 		Fiber fiber = Kernel.scheduler.newFiber();
 		fiber.start();
@@ -44,5 +45,11 @@ public class TwitterService implements Service {
 	public void close() {
 		Kernel.stream.unsubscribe(subscription);
 		subscription.getFiber().dispose();
+	}
+
+	@Override
+	public void process(Packet pkt) {
+		// TODO Auto-generated method stub
+		
 	}
 }

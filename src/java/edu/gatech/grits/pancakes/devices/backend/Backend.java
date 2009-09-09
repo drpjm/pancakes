@@ -15,6 +15,7 @@ public abstract class Backend {
 	}
 	
 	public abstract Object getHandle();
+	public abstract void close();
 	
 	@SuppressWarnings("unchecked")
 	public Object getDriver(String driverName) {

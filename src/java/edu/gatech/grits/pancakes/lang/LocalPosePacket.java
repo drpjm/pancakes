@@ -14,7 +14,7 @@ public class LocalPosePacket extends Packet { /**
 
 
 	public LocalPosePacket() {
-		super("local");
+		super("LocalPose");
 	}
 	
 	public final void setPose(float x, float y, float theta) {

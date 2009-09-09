@@ -2,20 +2,19 @@ package edu.gatech.grits.pancakes.service;
 
 import java.util.ArrayList;
 
-import javolution.util.FastMap;
-
 import edu.gatech.grits.pancakes.core.Kernel;
-import edu.gatech.grits.pancakes.core.Scheduler.SchedulingException;
 import edu.gatech.grits.pancakes.devices.*;
 import edu.gatech.grits.pancakes.devices.backend.*;
+import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.util.Properties;
 
-public class DeviceService implements Service {
+public class DeviceService extends Service {
 
-	private FastMap<String, Device> deviceRegistry;
 	private Backend deviceBackend;
 	
 	public DeviceService(Properties props) {
+		super("devices");
+		
 		String backend = props.getBackend();
 
 		if(backend.equals("player"))
@@ -30,22 +29,13 @@ public class DeviceService implements Service {
 		if(backend.equals("player"))
 			((PlayerBackend) deviceBackend).finalize();
 
-		for(String key : deviceRegistry.keySet()) {
-			Device d = deviceRegistry.get(key);
-			if(d.isRunnable()) {
-				try {
-					Kernel.scheduler.schedule((Runnable) d, d.delay());
-				} catch (SchedulingException e) {
-					Kernel.syslog.error("Unable to schedule " + key + ".");
-				}
-			}
+		for(String key : taskList()) {
+			scheduleTask(key);
 		}
 		
 	}
 
 	public void buildDeviceRegistry(ArrayList<String> sensors) {
-		
-		deviceRegistry = new FastMap<String, Device>();
 		
 		for(String s : sensors){
 			
@@ -57,36 +47,34 @@ public class DeviceService implements Service {
 
 			String currSensor = s.toLowerCase();
 			if(currSensor.equals("sonar")){
-				deviceRegistry.put("sonar", new SonarDevice(deviceBackend));
+				addTask("sonar", new SonarDevice(deviceBackend, 500l));
 			}
 			else if(currSensor.equals("ir")){
-				deviceRegistry.put("ir", new IRDevice(deviceBackend));
+				addTask("ir", new IRDevice(deviceBackend, 250l));
 			}
 			else if(currSensor.equals("local")){
-				deviceRegistry.put("local", new LocalPoseDevice(deviceBackend));
+				addTask("local", new LocalPoseDevice(deviceBackend, 0l));
 			}
 			else if(currSensor.equals("battery")){
-				deviceRegistry.put("battery", new BatteryDevice(deviceBackend));
+				addTask("battery", new BatteryDevice(deviceBackend, 1000l));
 			}
 			else if(currSensor.equals("motors")){
-				deviceRegistry.put("motors", new MotorDevice(deviceBackend));
+				addTask("motors", new MotorDevice(deviceBackend));
 			}
 		}
 	}
 
 	public void close() {
-		((PlayerBackend) deviceBackend).close();
-		for(String key : deviceRegistry.keySet()) {
-			Device d = deviceRegistry.get(key);
-			if(d.isRunnable()) {
-				try {
-					Kernel.scheduler.cancel((Runnable) d);
-				} catch (SchedulingException e) {
-					Kernel.syslog.warn("Unable to terminate " + key + ".");
-				}
-			}
-			d.close();
+		deviceBackend.close();
+		for(String key : taskList()) {
+			removeTask(key);
 		}
+	}
+
+	@Override
+	public void process(Packet pkt) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

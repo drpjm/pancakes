@@ -13,12 +13,13 @@ import edu.gatech.grits.pancakes.lang.LogPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.Subscription;
 
-public class Log4jService implements Service {
+public class Log4jService extends Service {
 
 	private static final String CFG_FILE = "cfg/log4j.cfg";
 	private final Subscription subscription;
 	
 	public Log4jService() {
+		super("log4j");
 		PropertyConfigurator.configure(CFG_FILE);
 		Fiber fiber = Kernel.scheduler.newFiber();
 		fiber.start();
@@ -40,5 +41,11 @@ public class Log4jService implements Service {
 	
 	public void close() {
 		Kernel.stream.unsubscribe(subscription);
+	}
+
+	@Override
+	public void process(Packet pkt) {
+		// TODO Auto-generated method stub
+		
 	}
 }

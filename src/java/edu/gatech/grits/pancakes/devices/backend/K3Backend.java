@@ -33,7 +33,7 @@ public class K3Backend extends Backend {
 	}
 
 	@Override
-	public Object getHandle() {
+	public final Object getHandle() {
 		// since the K3 backend is really a swig library, do nothing
 		return null;
 	}
@@ -42,8 +42,12 @@ public class K3Backend extends Backend {
 //		return parse(execute("k3i -f"));
 //	}
 	
-	public void update() {
+	public final void update() {
 		k3i.k3Update();
+	}
+	
+	public final void close() {
+		k3i.motorsStop(); // make sure we are stopped
 	}
 
 //	public synchronized ArrayList<String> execute(String command) {

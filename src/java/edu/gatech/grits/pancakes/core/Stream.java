@@ -21,6 +21,7 @@ public class Stream {
 		channels.put("network", new MemoryChannel<Packet>());
 		channels.put("user", new MemoryChannel<Packet>());
 		channels.put("log", new MemoryChannel<Packet>());
+		channels.put("ctrl", new MemoryChannel<Packet>());
 	}
 	
 	

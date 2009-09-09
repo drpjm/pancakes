@@ -1,11 +1,12 @@
 package edu.gatech.grits.pancakes.service;
 
+import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.net.*;
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Scheduler.SchedulingException;
 import edu.gatech.grits.pancakes.util.Properties;
 
-public class NetworkService implements Service {
+public class NetworkService extends Service {
 
 	private NetworkServer server;
 	private NetworkClient client = new NetworkClient();
@@ -14,6 +15,7 @@ public class NetworkService implements Service {
 	public static NetworkNeighborhood neighborhood = new NetworkNeighborhood();
 	
 	public NetworkService(Properties properties) {
+		super("network");
 		server = new NetworkServer(properties.getNetworkPort());
 		System.out.println("Network Port: " + properties.getNetworkPort());
 		speaker = new DiscoverySpeaker(properties.getNetworkAddress(), properties.getNetworkPort(), properties.getID());		
@@ -39,5 +41,11 @@ public class NetworkService implements Service {
 		}
 		
 		speaker.close();
+	}
+
+	@Override
+	public void process(Packet pkt) {
+		// TODO Auto-generated method stub
+		
 	}
 }
