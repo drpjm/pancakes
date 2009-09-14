@@ -40,6 +40,7 @@ public abstract class Service {
 			System.err.println(e.getMessage());
 		}
 		
+		taskRegistry = new FastMap<String, Taskable>();
 	}
 	
 	public final Set<String> taskList() {

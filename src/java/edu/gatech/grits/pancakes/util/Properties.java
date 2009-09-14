@@ -110,7 +110,7 @@ public class Properties {
 	
 	public int getBackendPort() {
 		//System.out.println(propertyTable.get("service.backend.port"));
-		return new Integer(propertyTable.get("service.backend.port"));
+		return new Integer(propertyTable.get("service.devices.backend.port"));
 	}
 	
 	public boolean isNetworkEnabled() {

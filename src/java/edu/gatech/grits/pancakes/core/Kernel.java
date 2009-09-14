@@ -10,10 +10,7 @@ public class Kernel {
 	public static Stream stream;// = new Stream();
 	public static Syslog syslog;// = new Syslogp();
 	
-//	private DeviceService ds;
-//	private NetworkService ns;
-//	private Log4jService l4j;
-//	private TwitterService twitter;
+	private Object lock = new Object();
 	
 	FastMap<String, Service> serviceList = new FastMap<String, Service>();
 	
@@ -27,6 +24,11 @@ public class Kernel {
 	
 	public void shutdown() {
 		stopServices();
+		lock.notify();
+	}
+	
+	public void join() throws InterruptedException {
+		lock.wait();
 	}
 	
 	public void startServices(Properties properties) {
@@ -49,8 +51,4 @@ public class Kernel {
 			serviceList.get(key).close();
 		}
 	}
-	
-//	public Service getService(String service) {
-//		return serviceList.get(service);
-//	}
 }
