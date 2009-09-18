@@ -2,6 +2,8 @@ package edu.gatech.grits.pancakes.service;
 
 import java.util.ArrayList;
 
+import javolution.util.FastList;
+
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.devices.*;
 import edu.gatech.grits.pancakes.devices.backend.*;
@@ -35,7 +37,7 @@ public class DeviceService extends Service {
 		
 	}
 
-	public void buildDeviceRegistry(ArrayList<String> sensors) {
+	public void buildDeviceRegistry(FastList<String> sensors) {
 		
 		for(String s : sensors){
 			
@@ -52,14 +54,14 @@ public class DeviceService extends Service {
 			else if(currSensor.equals("ir")){
 				addTask("ir", new IRDevice(deviceBackend, 250l));
 			}
-			else if(currSensor.equals("local")){
-				addTask("local", new LocalPoseDevice(deviceBackend, 0l));
+			else if(currSensor.equals("localpose")){
+				addTask("localpose", new LocalPoseDevice(deviceBackend, 1000l));
 			}
 			else if(currSensor.equals("battery")){
 				addTask("battery", new BatteryDevice(deviceBackend, 1000l));
 			}
-			else if(currSensor.equals("motors")){
-				addTask("motors", new MotorDevice(deviceBackend));
+			else if(currSensor.equals("motor")){
+				addTask("motor", new MotorDevice(deviceBackend));
 			}
 		}
 	}

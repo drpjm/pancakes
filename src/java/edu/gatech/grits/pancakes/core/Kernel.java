@@ -10,8 +10,6 @@ public class Kernel {
 	public static Stream stream;// = new Stream();
 	public static Syslog syslog;// = new Syslogp();
 	
-	private Object lock = new Object();
-	
 	FastMap<String, Service> serviceList = new FastMap<String, Service>();
 	
 	public Kernel(Properties properties) {
@@ -24,25 +22,26 @@ public class Kernel {
 	
 	public void shutdown() {
 		stopServices();
-		lock.notify();
-	}
-	
-	public void join() throws InterruptedException {
-		lock.wait();
 	}
 	
 	public void startServices(Properties properties) {
-		if(properties.isDevicesEnabled()) {
-			serviceList.put("devices", new DeviceService(properties));
-		}
-		if(properties.isNetworkEnabled()) {
-			serviceList.put("network", new NetworkService(properties));
-		}
-		if(properties.isTwitterEnabled()) {
-			serviceList.put("twitter", new TwitterService(properties));
-		}
-		if(properties.isLog4jEnabled()) {
-			serviceList.put("log4j", new Log4jService());
+		
+		for(String service : properties.getServices()) {
+			if(service.equals("devices")) {
+				serviceList.put("devices", new DeviceService(properties));
+			}
+			else if(service.equals("network")) {
+				serviceList.put("network", new NetworkService(properties));
+			}
+			else if(service.equals("twitter")) {
+				serviceList.put("twitter", new TwitterService(properties));
+			}
+			else if(service.equals("log4j")) {
+				serviceList.put("log4j", new Log4jService());
+			}
+			else if(service.equals("client")) {
+				serviceList.put("client", new ClientService());
+			}
 		}
 	}
 	

@@ -13,7 +13,7 @@ public class MotorPacket extends Packet { /**
 	private static final long serialVersionUID = -7369752263853901700L;
 	
 	public MotorPacket() {
-		super("Motor");
+		super("motor");
 	}
 	
 	public final float getVelocity() {

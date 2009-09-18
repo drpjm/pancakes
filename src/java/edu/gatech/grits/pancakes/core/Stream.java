@@ -1,14 +1,10 @@
 package edu.gatech.grits.pancakes.core;
 
-import javolution.util.FastList;
 import javolution.util.FastMap;
 
 import org.jetlang.channels.Channel;
 import org.jetlang.channels.MemoryChannel;
-import org.jetlang.core.Callback;
-import org.jetlang.fibers.Fiber;
 
-import edu.gatech.grits.pancakes.lang.LogPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.Subscription;
 
@@ -22,6 +18,24 @@ public class Stream {
 		channels.put("user", new MemoryChannel<Packet>());
 		channels.put("log", new MemoryChannel<Packet>());
 		channels.put("ctrl", new MemoryChannel<Packet>());
+	}
+	
+	public final void createChannel(String channel) {
+		synchronized(this) {
+			channels.put(channel, new MemoryChannel<Packet>());
+		}
+	}
+	
+	public final void destoryChannel(String channel) {
+		Channel<Packet> chl = null;
+		
+		synchronized(this) {
+			chl = channels.remove(channel);
+		}
+		
+		if(chl != null) {
+			((MemoryChannel<Packet>) chl).clearSubscribers();
+		}
 	}
 	
 	

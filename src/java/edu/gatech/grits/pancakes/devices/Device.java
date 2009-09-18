@@ -10,13 +10,13 @@ import edu.gatech.grits.pancakes.lang.Task;
 public abstract class Device<T> extends Task {
 	
 	private final HardwareDriver<T> driver;
-	private final String type;
+	private final String device;
 	
 	@SuppressWarnings("unchecked")
 	public Device(Backend backend, String type, String channel, long delay) {
 		super(channel, delay);
-		driver = (HardwareDriver<T>) backend.getDriver(type + "Driver");
-		this.type = type;
+		driver = (HardwareDriver<T>) backend.getDriver(type + "Driver");		
+		device = type.toLowerCase();
 	}
 	
 	public final void run() {
@@ -30,7 +30,7 @@ public abstract class Device<T> extends Task {
 	
 	@SuppressWarnings("unchecked")
 	public final void process(Packet pkt) {
-		if(pkt.getPacketType().equals(type))
+		if(pkt.getPacketType().equals(device))
 			driver.request((T) pkt);
 	}
 	

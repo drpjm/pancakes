@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
+import javolution.util.FastList;
+
 public class Properties {
 	
 	private final String CFG_LOC = "/cfg/";
@@ -20,6 +22,8 @@ public class Properties {
 		else
 			System.err.println("error: invalid configuration file!");
 	}
+	
+	// helpers
 	
 	public void loadFromPlainText(String fileName) {
 		String fullFileName = this.getPathToFile(fileName);
@@ -57,18 +61,22 @@ public class Properties {
 			System.out.println(key + " = " + propertyTable.get(key));
 	}
 	
+	public String getProperty(String key) {
+		return propertyTable.get(key);
+	}
 	
-	public ArrayList<String> getDevices() {
-		String result = "";
-		ArrayList<String> list = new ArrayList<String>();
-		for(String key : propertyTable.keySet()) {
-			if(key.startsWith("service.devices.device.list"))
-				result = propertyTable.get(key);
-		}
-		
+	private final String getPathToFile(String fileName){
+		String rootName = System.getProperty("user.dir");
+		return rootName + this.CFG_LOC + fileName;
+	}
+
+	// accessors
+	
+	public FastList<String> getDevices() {
+		FastList<String> list = new FastList<String>();
+		String result = getProperty("service.devices.device.list");
 		if(result != null) {
 			StringTokenizer st = new StringTokenizer(result, ",");
-			ArrayList<String> tokens = new ArrayList<String>(2);
 			while(st.hasMoreTokens()) {
 				list.add(st.nextToken());
 			}
@@ -76,12 +84,18 @@ public class Properties {
 		return list;
 	}
 	
-	private final String getPathToFile(String fileName){
-		String rootName = System.getProperty("user.dir");
-		return rootName + this.CFG_LOC + fileName;
+	public FastList<String> getServices() {
+		FastList<String> list = new FastList<String>();
+		String result = getProperty("kernel.service.list");
+		if(result != null) {
+			StringTokenizer st = new StringTokenizer(result, ",");
+			while(st.hasMoreTokens()) {
+				list.add(st.nextToken());
+			}
+		}
+		return list;
 	}
 	
-	// accessors
 	
 	public String getID() {
 		return propertyTable.get("kernel.id");
@@ -100,25 +114,9 @@ public class Properties {
 		}
 	}
 	
-	public boolean isDevicesEnabled() {
-		if(propertyTable.get("service.devices.enabled").equals("true")) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
 	public int getBackendPort() {
 		//System.out.println(propertyTable.get("service.backend.port"));
 		return new Integer(propertyTable.get("service.devices.backend.port"));
-	}
-	
-	public boolean isNetworkEnabled() {
-		if(propertyTable.get("service.network.enabled").equals("true")) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 	
 	public String getNetworkAddress() {
@@ -128,24 +126,10 @@ public class Properties {
 	public int getNetworkPort() {
 		return new Integer(propertyTable.get("service.network.port"));
 	}
-	
-	// log4j
-	
-	public boolean isLog4jEnabled() {
-		if(propertyTable.get("service.log4j.enabled").equals("true"))
-			return true;
-		else
-			return false;
-	}
+
 	
 	// Twitter
-	
-	public boolean isTwitterEnabled() {
-		if(propertyTable.get("service.twitter.enabled").equals("true"))
-			return true;
-		else
-			return false;
-	}
+
 	
 	public String getTwitterID() {
 		return propertyTable.get("service.twitter.username");

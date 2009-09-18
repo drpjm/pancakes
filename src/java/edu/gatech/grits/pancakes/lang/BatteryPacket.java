@@ -5,7 +5,7 @@ public class BatteryPacket extends Packet {
 	private static final long serialVersionUID = 5646193809509209402L;
 
 	public BatteryPacket() {
-		super("Battery");
+		super("battery");
 		// TODO Auto-generated constructor stub
 	}
 	
