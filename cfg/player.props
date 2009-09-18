@@ -1,0 +1,10 @@
+kernel.id = 8
+kernel.service.list = devices,network,log4j,client
+service.devices.backend.type = player
+service.devices.backend.port = 6665
+service.devices.device.list = localpose,sonar,motor
+service.devices.device.local.delay = 1000
+service.devices.device.sonar.delay = 250
+service.network.address = 192.168.13.22
+service.network.port = 2413
+service.log4j.enabled = true
