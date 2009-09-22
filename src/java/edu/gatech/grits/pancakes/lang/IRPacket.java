@@ -9,7 +9,7 @@ public class IRPacket extends Packet { /**
 	
 	
 	public IRPacket() {
-		super("ir");
+		super(PacketType.IR);
 	}
 	
 	public final float getIRReading(int index) {

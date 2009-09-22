@@ -1,16 +1,44 @@
 package edu.gatech.grits.pancakes.service;
 
-import edu.gatech.grits.pancakes.client.Monitor;
+import javolution.util.FastList;
+import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.client.ScanThreat;
 import edu.gatech.grits.pancakes.lang.Packet;
+import edu.gatech.grits.pancakes.lang.Task;
+import edu.gatech.grits.pancakes.util.Properties;
 
 public class ClientService extends Service {
 
-	public ClientService() {
+	private final String CLASSPATH = "edu.gatech.grits.pancakes.client";
+
+	public ClientService(Properties properties) {
 		super("Client");
-		// TODO Auto-generated constructor stub
-		addTask("monitor", new Monitor());
-		addTask("scanThreat", new ScanThreat());
+
+		FastList<String> tasks = properties.getClientTasks();
+
+		// search in file name list
+		for(String taskName : tasks){
+			try {
+				Task t = (Task) Class.forName(CLASSPATH + "." + taskName).newInstance();
+//				Task t = (Task) Class.forName(taskName, true, ClassLoader.getSystemClassLoader()).newInstance();
+//				Task t = (Task) cl.loadClass(taskName).newInstance();
+				addTask(taskName.toLowerCase(), t);
+				scheduleTask(taskName.toLowerCase());
+				Kernel.syslog.debug(taskName + " task started.");
+
+			} catch (InstantiationException e) {
+				Kernel.syslog.error(taskName + " not instantiated!");
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				Kernel.syslog.error(taskName + " task not found! Skipping.");
+			}
+
+			//			}
+		}
+//		addTask("scanThreat", new ScanThreat());
 	}
 
 	@Override

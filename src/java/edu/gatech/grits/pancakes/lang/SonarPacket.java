@@ -7,7 +7,7 @@ public class SonarPacket extends Packet { /**
 	
 	
 	public SonarPacket() {
-		super("sonar");
+		super(PacketType.SONAR);
 	}
 	
 	public final float getSonarReading(int index) {

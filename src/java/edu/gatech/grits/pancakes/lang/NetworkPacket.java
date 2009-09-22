@@ -8,7 +8,7 @@ public class NetworkPacket extends Packet {
 	private FastList<Packet> packets = new FastList<Packet>(3);
 	
 	public NetworkPacket(String src, String dst) {
-		super("network");
+		super(PacketType.NETWORK);
 		setDestination(dst);
 		setSource(src);
 	}

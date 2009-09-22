@@ -2,6 +2,7 @@ package edu.gatech.grits.pancakes.client;
 
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.lang.Packet;
+import edu.gatech.grits.pancakes.lang.PacketType;
 import edu.gatech.grits.pancakes.lang.Task;
 
 public class Monitor extends Task {
@@ -17,7 +18,7 @@ public class Monitor extends Task {
 
 	public void process(Packet pkt) {
 		Kernel.syslog.debug(pkt.getPacketType());
-		if(pkt.getPacketType().equals("localpose")) {
+		if(pkt.getPacketType().equals(PacketType.LOCAL_POSE)) {
 			pkt.debug();
 		}
 	}

@@ -96,6 +96,18 @@ public class Properties {
 		return list;
 	}
 	
+	public FastList<String> getClientTasks(){
+		FastList<String> tasks = new FastList<String>();
+		String result = getProperty("service.client.list");
+		if(result != null){
+			result = result.trim();
+			String[] resultSplit = result.split(",");
+			for(String s : resultSplit){
+				tasks.add(s);
+			}
+		}
+		return tasks;
+	}
 	
 	public String getID() {
 		return propertyTable.get("kernel.id");

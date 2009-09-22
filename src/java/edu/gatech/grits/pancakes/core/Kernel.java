@@ -40,7 +40,7 @@ public class Kernel {
 				serviceList.put("log4j", new Log4jService());
 			}
 			else if(service.equals("client")) {
-				serviceList.put("client", new ClientService());
+				serviceList.put("client", new ClientService(properties));
 			}
 		}
 	}
