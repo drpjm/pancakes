@@ -55,7 +55,7 @@ public class DeviceService extends Service {
 				addTask("ir", new IRDevice(deviceBackend, 250l));
 			}
 			else if(currSensor.equals("localpose")){
-				addTask("localpose", new LocalPoseDevice(deviceBackend, 1000l));
+				addTask("localpose", new LocalPoseDevice(deviceBackend, 250l));
 			}
 			else if(currSensor.equals("battery")){
 				addTask("battery", new BatteryDevice(deviceBackend, 1000l));

@@ -1,6 +1,7 @@
 package edu.gatech.grits.pancakes.service;
 
 import edu.gatech.grits.pancakes.client.Monitor;
+import edu.gatech.grits.pancakes.client.ScanThreat;
 import edu.gatech.grits.pancakes.lang.Packet;
 
 public class ClientService extends Service {
@@ -9,6 +10,7 @@ public class ClientService extends Service {
 		super("Client");
 		// TODO Auto-generated constructor stub
 		addTask("monitor", new Monitor());
+		addTask("scanThreat", new ScanThreat());
 	}
 
 	@Override
