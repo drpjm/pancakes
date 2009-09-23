@@ -5,16 +5,17 @@ import java.awt.geom.Point2D.Float;
 
 import javolution.util.FastMap;   
 
+import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.lang.LocalPosePacket;
 import edu.gatech.grits.pancakes.lang.MotorPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
+import edu.gatech.grits.pancakes.lang.PacketType;
 import edu.gatech.grits.pancakes.lang.Task;
                                                                                                                                                                   
 public class ScanThreat extends Task {                                                                                                               
                                                                                                                                                                   
 	public ScanThreat() {
-		super("system", 0l);
-		// TODO Auto-generated constructor stub
+		// TODO: fix this!
 	}
 
 	private final float RADIUS = 50.0f;                                                                                                                        
@@ -50,22 +51,20 @@ public class ScanThreat extends Task {
 	}
 
 	public void process(Packet pkt) {
-		// TODO Auto-generated method stub
-		if(pkt.getPacketType().equals("localpose")) {
+		
+		if(pkt.getPacketType().equals(PacketType.LOCAL_POSE)) {
 			float k;
 			
 			LocalPosePacket localData = (LocalPosePacket) pkt;
 
-            Point2D.Float r1 = new Point2D.Float(0,0);
+			// hard wired target point
+            Point2D.Float r1 = new Point2D.Float(60,80);
             Point2D.Float r2 = new Point2D.Float(localData.getPositionX(), localData.getPositionY());
              
             float theta = ((LocalPosePacket) pkt).getTheta();
 
             Point2D.Float x2 = new Point2D.Float((float)Math.cos(theta), (float)Math.sin(theta));
             Point2D.Float y2 = rotate(x2, (float)-Math.PI / 2);
-//		            System.out.println("Agent axes: " + x2 + "; " + y2);
-
-
 
             // vector and angle from target to agent
             Point2D.Float r = new Point2D.Float((float)(r2.getX() - r1.getX()), (float) (r2.getY() - r1.getY()));
@@ -73,7 +72,6 @@ public class ScanThreat extends Task {
 
             Point2D.Float y1 = new Point2D.Float((float) Math.cos(beta), (float) Math.sin(beta));
             Point2D.Float x1 = rotate(y1, (float) Math.PI / 2);
-//		            System.out.println("Target axes: " + x1 + "; " + y1);
 
             // check for when r is 0 ...
             if(norm(r) > 0){
@@ -81,7 +79,6 @@ public class ScanThreat extends Task {
             	float middleTerm = (float) ( CIRC_GAIN*(1-Math.pow( RADIUS / norm(r), 2)) ) * ( innerProduct(r,y2)/norm(r) );
                 float lastTerm =  innerProduct(x1,x2)/norm(r);
                 k = innerProduct(x1, y2) - middleTerm - lastTerm;
-//	                    System.out.println("curvature: " + k);
             }
             else{
             	k = 0;
@@ -90,8 +87,11 @@ public class ScanThreat extends Task {
             MotorPacket ctrl = new MotorPacket();
             ctrl.setVelocity(MAX_VEL);
             ctrl.setRotationalVelocity(k*MAX_VEL);
-             
+            
+            Kernel.syslog.debug(ctrl.toString());
+            
             publish("user", ctrl);
+            
 			}
 		}
 

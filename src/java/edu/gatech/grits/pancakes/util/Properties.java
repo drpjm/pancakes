@@ -84,6 +84,18 @@ public class Properties {
 		return list;
 	}
 	
+	public Long getDelayOf(String item){
+		String propName = "service.devices.device." + item + ".delay";
+		String result = getProperty(propName);
+		if(result != null){
+			return Long.valueOf(result);
+		}
+		else{
+			System.err.println("Error: no delay specified for " + item);
+			return new Long(0);
+		}
+	}
+	
 	public FastList<String> getServices() {
 		FastList<String> list = new FastList<String>();
 		String result = getProperty("kernel.service.list");

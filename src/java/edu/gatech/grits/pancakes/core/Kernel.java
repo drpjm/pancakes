@@ -25,7 +25,7 @@ public class Kernel {
 	}
 	
 	public void startServices(Properties properties) {
-		
+		// TODO: logging should be started first since we use it in all other services!
 		for(String service : properties.getServices()) {
 			if(service.equals("devices")) {
 				serviceList.put("devices", new DeviceService(properties));

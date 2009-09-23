@@ -1,31 +1,52 @@
 package edu.gatech.grits.pancakes.lang;
 
+import javolution.util.FastList;
+
 import org.jetlang.core.Callback;
 import org.jetlang.fibers.Fiber;
 
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
 
+/**
+ * This class abstracts the basic functionality of a Pancakes Task. All user
+ * and system components that must perform actions must subclass from Task.
+ * @author pmartin
+ *
+ */
 public abstract class Task implements Taskable {
 
-	private Subscription subscription = null;
+//	private Subscription subscription = null;
 	private boolean isEventDriven = false;
 	private boolean isTimeDriven = false;
 	private long timeDelay = 0l;
 	
-	public Task(String channel, long delay) {
-		if(channel != null) {
-			isEventDriven = true;
-			subscribe(channel);
-		}
-		
-		if(delay > 0l) {
-			isTimeDriven = true;
-			setDelay(delay);
-		}
+	private FastList<Subscription> subscriptions;
+	private Fiber taskFiber;
+	
+	public Task() {
+		taskFiber = Kernel.scheduler.newFiber();
+		taskFiber.start();
+
+		subscriptions = new FastList<Subscription>();
+		//		if(channel != null) {
+//			isEventDriven = true;
+//			subscribe(channel);
+//		}
+//		
+//		if(delay > 0l) {
+//			isTimeDriven = true;
+//			setDelay(delay);
+//		}
 	}
 	
 	public final void setDelay(long delay) {
+		if(delay > 0l){
+			isTimeDriven = true;
+		}
+		else{
+			isTimeDriven = false;
+		}
 		timeDelay = delay;
 	}
 	
@@ -40,32 +61,30 @@ public abstract class Task implements Taskable {
 	public final boolean isTimeDriven() {
 		return isTimeDriven;
 	}
-	
-	public final void subscribe(String chl) {
-		Fiber fiber = Kernel.scheduler.newFiber();
-		fiber.start();
-		Callback<Packet> callback = new Callback<Packet>() {
-			public void onMessage(Packet pkt) {
-				process(pkt);
+
+	public void subscribe(String chl, Callback cbk) {
+		if(chl != null){
+			Subscription s = new Subscription(chl, taskFiber, cbk);
+			subscriptions.add(s);
+			try {
+				Kernel.stream.subscribe(s);
+			} catch (CommunicationException e) {
+				Kernel.syslog.error(e.getMessage());
 			}
-		};
-		
-		subscription = new Subscription(chl, fiber, callback);
-		
-		try {
-			Kernel.stream.subscribe(subscription);
-		} catch (CommunicationException e) {
-			// TODO Auto-generated catch block
-			System.err.println(e.getMessage());
 		}
 	}
 	
 	public final void unsubscribe() {
-		if(subscription != null) {
-			Kernel.stream.unsubscribe(subscription);
-			subscription.getFiber().dispose();
-			subscription = null;
+		for(Subscription s : subscriptions){
+			Kernel.stream.unsubscribe(s);
+			s = null;
 		}
+		taskFiber.dispose();
+//		if(subscription != null) {
+//			Kernel.stream.unsubscribe(subscription);
+//			subscription.getFiber().dispose();
+//			subscription = null;
+//		}
 	}
 	
 	public final void publish(String channel, Packet packet) {

@@ -1,5 +1,8 @@
 package edu.gatech.grits.pancakes.devices;
 
+import org.jetlang.core.Callback;
+
+import edu.gatech.grits.pancakes.core.CoreChannel;
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
 import edu.gatech.grits.pancakes.devices.backend.Backend;
@@ -14,25 +17,38 @@ public abstract class Device<T> extends Task {
 	
 	@SuppressWarnings("unchecked")
 	public Device(Backend backend, String type, String channel, long delay) {
-		super(channel, delay);
+		super();
+		setDelay(delay);
+		if(channel != null){
+			Callback<Packet> cbk = new Callback<Packet>(){
+
+				public void onMessage(Packet pkt) {
+					if(pkt.getPacketType().equals(device))
+						driver.request((T) pkt);
+				}
+				
+			};
+			subscribe(channel, cbk);
+		}
+//		super(channel, delay);
 		driver = (HardwareDriver<T>) backend.getDriver(type + "Driver");		
 		device = type.toLowerCase();
 	}
 	
 	public final void run() {
 		try {
-			Kernel.stream.publish("system", (Packet) driver.query());
+			Kernel.stream.publish(CoreChannel.SYSTEM, (Packet) driver.query());
 		} catch (CommunicationException e) {
 			// TODO Auto-generated catch block
 			System.err.println(e.getMessage());
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	public final void process(Packet pkt) {
-		if(pkt.getPacketType().equals(device))
-			driver.request((T) pkt);
-	}
+//	@SuppressWarnings("unchecked")
+//	public final void process(Packet pkt) {
+//		if(pkt.getPacketType().equals(device))
+//			driver.request((T) pkt);
+//	}
 	
 	public final void close() {
 		unsubscribe();

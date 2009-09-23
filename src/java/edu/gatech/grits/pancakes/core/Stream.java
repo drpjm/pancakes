@@ -13,8 +13,8 @@ public class Stream {
 	private FastMap<String, Channel<Packet>> channels = new FastMap<String, Channel<Packet>>();
 	
 	public Stream() {
-		channels.put("system", new MemoryChannel<Packet>());
-		channels.put("network", new MemoryChannel<Packet>());
+		channels.put(CoreChannel.SYSTEM, new MemoryChannel<Packet>());
+		channels.put(CoreChannel.NETWORK, new MemoryChannel<Packet>());
 		channels.put("user", new MemoryChannel<Packet>());
 		channels.put("log", new MemoryChannel<Packet>());
 		channels.put("ctrl", new MemoryChannel<Packet>());
