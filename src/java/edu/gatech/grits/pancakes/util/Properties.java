@@ -91,7 +91,7 @@ public class Properties {
 			return Long.valueOf(result);
 		}
 		else{
-			System.err.println("Error: no delay specified for " + item);
+//			System.err.println("Error: no delay specified for " + item);
 			return new Long(0);
 		}
 	}

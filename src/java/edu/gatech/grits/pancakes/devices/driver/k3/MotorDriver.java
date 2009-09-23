@@ -1,5 +1,6 @@
 package edu.gatech.grits.pancakes.devices.driver.k3;
 
+import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.devices.backend.Backend;
 import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
 import edu.gatech.grits.pancakes.lang.MotorPacket;
@@ -29,6 +30,8 @@ public class MotorDriver implements HardwareDriver<MotorPacket> {
 		int vel_l_k3 = (int) (vel_l * 1000.0f * 144.01f);
 		int vel_r_k3 = (int) (vel_r * 1000.0f * 144.01f);
 		
+//		Kernel.syslog.debug("Received MotorPacket");
+//		Kernel.syslog.debug("Pushing down (" + vel_l_k3 + "," + vel_r_k3 + ")");
 		k3i.motorsSetSpeed(vel_l_k3, vel_r_k3);
 	}
 	

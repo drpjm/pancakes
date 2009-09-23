@@ -90,8 +90,8 @@ public class ViconRTEDriver implements NetworkDriver<LocalPosePacket> {
 //			System.out.println(tokens[i]);
 //		}
 		
-		//System.out.println("My ID: " + ID);
-		//System.out.println("Received ID: " + tokens[0]);
+//		System.out.println("My ID: " + ID);
+//		System.out.println("Received ID: " + tokens[0]);
 		
 		if( (new Integer(ID)).equals(Integer.valueOf(tokens[0])) ) {
 			data = msg;

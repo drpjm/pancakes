@@ -49,7 +49,8 @@ public class DeviceService extends Service {
 
 			String currSensor = s.toLowerCase();
 			Long sensorDelay = props.getDelayOf(currSensor);
-			Kernel.syslog.debug("Adding sensor: " + s + " with delay " + sensorDelay);
+//			Kernel.syslog.debug("Adding sensor: " + s + " with delay " + sensorDelay);
+			System.out.println("Adding sensor: " + s + " with delay " + sensorDelay);
 
 			if(currSensor.equals("sonar")){
 				addTask("sonar", new SonarDevice(deviceBackend, sensorDelay.longValue()));
