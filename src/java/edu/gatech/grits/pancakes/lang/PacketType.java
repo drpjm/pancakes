@@ -10,6 +10,7 @@ public class PacketType {
 	public static final String MOTOR = "motor";
 	public static final String LOG = "log";
 	public static final String CONTROL = "control";
+	public static final String NEIGHBOR = "neighbor";
 
 	
 }

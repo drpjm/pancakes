@@ -9,33 +9,46 @@ import edu.gatech.grits.pancakes.util.Properties;
 public class NetworkService extends Service {
 
 	private NetworkServer server;
-	private NetworkClient client = new NetworkClient();
-	private DiscoveryListener listener = new DiscoveryListener();
+//	private NetworkClient client = new NetworkClient();
+	private NetworkClient client;
+	private DiscoveryListener listener;
 	private DiscoverySpeaker speaker;
-	public static NetworkNeighborhood neighborhood = new NetworkNeighborhood();
+//	public NetworkNeighborhood neighborhood = new NetworkNeighborhood();
+	
+	public static final String NEIGHBORHOOD = "neighborhood";
 	
 	public NetworkService(Properties properties) {
 		super("network");
+		
+		// make channel for passing neighbor information
+		Kernel.stream.createChannel(NEIGHBORHOOD);
+		
+		client = new NetworkClient();
 		server = new NetworkServer(properties.getNetworkPort());
-		System.out.println("Network Port: " + properties.getNetworkPort());
+		Kernel.syslog.debug("Network Port: " + properties.getNetworkPort());
+		
+		listener = new DiscoveryListener();
 		speaker = new DiscoverySpeaker(properties.getNetworkAddress(), properties.getNetworkPort(), properties.getID());		
-		try {
-			Kernel.scheduler.schedule(speaker, 1000);
-			Kernel.scheduler.schedule(neighborhood, 10000);
-		} catch (SchedulingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+		addTask("speaker", speaker);
+		addTask("listener", listener);
+		addTask("client", client);
+
+		for(String key : taskList()) {
+			scheduleTask(key);
 		}
+
 	}
 	
 	public void close() {
+		
 		server.close();
 		client.close();
 		listener.close();
-		
+
 		try {
 			Kernel.scheduler.cancel(speaker);
-			Kernel.scheduler.cancel(neighborhood);
+//			Kernel.scheduler.cancel(listener);
 		} catch (SchedulingException e) {
 			System.err.println("Unable to cancel runnables.");
 		}

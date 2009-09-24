@@ -16,7 +16,7 @@ public class Stream {
 		channels.put(CoreChannel.SYSTEM, new MemoryChannel<Packet>());
 		channels.put(CoreChannel.NETWORK, new MemoryChannel<Packet>());
 		channels.put("user", new MemoryChannel<Packet>());
-		channels.put("log", new MemoryChannel<Packet>());
+		channels.put(CoreChannel.LOG, new MemoryChannel<Packet>());
 		channels.put("ctrl", new MemoryChannel<Packet>());
 	}
 	
@@ -48,7 +48,7 @@ public class Stream {
 		if(chl != null) {
 			chl.publish(pkt);
 		} else {
-			throw new CommunicationException("Channel does not exist.");
+			throw new CommunicationException(channel + " channel does not exist.");
 		}
 	}
 	
@@ -62,7 +62,7 @@ public class Stream {
 		if(chl != null) {
 			s.setDisposable(chl.subscribe(s.getFiber(), s.getCallback()));
 		} else {
-			throw new CommunicationException("Channel does not exist.");
+			throw new CommunicationException(s.getChannel() + " channel does not exist.");
 		}
 	}
 	
@@ -78,4 +78,13 @@ public class Stream {
 			super(desc);
 		}
 	}
+
+//	@Override
+//	public String toString() {
+//		String str = "Stream:\n";
+//		str += this.channels;
+//		return str;
+//	}
+	
+	
 }

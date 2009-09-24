@@ -14,6 +14,7 @@ import edu.gatech.grits.pancakes.lang.MotorPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.PacketType;
 import edu.gatech.grits.pancakes.lang.Task;
+import edu.gatech.grits.pancakes.util.Properties;
 
 public class ScanThreat extends Task {                                                                                                               
 
@@ -23,7 +24,7 @@ public class ScanThreat extends Task {
 	private final float MAX_VEL = 0.12f;
 
 	public ScanThreat() {
-		this.setDelay(0l);
+		setDelay(0l);
 		Callback<Packet> cbk = new Callback<Packet>(){
 
 			public void onMessage(Packet pkt) {

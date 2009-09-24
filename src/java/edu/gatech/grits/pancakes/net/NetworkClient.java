@@ -3,27 +3,35 @@ package edu.gatech.grits.pancakes.net;
 import java.net.*;
 import java.io.*;
 
+import javolution.util.FastMap;
+
 import org.jetlang.core.Callback;
 import org.jetlang.fibers.Fiber;
 
+import edu.gatech.grits.pancakes.core.CoreChannel;
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
+import edu.gatech.grits.pancakes.lang.NeighborUpdatePacket;
 import edu.gatech.grits.pancakes.lang.NetworkNeighbor;
 import edu.gatech.grits.pancakes.lang.NetworkPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
+import edu.gatech.grits.pancakes.lang.PacketType;
 import edu.gatech.grits.pancakes.lang.Subscription;
+import edu.gatech.grits.pancakes.lang.Task;
 import edu.gatech.grits.pancakes.service.NetworkService;
 
-public class NetworkClient {
+public class NetworkClient extends Task {
 
-	private final Subscription subscription;
+	private FastMap<String, NetworkNeighbor> neighbors;
 	
 	public NetworkClient() {
-		Fiber fiber = Kernel.scheduler.newFiber();
-		fiber.start();
-		Callback<Packet> callback = new Callback<Packet>() {
+		setDelay(0l);
+		neighbors = new FastMap<String, NetworkNeighbor>();
+		
+		Callback<Packet> netCallback = new Callback<Packet>() {
 			public void onMessage(Packet packet) {
-				final NetworkNeighbor n = NetworkService.neighborhood.getNeighbor(((NetworkPacket) packet).getDestination());
+				
+				final NetworkNeighbor n = neighbors.get(((NetworkPacket) packet).getDestination());
 				if(n != null) {
 					try {	
 						final Socket socket = new Socket(n.getHostname(), n.getNetworkPort());
@@ -38,23 +46,41 @@ public class NetworkClient {
 						e.printStackTrace();
 					}	
 				} else {
-					System.err.println("Destination not in the reachable network neighborhood");
+					Kernel.syslog.error("Destination not in the reachable network neighborhood");
 				}
 			}
 		};
 		
-		subscription = new Subscription("network", fiber, callback);
+		Callback<Packet> neighborCallback = new Callback<Packet>(){
+
+			public void onMessage(Packet message) {
+				if(message.getPacketType().equals(PacketType.NEIGHBOR)){
+					NeighborUpdatePacket np = (NeighborUpdatePacket) message;
+					if(!np.isExpired()){
+//						Kernel.syslog.debug("NC: Adding " + np.getNeighbor().getID());
+						String id = np.getNeighbor().getID();
+						neighbors.put(id, np.getNeighbor());
+					}
+					else{
+//						Kernel.syslog.debug("NC: Removing " + np.getNeighbor().getID());
+						neighbors.remove(np.getNeighbor().getID());
+					}
+				}
+			}
+			
+		};
 		
-		try {
-			Kernel.stream.subscribe(subscription);
-		} catch (CommunicationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		subscribe(CoreChannel.NETWORK, netCallback);
+		subscribe(NetworkService.NEIGHBORHOOD, neighborCallback);
+		
 	}
 	
 	public void close() {
-		Kernel.stream.unsubscribe(subscription);
-		subscription.getFiber().dispose();
+		unsubscribe();
+	}
+
+	public void run() {
+		// TODO Auto-generated method stub
+		
 	}
 }

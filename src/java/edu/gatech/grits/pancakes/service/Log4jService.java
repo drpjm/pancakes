@@ -7,6 +7,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.jetlang.core.Callback;
 import org.jetlang.fibers.Fiber;
 
+import edu.gatech.grits.pancakes.core.CoreChannel;
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
 import edu.gatech.grits.pancakes.lang.LogPacket;
@@ -30,7 +31,7 @@ public class Log4jService extends Service {
 			}
 		};
 		
-		subscription = new Subscription("log", fiber, callback);
+		subscription = new Subscription(CoreChannel.LOG, fiber, callback);
 		
 		try {
 			Kernel.stream.subscribe(subscription);

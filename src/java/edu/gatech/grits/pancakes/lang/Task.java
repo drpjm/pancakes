@@ -29,15 +29,6 @@ public abstract class Task implements Taskable {
 		taskFiber.start();
 
 		subscriptions = new FastList<Subscription>();
-		//		if(channel != null) {
-//			isEventDriven = true;
-//			subscribe(channel);
-//		}
-//		
-//		if(delay > 0l) {
-//			isTimeDriven = true;
-//			setDelay(delay);
-//		}
 	}
 	
 	public final void setDelay(long delay) {
@@ -70,6 +61,9 @@ public abstract class Task implements Taskable {
 				Kernel.stream.subscribe(s);
 			} catch (CommunicationException e) {
 				Kernel.syslog.error(e.getMessage());
+			}
+			if(subscriptions.size() > 0){
+				this.isEventDriven = true;
 			}
 		}
 	}

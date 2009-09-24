@@ -47,14 +47,4 @@ public class NetworkNeighborhood implements Runnable {
 		}
 	}
 
-	public final void debug() {
-		// TODO Auto-generated method stub
-		synchronized(this) {
-			for(String key : neighbors.keySet()) {
-				NetworkNeighbor n = neighbors.get(key);
-				System.out.println(n.getID() + ":" + n.getHostname() + ":" + n.getNetworkPort());
-			}
-		}
-	}
-
 }

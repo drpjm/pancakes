@@ -46,4 +46,17 @@ public class NetworkNeighbor {
 		NETWORK_PORT = network_port;
 		return;
 	}
+
+	public final void setTimestamp(Date timestamp) {
+		TIMESTAMP = timestamp;
+	}
+
+	@Override
+	public String toString() {
+		String str = getClass().getSimpleName() + ": ";
+		str += "id=" + ID + ", hostname=" + HOSTNAME + ", port=" + NETWORK_PORT;
+		return str;
+	}
+	
+	
 }

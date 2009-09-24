@@ -25,7 +25,7 @@ public class NetworkPacket extends Packet {
 		add("src", src);
 	}
 	
-	public final String getSource(String src) {
+	public final String getSource() {
 		return get("src");
 	}
 	

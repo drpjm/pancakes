@@ -20,8 +20,9 @@ public class ClientService extends Service {
 		for(String taskName : tasks){
 			try {
 				Task t = (Task) Class.forName(CLASSPATH + "." + taskName).newInstance();
-//				Task t = (Task) Class.forName(taskName, true, ClassLoader.getSystemClassLoader()).newInstance();
-//				Task t = (Task) cl.loadClass(taskName).newInstance();
+				
+				
+				
 				addTask(taskName.toLowerCase(), t);
 				scheduleTask(taskName.toLowerCase());
 				Kernel.syslog.debug(taskName + " task started.");

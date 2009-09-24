@@ -8,7 +8,9 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 
-public class DiscoverySpeaker implements Runnable {
+import edu.gatech.grits.pancakes.lang.Task;
+
+public class DiscoverySpeaker extends Task {
 
 	private final String MCAST_ADDR = "224.224.224.224";
 	private final int DEST_PORT = 1337;
@@ -16,14 +18,13 @@ public class DiscoverySpeaker implements Runnable {
 	private DatagramSocket socket;
 	
 	public DiscoverySpeaker(String hostname, int network_port, String id) {
+		setDelay(1000l);
 		try {
 			socket = new DatagramSocket();
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		BROADCAST = hostname + ":" + id + ":" + network_port;
-		//System.out.println(BROADCAST);
 	}
 	
 	public void run() {
@@ -42,9 +43,6 @@ public class DiscoverySpeaker implements Runnable {
 			e.printStackTrace();
 		}
 
-
-//		System.err.println("Sending " + b.length + " bytes to " +
-//				  dgram.getAddress() + ':' + dgram.getPort());
 		try {
 			socket.send(dgram);
 		} catch (IOException e) {

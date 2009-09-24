@@ -33,7 +33,7 @@ public class NetworkServer {
 								handleConnection(client);
 							}
 						};
-						Kernel.scheduler.execute(task);		
+						Kernel.scheduler.execute(task);
 					} catch (IOException e) {
 						System.out.println("Error receiving object or socket closed.");
 						//e.printStackTrace();

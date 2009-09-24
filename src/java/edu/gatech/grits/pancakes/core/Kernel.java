@@ -10,12 +10,16 @@ public class Kernel {
 	public static Stream stream;// = new Stream();
 	public static Syslog syslog;// = new Syslogp();
 	
+	public static String id;
+	
 	FastMap<String, Service> serviceList = new FastMap<String, Service>();
 	
 	public Kernel(Properties properties) {
 		scheduler = new Scheduler();
 		stream = new Stream();
 		syslog = new Syslog();
+		
+		id = properties.getID();
 		
 		startServices(properties);
 	}
@@ -26,6 +30,13 @@ public class Kernel {
 	
 	public void startServices(Properties properties) {
 		// TODO: logging should be started first since we use it in all other services!
+		
+		if(properties.getServices().contains("log4j")){
+			int logIndex = properties.getServices().indexOf("log4j");
+			String logging = properties.getServices().remove(logIndex);
+			serviceList.put(logging, new Log4jService());
+		}
+		
 		for(String service : properties.getServices()) {
 			if(service.equals("devices")) {
 				serviceList.put("devices", new DeviceService(properties));
@@ -36,9 +47,9 @@ public class Kernel {
 			else if(service.equals("twitter")) {
 				serviceList.put("twitter", new TwitterService(properties));
 			}
-			else if(service.equals("log4j")) {
-				serviceList.put("log4j", new Log4jService());
-			}
+//			else if(service.equals("log4j")) {
+//				serviceList.put("log4j", new Log4jService());
+//			}
 			else if(service.equals("client")) {
 				serviceList.put("client", new ClientService(properties));
 			}
