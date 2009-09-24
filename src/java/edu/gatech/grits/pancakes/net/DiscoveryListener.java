@@ -112,14 +112,16 @@ public class DiscoveryListener extends Task {
 	private final void addNetworkNeighbor(DatagramPacket dgram) {
 		ArrayList<String> p = parse(dgram.getData());
 		if(p != null) {
-			if(!neighbors.containsKey(p.get(1))){
-				Kernel.syslog.debug("Adding neighbor: " + p);
-				NetworkNeighbor n = new NetworkNeighbor(p.get(1), p.get(0), Integer.valueOf(p.get(2)), new Date(System.currentTimeMillis()));
-				neighbors.put(p.get(1), n);
-				publish(NetworkService.NEIGHBORHOOD, new NeighborUpdatePacket(new Boolean(false), n));
-			}
-			else{
-				neighbors.get(p.get(1)).setTimestamp(new Date(System.currentTimeMillis()));
+			if(!p.get(1).equals(Kernel.id)){
+				if(!neighbors.containsKey(p.get(1))){
+					Kernel.syslog.debug("Adding neighbor: " + p);
+					NetworkNeighbor n = new NetworkNeighbor(p.get(1), p.get(0), Integer.valueOf(p.get(2)), new Date(System.currentTimeMillis()));
+					neighbors.put(p.get(1), n);
+					publish(NetworkService.NEIGHBORHOOD, new NeighborUpdatePacket(new Boolean(false), n));
+				}
+				else{
+					neighbors.get(p.get(1)).setTimestamp(new Date(System.currentTimeMillis()));
+				}
 			}
 		}
 		return;

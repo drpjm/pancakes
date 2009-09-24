@@ -37,32 +37,30 @@ public class DeviceService extends Service {
 		
 	}
 
-//	public void buildDeviceRegistry(FastList<String> sensors) {
 	public void buildDeviceRegistry(Properties props) {
 		
-		FastList<String> sensors = props.getDevices();
-		for(String s : sensors){
+		FastList<String> devices = props.getDevices();
+		for(String s : devices){
 			
 			if(deviceBackend.getBackendType().equals("player")) {
 				((PlayerBackend) deviceBackend).update();
 			}
 
 			String currSensor = s.toLowerCase();
-			Long sensorDelay = props.getDelayOf(currSensor);
-//			Kernel.syslog.debug("Adding sensor: " + s + " with delay " + sensorDelay);
-			System.out.println("Adding sensor: " + s + " with delay " + sensorDelay);
+			Long deviceDelay = props.getDelayOf(currSensor);
+			Kernel.syslog.debug("Adding device: " + s + " with delay " + deviceDelay);
 
 			if(currSensor.equals("sonar")){
-				addTask("sonar", new SonarDevice(deviceBackend, sensorDelay.longValue()));
+				addTask("sonar", new SonarDevice(deviceBackend, deviceDelay.longValue()));
 			}
 			else if(currSensor.equals("ir")){
-				addTask("ir", new IRDevice(deviceBackend, sensorDelay.longValue()));
+				addTask("ir", new IRDevice(deviceBackend, deviceDelay.longValue()));
 			}
 			else if(currSensor.equals("localpose")){
-				addTask("localpose", new LocalPoseDevice(deviceBackend, sensorDelay.longValue()));
+				addTask("localpose", new LocalPoseDevice(deviceBackend, deviceDelay.longValue()));
 			}
 			else if(currSensor.equals("battery")){
-				addTask("battery", new BatteryDevice(deviceBackend, sensorDelay.longValue()));
+				addTask("battery", new BatteryDevice(deviceBackend, deviceDelay.longValue()));
 			}
 			else if(currSensor.equals("motor")){
 				addTask("motor", new MotorDevice(deviceBackend));

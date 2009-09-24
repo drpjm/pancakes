@@ -29,27 +29,29 @@ public class Kernel {
 	}
 	
 	public void startServices(Properties properties) {
-		// TODO: logging should be started first since we use it in all other services!
 		
+		// TODO: consider always starting the network and device services...
+		
+		// logging should be started first since we use it in all other services!		
 		if(properties.getServices().contains("log4j")){
 			int logIndex = properties.getServices().indexOf("log4j");
 			String logging = properties.getServices().remove(logIndex);
 			serviceList.put(logging, new Log4jService());
+		}
+		// next, get the network service up
+		if(properties.getServices().contains("network")){
+			int netIndex = properties.getServices().indexOf("network");
+			String net = properties.getServices().remove(netIndex);
+			serviceList.put(net, new NetworkService(properties));
 		}
 		
 		for(String service : properties.getServices()) {
 			if(service.equals("devices")) {
 				serviceList.put("devices", new DeviceService(properties));
 			}
-			else if(service.equals("network")) {
-				serviceList.put("network", new NetworkService(properties));
-			}
 			else if(service.equals("twitter")) {
 				serviceList.put("twitter", new TwitterService(properties));
 			}
-//			else if(service.equals("log4j")) {
-//				serviceList.put("log4j", new Log4jService());
-//			}
 			else if(service.equals("client")) {
 				serviceList.put("client", new ClientService(properties));
 			}
