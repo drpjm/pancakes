@@ -36,6 +36,15 @@ public class Packet implements Serializable {
 		System.out.println("</" + typeOfPacket + ">");
 	}
 	
+	public final String toString() {
+		String out = "<" + typeOfPacket + ">";
+		for(Entry<String,String> e : dataMap.entrySet()) {
+			out += "<" + e.getKey() + ">" + e.getValue() + "</" + e.getKey() + ">";
+		}
+		out += "</" + typeOfPacket + ">";
+		return out;
+	}
+	
 	public final int getSize() {
 		return dataMap.size();
 	}

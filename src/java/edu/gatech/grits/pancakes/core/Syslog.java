@@ -4,6 +4,7 @@ import org.apache.log4j.Level;
 
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
 import edu.gatech.grits.pancakes.lang.LogPacket;
+import edu.gatech.grits.pancakes.lang.Packet;
 
 public class Syslog {
 	
@@ -39,5 +40,9 @@ public class Syslog {
 	
 	public final void tweet(String m) {
 		log(new LogPacket("twitter", Level.INFO, m));
+	}
+	
+	public final void record(Packet p) {
+		log(new LogPacket("data", Level.INFO, p.toString()));
 	}
 }

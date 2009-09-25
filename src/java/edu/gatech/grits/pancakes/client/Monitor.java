@@ -22,6 +22,8 @@ public class Monitor extends Task {
 		Callback<Packet> data = new Callback<Packet>(){
 
 			public void onMessage(Packet message) {
+				Kernel.syslog.record(message);
+				
 				if(message.getPacketType().equals(PacketType.LOCAL_POSE)){
 					LocalPosePacket local = (LocalPosePacket) message;
 					local.debug();
