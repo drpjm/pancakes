@@ -5,6 +5,7 @@ import javolution.util.FastMap;
 import org.jetlang.channels.Channel;
 import org.jetlang.channels.MemoryChannel;
 
+import edu.gatech.grits.pancakes.lang.CoreChannel;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.Subscription;
 
@@ -17,7 +18,7 @@ public class Stream {
 		channels.put(CoreChannel.NETWORK, new MemoryChannel<Packet>());
 		channels.put("user", new MemoryChannel<Packet>());
 		channels.put(CoreChannel.LOG, new MemoryChannel<Packet>());
-		channels.put("ctrl", new MemoryChannel<Packet>());
+		channels.put(CoreChannel.CONTROL, new MemoryChannel<Packet>());
 	}
 	
 	public final void createChannel(String channel) {

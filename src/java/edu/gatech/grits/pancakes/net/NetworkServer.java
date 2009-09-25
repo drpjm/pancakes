@@ -3,9 +3,9 @@ package edu.gatech.grits.pancakes.net;
 import java.net.*;
 import java.io.*;
 
-import edu.gatech.grits.pancakes.core.CoreChannel;
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
+import edu.gatech.grits.pancakes.lang.CoreChannel;
 import edu.gatech.grits.pancakes.lang.Packet;
 
 public class NetworkServer {

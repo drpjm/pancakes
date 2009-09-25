@@ -1,12 +1,11 @@
 package edu.gatech.grits.pancakes.service;
 
-import java.util.ArrayList;
-
 import javolution.util.FastList;
 
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.devices.*;
 import edu.gatech.grits.pancakes.devices.backend.*;
+import edu.gatech.grits.pancakes.lang.ControlPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.util.Properties;
 
@@ -78,7 +77,15 @@ public class DeviceService extends Service {
 	@Override
 	public void process(Packet pkt) {
 		// TODO Auto-generated method stub
+		ControlPacket ctrl = (ControlPacket) pkt;
 		
+		Device d = (Device) getTask(ctrl.getPacketType());
+		
+		if(d != null) {
+			if(ctrl.getControl().equals("reschedule")) {
+				rescheduleTask(ctrl.getPacketType(), ctrl.getDelay());
+			}
+		}
 	}
 
 }

@@ -7,8 +7,8 @@ import javolution.util.FastMap;
 
 import org.jetlang.core.Callback;
 
-import edu.gatech.grits.pancakes.core.CoreChannel;
 import edu.gatech.grits.pancakes.core.Kernel;
+import edu.gatech.grits.pancakes.lang.CoreChannel;
 import edu.gatech.grits.pancakes.lang.NetworkNeighborPacket;
 import edu.gatech.grits.pancakes.lang.NetworkNeighbor;
 import edu.gatech.grits.pancakes.lang.NetworkPacket;

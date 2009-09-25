@@ -10,6 +10,7 @@ import org.jetlang.fibers.Fiber;
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Scheduler.SchedulingException;
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
+import edu.gatech.grits.pancakes.lang.CoreChannel;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.Subscription;
 import edu.gatech.grits.pancakes.lang.Taskable;
@@ -31,7 +32,7 @@ public abstract class Service {
 			}
 		};
 		
-		subscription = new Subscription("ctrl", fiber, callback);
+		subscription = new Subscription(CoreChannel.CONTROL, fiber, callback);
 		
 		try {
 			Kernel.stream.subscribe(subscription);
@@ -41,6 +42,10 @@ public abstract class Service {
 		}
 		
 		taskRegistry = new FastMap<String, Taskable>();
+	}
+	
+	public final Taskable getTask(String key) {
+		return taskRegistry.get(key);
 	}
 	
 	public final Set<String> taskList() {
