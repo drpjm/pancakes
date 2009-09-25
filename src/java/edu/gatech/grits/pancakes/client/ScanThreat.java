@@ -34,6 +34,7 @@ public class ScanThreat extends Task {
 
 					LocalPosePacket localData = (LocalPosePacket) pkt;
 //					localData.debug();
+					Kernel.syslog.record(localData);
 					
 					// hard wired target point
 					Point2D.Float r1 = new Point2D.Float(1.8f,-9.0f);
@@ -67,6 +68,7 @@ public class ScanThreat extends Task {
 					ctrl.setRotationalVelocity(k*MAX_VEL);
 
 //					ctrl.debug();
+					Kernel.syslog.record(ctrl);
 					
 					publish("user", ctrl);
 

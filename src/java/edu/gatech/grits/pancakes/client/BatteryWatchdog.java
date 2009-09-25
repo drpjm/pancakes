@@ -3,13 +3,18 @@ package edu.gatech.grits.pancakes.client;
 import org.jetlang.core.Callback;
 
 import edu.gatech.grits.pancakes.core.Kernel;
+import edu.gatech.grits.pancakes.core.Syslog;
 import edu.gatech.grits.pancakes.lang.BatteryPacket;
+import edu.gatech.grits.pancakes.lang.ControlPacket;
 import edu.gatech.grits.pancakes.lang.CoreChannel;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.PacketType;
 import edu.gatech.grits.pancakes.lang.Task;
 
 public class BatteryWatchdog extends Task {
+	
+	private float BATTERY_LEVEL = 8.2f;
+	private long DELAY = 250l;
 	
 	public BatteryWatchdog() {
 		setDelay(0l);
@@ -20,17 +25,14 @@ public class BatteryWatchdog extends Task {
 				if(message.getPacketType().equals(PacketType.BATTERY)){
 					BatteryPacket battery = (BatteryPacket) message;
 					
-					battery.debug();
+					//battery.debug();
+					Kernel.syslog.record(battery);
 					
-					if(battery.getVoltage() > 7.7f) {
-						// battery high
-						
-					} else if(battery.getVoltage() > 7.2) {
-						// battery medium
-						
-					} else {
-						// battery low
-						
+					
+					if(battery.getVoltage() < BATTERY_LEVEL) {
+						BATTERY_LEVEL -= 0.5f;
+						DELAY += 750l;
+						publish(CoreChannel.CONTROL, new ControlPacket("devices", "reschedule", DELAY));
 					}
 					
 				}
