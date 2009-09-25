@@ -6,17 +6,14 @@ import java.io.*;
 import javolution.util.FastMap;
 
 import org.jetlang.core.Callback;
-import org.jetlang.fibers.Fiber;
 
 import edu.gatech.grits.pancakes.core.CoreChannel;
 import edu.gatech.grits.pancakes.core.Kernel;
-import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
-import edu.gatech.grits.pancakes.lang.NeighborUpdatePacket;
+import edu.gatech.grits.pancakes.lang.NetworkNeighborPacket;
 import edu.gatech.grits.pancakes.lang.NetworkNeighbor;
 import edu.gatech.grits.pancakes.lang.NetworkPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.PacketType;
-import edu.gatech.grits.pancakes.lang.Subscription;
 import edu.gatech.grits.pancakes.lang.Task;
 import edu.gatech.grits.pancakes.service.NetworkService;
 
@@ -55,7 +52,7 @@ public class NetworkClient extends Task {
 
 			public void onMessage(Packet message) {
 				if(message.getPacketType().equals(PacketType.NEIGHBOR)){
-					NeighborUpdatePacket np = (NeighborUpdatePacket) message;
+					NetworkNeighborPacket np = (NetworkNeighborPacket) message;
 					if(!np.isExpired()){
 //						Kernel.syslog.debug("NC: Adding " + np.getNeighbor().getID());
 						String id = np.getNeighbor().getID();

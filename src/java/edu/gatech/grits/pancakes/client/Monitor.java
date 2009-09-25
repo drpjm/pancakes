@@ -5,7 +5,7 @@ import org.jetlang.core.Callback;
 import edu.gatech.grits.pancakes.core.CoreChannel;
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.lang.LocalPosePacket;
-import edu.gatech.grits.pancakes.lang.NeighborUpdatePacket;
+import edu.gatech.grits.pancakes.lang.NetworkNeighborPacket;
 import edu.gatech.grits.pancakes.lang.NetworkPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.PacketType;
@@ -38,7 +38,7 @@ public class Monitor extends Task {
 
 			public void onMessage(Packet message) {
 				if(message.getPacketType().equals(PacketType.NEIGHBOR)){
-					NeighborUpdatePacket npkt = (NeighborUpdatePacket) message;
+					NetworkNeighborPacket npkt = (NetworkNeighborPacket) message;
 					if(!npkt.isExpired()){
 						Kernel.syslog.debug("Monitor: got a new neighbor!");
 						

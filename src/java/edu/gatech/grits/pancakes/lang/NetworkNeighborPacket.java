@@ -1,18 +1,16 @@
 package edu.gatech.grits.pancakes.lang;
 
-import java.sql.Date;
+import java.util.Date;
 
-import edu.gatech.grits.pancakes.core.Kernel;
-
-public class NeighborUpdatePacket extends Packet {
+public class NetworkNeighborPacket extends Packet {
 
 	private static final long serialVersionUID = -1732234663974191834L;
 
-	public NeighborUpdatePacket() {
+	public NetworkNeighborPacket() {
 		super(PacketType.NEIGHBOR);
 	}
 
-	public NeighborUpdatePacket(Boolean expired, NetworkNeighbor n) {
+	public NetworkNeighborPacket(Boolean expired, NetworkNeighbor n) {
 		this();
 		addNeighbor(expired, n);
 	}
@@ -41,7 +39,7 @@ public class NeighborUpdatePacket extends Packet {
 		
 		long timeout  = 5000;
 		NetworkNeighbor n = new NetworkNeighbor("8", "awesome", 89, new Date(System.currentTimeMillis()-timeout));
-		NeighborUpdatePacket pkt = new NeighborUpdatePacket();
+		NetworkNeighborPacket pkt = new NetworkNeighborPacket();
 		pkt.addNeighbor(true, n);
 		pkt.debug();
 		

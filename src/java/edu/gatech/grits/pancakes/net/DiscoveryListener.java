@@ -83,7 +83,7 @@ public class DiscoveryListener extends Task {
 							Kernel.syslog.debug("Remove expired neighbor " + key);
 							NetworkNeighbor expiredNeighbor;
 							expiredNeighbor = neighbors.remove(key);
-							NeighborUpdatePacket np = new NeighborUpdatePacket(new Boolean(true), expiredNeighbor);
+							NetworkNeighborPacket np = new NetworkNeighborPacket(new Boolean(true), expiredNeighbor);
 							publish(NetworkService.NEIGHBORHOOD, np);
 						}
 					} catch (IOException e) {
@@ -117,7 +117,7 @@ public class DiscoveryListener extends Task {
 					Kernel.syslog.debug("Adding neighbor: " + p);
 					NetworkNeighbor n = new NetworkNeighbor(p.get(1), p.get(0), Integer.valueOf(p.get(2)), new Date(System.currentTimeMillis()));
 					neighbors.put(p.get(1), n);
-					publish(NetworkService.NEIGHBORHOOD, new NeighborUpdatePacket(new Boolean(false), n));
+					publish(NetworkService.NEIGHBORHOOD, new NetworkNeighborPacket(new Boolean(false), n));
 				}
 				else{
 					neighbors.get(p.get(1)).setTimestamp(new Date(System.currentTimeMillis()));
