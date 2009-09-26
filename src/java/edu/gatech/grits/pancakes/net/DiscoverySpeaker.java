@@ -8,6 +8,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 
+import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.lang.Task;
 
 public class DiscoverySpeaker extends Task {
@@ -32,6 +33,7 @@ public class DiscoverySpeaker extends Task {
 	}
 	
 	public void sendDiscovery() {		
+		Kernel.syslog.debug(this.getClass().getSimpleName() + " sending discovery...");
 		Charset charSet = Charset.forName("US-ASCII");
 		
 		byte[] b = BROADCAST.getBytes(charSet);

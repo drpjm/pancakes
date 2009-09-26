@@ -19,17 +19,19 @@ import edu.gatech.grits.pancakes.service.NetworkService;
 
 public class DiscoveryListener extends Task {
 
+	private final String id;
 	private final String MCAST_ADDR = "224.224.224.224";
 	private final int DEST_PORT = 1337;
 	private final int BUFFER_LENGTH = 19;
 	private MulticastSocket socket;
 	private boolean isRunning = false;
-	Thread mainThread;
+	private Thread mainThread;
 
 	private final long TIMEOUT = 10000; // 10s
 	private FastMap<String, NetworkNeighbor> neighbors = new FastMap<String, NetworkNeighbor>(10);
 
 	public DiscoveryListener() {
+		id = Kernel.id;
 		setDelay(0l);
 		try {
 			socket = new MulticastSocket(DEST_PORT);
@@ -112,7 +114,7 @@ public class DiscoveryListener extends Task {
 	private final void addNetworkNeighbor(DatagramPacket dgram) {
 		ArrayList<String> p = parse(dgram.getData());
 		if(p != null) {
-			if(!p.get(1).equals(Kernel.id)){
+			if(!p.get(1).equals(id)){
 				if(!neighbors.containsKey(p.get(1))){
 					Kernel.syslog.debug("Adding neighbor: " + p);
 					NetworkNeighbor n = new NetworkNeighbor(p.get(1), p.get(0), Integer.valueOf(p.get(2)), new Date(System.currentTimeMillis()));

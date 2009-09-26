@@ -76,12 +76,13 @@ public class DeviceService extends Service {
 
 	@Override
 	public void process(Packet pkt) {
-		//TODO: finish this off
+		
 		ControlPacket ctrlPkt = (ControlPacket) pkt;
 		Device d = (Device) getTask(ctrlPkt.getTaskName());
 		
 		if(d != null) {
-			if(ctrlPkt.getControl().equals("reschedule")) {
+			if(ctrlPkt.getControl().equals(ControlPacket.RESCHEDULE)) {
+				Kernel.syslog.debug("Reschedule " + d.getClass().getSimpleName() + ": " + ctrlPkt.getDelay());
 				rescheduleTask(ctrlPkt.getTaskName(), ctrlPkt.getDelay());
 			}
 		}

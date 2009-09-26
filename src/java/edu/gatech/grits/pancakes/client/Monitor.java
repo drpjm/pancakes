@@ -19,8 +19,10 @@ public class Monitor extends Task {
 
 	private long startTime;
 	private boolean rescheduled;
+	private final String id;
 	
 	public Monitor() {
+		id = Kernel.id;
 		startTime = System.currentTimeMillis();
 		rescheduled = false;
 		setDelay(0l);
@@ -40,8 +42,8 @@ public class Monitor extends Task {
 				}
 				
 				if(System.currentTimeMillis() - startTime > 10000 && !rescheduled){
-					Kernel.syslog.debug("Reschedule localpose to " + 1200);
-					publish(CoreChannel.CONTROL, new ControlPacket("devices", ControlPacket.RESCHEDULE, "localpose", 1200));
+					publish(CoreChannel.CONTROL, new ControlPacket("devices", ControlPacket.RESCHEDULE, "localpose", 1500));
+					publish(CoreChannel.CONTROL, new ControlPacket("network", ControlPacket.RESCHEDULE, "speaker", 3000));
 					rescheduled = true;
 				}
 			}
@@ -58,7 +60,7 @@ public class Monitor extends Task {
 						
 						//send a reply to the neighbor
 						String target = npkt.getNeighbor().getID();
-						if(!target.equals(Kernel.id)){
+						if(!target.equals(id)){
 							NetworkPacket np = new NetworkPacket(Kernel.id, target);
 							publish(CoreChannel.NETWORK, np);
 						}

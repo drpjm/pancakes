@@ -1,6 +1,8 @@
 package edu.gatech.grits.pancakes.service;
 
+import edu.gatech.grits.pancakes.lang.ControlPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
+import edu.gatech.grits.pancakes.lang.Task;
 import edu.gatech.grits.pancakes.net.*;
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Scheduler.SchedulingException;
@@ -58,7 +60,16 @@ public class NetworkService extends Service {
 
 	@Override
 	public void process(Packet pkt) {
-		// TODO Auto-generated method stub
+		
+		ControlPacket ctrlPkt = (ControlPacket) pkt;
+		Task t = (Task) getTask(ctrlPkt.getTaskName());
+		
+		if(t != null){
+			if(ctrlPkt.getControl().equals(ControlPacket.RESCHEDULE)) {
+				Kernel.syslog.debug("Reschedule " + t.getClass().getSimpleName() + ": " + ctrlPkt.getDelay());
+				rescheduleTask(ctrlPkt.getTaskName(), ctrlPkt.getDelay());
+			}
+		}
 		
 	}
 }
