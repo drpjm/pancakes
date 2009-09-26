@@ -1,5 +1,6 @@
 package edu.gatech.grits.pancakes.devices.driver.k3;
 
+import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.devices.backend.Backend;
 import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
 import edu.gatech.grits.pancakes.devices.driver.net.ViconRTEDriver;
@@ -10,7 +11,7 @@ public class LocalPoseDriver implements HardwareDriver<LocalPosePacket> {
 	private ViconRTEDriver device;
 	
 	public LocalPoseDriver(Backend backend) {
-		device = new ViconRTEDriver(1026, 8); // TODO ID needs to be properly passed here
+		device = new ViconRTEDriver(1026, 30); // TODO ID needs to be properly passed here
 	}
 	
 	public void request(LocalPosePacket pkt) {

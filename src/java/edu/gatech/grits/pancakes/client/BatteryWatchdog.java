@@ -13,7 +13,7 @@ import edu.gatech.grits.pancakes.lang.Task;
 
 public class BatteryWatchdog extends Task {
 	
-	private float BATTERY_LEVEL = 8.2f;
+	private float BATTERY_LEVEL = 8.0f;
 	private long DELAY = 250l;
 	
 	public BatteryWatchdog() {
@@ -30,9 +30,10 @@ public class BatteryWatchdog extends Task {
 					
 					
 					if(battery.getVoltage() < BATTERY_LEVEL) {
+						Kernel.syslog.debug("Battery below threshold -- RESCHEDULE!");
 						BATTERY_LEVEL -= 0.5f;
 						DELAY += 750l;
-						publish(CoreChannel.CONTROL, new ControlPacket("devices", "reschedule", DELAY));
+						publish(CoreChannel.CONTROL, new ControlPacket("devices", ControlPacket.RESCHEDULE, "localpose", DELAY));
 					}
 					
 				}

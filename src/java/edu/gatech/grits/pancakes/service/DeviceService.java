@@ -76,14 +76,13 @@ public class DeviceService extends Service {
 
 	@Override
 	public void process(Packet pkt) {
-		// TODO Auto-generated method stub
-		ControlPacket ctrl = (ControlPacket) pkt;
-		
-		Device d = (Device) getTask(ctrl.getPacketType());
+		//TODO: finish this off
+		ControlPacket ctrlPkt = (ControlPacket) pkt;
+		Device d = (Device) getTask(ctrlPkt.getTaskName());
 		
 		if(d != null) {
-			if(ctrl.getControl().equals("reschedule")) {
-				rescheduleTask(ctrl.getPacketType(), ctrl.getDelay());
+			if(ctrlPkt.getControl().equals("reschedule")) {
+				rescheduleTask(ctrlPkt.getTaskName(), ctrlPkt.getDelay());
 			}
 		}
 	}

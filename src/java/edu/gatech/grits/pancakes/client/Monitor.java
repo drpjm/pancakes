@@ -3,6 +3,7 @@ package edu.gatech.grits.pancakes.client;
 import org.jetlang.core.Callback;
 
 import edu.gatech.grits.pancakes.core.Kernel;
+import edu.gatech.grits.pancakes.lang.ControlPacket;
 import edu.gatech.grits.pancakes.lang.CoreChannel;
 import edu.gatech.grits.pancakes.lang.LocalPosePacket;
 import edu.gatech.grits.pancakes.lang.NetworkNeighborPacket;
@@ -16,7 +17,12 @@ import edu.gatech.grits.pancakes.util.Properties;
 
 public class Monitor extends Task {
 
+	private long startTime;
+	private boolean rescheduled;
+	
 	public Monitor() {
+		startTime = System.currentTimeMillis();
+		rescheduled = false;
 		setDelay(0l);
 		// looks like Java Swing listeners!
 		Callback<Packet> data = new Callback<Packet>(){
@@ -31,6 +37,12 @@ public class Monitor extends Task {
 				
 				if(message.getPacketType().equals(PacketType.NETWORK)){
 					Kernel.syslog.debug("Received message from: " + ((NetworkPacket)message).getSource());
+				}
+				
+				if(System.currentTimeMillis() - startTime > 10000 && !rescheduled){
+					Kernel.syslog.debug("Reschedule localpose to " + 1200);
+					publish(CoreChannel.CONTROL, new ControlPacket("devices", ControlPacket.RESCHEDULE, "localpose", 1200));
+					rescheduled = true;
 				}
 			}
 			

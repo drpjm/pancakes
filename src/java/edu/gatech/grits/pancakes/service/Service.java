@@ -31,7 +31,6 @@ public abstract class Service {
 					process(pkt);
 			}
 		};
-		
 		subscription = new Subscription(CoreChannel.CONTROL, fiber, callback);
 		
 		try {

@@ -4,18 +4,23 @@ public class ControlPacket extends Packet {
 	
 	private static final long serialVersionUID = 1761628700970106348L;
 	private final String control;
+	private final String taskName;
 	private final long delay;
+	
+	public static final String RESCHEDULE = "reschedule";
 
-	public ControlPacket(String dst, String ctrl) {
-		super(dst);
+	public ControlPacket(String serviceName, String ctrl, String taskToSchedule) {
+		super(serviceName);
 		control = ctrl;
+		taskName = taskToSchedule;
 		delay = 0l;
 	}
 	
-	public ControlPacket(String dst, String ctrl, long arg) {
-		super(dst);
+	public ControlPacket(String serviceName, String ctrl, String taskToSchedule, long newDelay) {
+		super(serviceName);
 		control = ctrl;
-		delay = arg;
+		taskName = taskToSchedule;
+		delay = newDelay;
 	}
 	
 	public final String getControl() {
@@ -24,6 +29,10 @@ public class ControlPacket extends Packet {
 	
 	public final long getDelay() {
 		return delay;
+	}
+
+	public final String getTaskName() {
+		return taskName;
 	}
 
 }
