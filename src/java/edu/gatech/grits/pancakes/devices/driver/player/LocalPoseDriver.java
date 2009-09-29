@@ -14,14 +14,18 @@ public class LocalPoseDriver implements HardwareDriver<LocalPosePacket> {
 	
 	private Position2DInterface device;
 	private PlayerBackend backend;
+	private LocalPosePacket cachedPkt;
 	
 	public LocalPoseDriver(Backend backend) {
 		this.backend = (PlayerBackend) backend;
+		cachedPkt = new LocalPosePacket();
+		
 		while(!((PlayerBackend) backend).getHandle().isReadyRequestDevice()) {
 			Kernel.syslog.debug("Trying to get an interface for the LocalPoseDevice.");
 			device = ((PlayerBackend) backend).getHandle().requestInterfacePosition2D(0, PlayerConstants.PLAYER_OPEN_MODE);
 		}
 		Kernel.syslog.debug("Received an inteface!");
+		
 		device.setControlMode(PlayerConstants.PLAYER_POSITION2D_REQ_VELOCITY_MODE);
 	}
 	
@@ -32,18 +36,20 @@ public class LocalPoseDriver implements HardwareDriver<LocalPosePacket> {
 	public LocalPosePacket query() {
 		LocalPosePacket pkt = new LocalPosePacket();
 		
-		//manager.update();
-		
 		backend.update();
 		
 		if(device.isDataReady()) {
 			PlayerPose pose = device.getData().getPos();
 			pkt.setPose(pose.getPx(), pose.getPy(), pose.getPa());
+			cachedPkt = pkt;
+			
+			return pkt;
 		} else {
-			//System.out.println("NOT READY!");
+			// if there is no update, return the last known position
+			Kernel.syslog.debug("Used cached local pose.");
+			return cachedPkt;
 		}
 		
-		return pkt;
 	}
 	
 	public void close() {

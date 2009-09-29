@@ -42,7 +42,7 @@ public class Monitor extends Task {
 				}
 				
 				if(System.currentTimeMillis() - startTime > 10000 && !rescheduled){
-					publish(CoreChannel.CONTROL, new ControlPacket("devices", ControlPacket.RESCHEDULE, "localpose", 1500));
+//					publish(CoreChannel.CONTROL, new ControlPacket("devices", ControlPacket.RESCHEDULE, "localpose", 1500));
 					publish(CoreChannel.CONTROL, new ControlPacket("network", ControlPacket.RESCHEDULE, "speaker", 3000));
 					rescheduled = true;
 				}

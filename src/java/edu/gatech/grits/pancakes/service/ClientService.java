@@ -10,10 +10,14 @@ import edu.gatech.grits.pancakes.util.Properties;
 public class ClientService extends Service {
 
 	private final String CLASSPATH = "edu.gatech.grits.pancakes.client";
+	public final static String BATTERY_UPDATE = "battery_update";
+
 
 	public ClientService(Properties properties) {
 		super("Client");
 
+		Kernel.stream.createChannel(BATTERY_UPDATE);
+		
 		FastList<String> tasks = properties.getClientTasks();
 
 		// search in file name list

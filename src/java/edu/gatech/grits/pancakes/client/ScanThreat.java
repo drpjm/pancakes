@@ -8,20 +8,22 @@ import org.jetlang.core.Callback;
 import javolution.util.FastMap;   
 
 import edu.gatech.grits.pancakes.core.Kernel;
+import edu.gatech.grits.pancakes.lang.ControlPacket;
 import edu.gatech.grits.pancakes.lang.CoreChannel;
 import edu.gatech.grits.pancakes.lang.LocalPosePacket;
 import edu.gatech.grits.pancakes.lang.MotorPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.PacketType;
 import edu.gatech.grits.pancakes.lang.Task;
+import edu.gatech.grits.pancakes.service.ClientService;
 import edu.gatech.grits.pancakes.util.Properties;
 
 public class ScanThreat extends Task {                                                                                                               
 
-	private final float RADIUS = 30.0f;                                                                                                                        
-	private final float CIRC_GAIN = 4f;                                                                                                                       
+	private float RADIUS = 25.0f;                                                                                                                        
+	private float CIRC_GAIN = 4f;                                                                                                                       
 
-	private final float MAX_VEL = 0.12f;
+	private float MAX_VEL = 0.12f;
 
 	public ScanThreat() {
 		setDelay(0l);
@@ -70,13 +72,28 @@ public class ScanThreat extends Task {
 //					ctrl.debug();
 					Kernel.syslog.record(ctrl);
 					
-					publish("user", ctrl);
+					publish(CoreChannel.COMMAND, ctrl);
 
 				}
 			}
 
 		};
 		subscribe(CoreChannel.SYSTEM, cbk);
+		
+		Callback<Packet> batteryPkt = new  Callback<Packet>(){
+
+			public void onMessage(Packet message) {
+				if(message instanceof ControlPacket){
+					
+					Kernel.syslog.debug("************* Changing params *************");
+					RADIUS = 35.0f;
+					MAX_VEL = 0.08f;
+					
+				}
+			}
+			
+		};
+		subscribe(ClientService.BATTERY_UPDATE, batteryPkt);
 	}
 
 	private final Point2D.Float rotate(Point2D.Float vec, float angle){

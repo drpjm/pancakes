@@ -11,11 +11,9 @@ import edu.gatech.grits.pancakes.util.Properties;
 public class NetworkService extends Service {
 
 	private NetworkServer server;
-//	private NetworkClient client = new NetworkClient();
 	private NetworkClient client;
 	private DiscoveryListener listener;
 	private DiscoverySpeaker speaker;
-//	public NetworkNeighborhood neighborhood = new NetworkNeighborhood();
 	
 	public static final String NEIGHBORHOOD = "neighborhood";
 	

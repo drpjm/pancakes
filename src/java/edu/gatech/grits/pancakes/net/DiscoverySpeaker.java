@@ -33,7 +33,7 @@ public class DiscoverySpeaker extends Task {
 	}
 	
 	public void sendDiscovery() {		
-		Kernel.syslog.debug(this.getClass().getSimpleName() + " sending discovery...");
+//		Kernel.syslog.debug(this.getClass().getSimpleName() + " sending discovery...");
 		Charset charSet = Charset.forName("US-ASCII");
 		
 		byte[] b = BROADCAST.getBytes(charSet);
