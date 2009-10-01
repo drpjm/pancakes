@@ -1,99 +1,83 @@
 package edu.gatech.grits.pancakes.client;
 
 import java.awt.geom.Point2D;                                                                                                                                     
-import java.awt.geom.Point2D.Float;                                                                                                                               
 
 import org.jetlang.core.Callback;
 
-import javolution.util.FastMap;   
+import javolution.util.*;   
 
+import edu.gatech.grits.pancakes.client.util.TrackBoundary;
 import edu.gatech.grits.pancakes.core.Kernel;
-import edu.gatech.grits.pancakes.lang.ControlPacket;
-import edu.gatech.grits.pancakes.lang.CoreChannel;
-import edu.gatech.grits.pancakes.lang.LocalPosePacket;
-import edu.gatech.grits.pancakes.lang.MotorPacket;
-import edu.gatech.grits.pancakes.lang.Packet;
-import edu.gatech.grits.pancakes.lang.PacketType;
-import edu.gatech.grits.pancakes.lang.Task;
+import edu.gatech.grits.pancakes.lang.*;
 import edu.gatech.grits.pancakes.service.ClientService;
-import edu.gatech.grits.pancakes.util.Properties;
 
 public class ScanThreat extends Task {                                                                                                               
 
-	private float RADIUS = 25.0f;                                                                                                                        
-	private float CIRC_GAIN = 4f;                                                                                                                       
+	// Player
+	private float radius = 4.0f;                                                                                                                        
+	private float circGain = 3f;                                                                                                                       
+	private float maxVel = 0.8f;
+	
+	// K3
+//	private float radius = 35.0f;                                                                                                                        
+//	private float circGain = 3f;                                                                                                                       
+//	private float maxVel = 0.2f;
 
-	private float MAX_VEL = 0.12f;
+	
+	private FastMap<String, Point2D.Float> neighborPoints;
+	private TrackBoundary tracker;
 
 	public ScanThreat() {
+		
 		setDelay(0l);
+		neighborPoints = new FastMap<String, Point2D.Float>();
+		tracker = new TrackBoundary(maxVel, circGain, radius, 0, 0);
+		
 		Callback<Packet> cbk = new Callback<Packet>(){
 
 			public void onMessage(Packet pkt) {
-//				Kernel.syslog.debug("I hear something...");
 				if(pkt.getPacketType().equals(PacketType.LOCAL_POSE)) {
 					float k;
 
 					LocalPosePacket localData = (LocalPosePacket) pkt;
-//					localData.debug();
-					Kernel.syslog.record(localData);
+//					Kernel.syslog.record(localData);
+					localData.debug();
 					
-					// hard wired target point
-					Point2D.Float r1 = new Point2D.Float(1.8f,-9.0f);
-					Point2D.Float r2 = new Point2D.Float(localData.getPositionX(), localData.getPositionY());
-
-					float theta = ((LocalPosePacket) pkt).getTheta();
-
-					Point2D.Float x2 = new Point2D.Float((float)Math.cos(theta), (float)Math.sin(theta));
-					Point2D.Float y2 = rotate(x2, (float)-Math.PI / 2);
-
-					// vector and angle from target to agent
-					Point2D.Float r = new Point2D.Float((float)(r2.getX() - r1.getX()), (float) (r2.getY() - r1.getY()));
-					float beta = (float) Math.atan2(r.getY(), r.getX());
-
-					Point2D.Float y1 = new Point2D.Float((float) Math.cos(beta), (float) Math.sin(beta));
-					Point2D.Float x1 = rotate(y1, (float) Math.PI / 2);
-
-					// check for when r is 0 ...
-					if(norm(r) > 0){
-						// if not, execute controller calculation!
-						float middleTerm = (float) ( CIRC_GAIN*(1-Math.pow( RADIUS / norm(r), 2)) ) * ( innerProduct(r,y2)/norm(r) );
-						float lastTerm =  innerProduct(x1,x2)/norm(r);
-						k = innerProduct(x1, y2) - middleTerm - lastTerm;
-					}
-					else{
-						k = 0;
-					}
-
-					MotorPacket ctrl = new MotorPacket();
-					ctrl.setVelocity(MAX_VEL);
-					ctrl.setRotationalVelocity(k*MAX_VEL);
-
-//					ctrl.debug();
-					Kernel.syslog.record(ctrl);
+					MotorPacket ctrl = tracker.calculate(localData, neighborPoints);
 					
+//					Kernel.syslog.record(ctrl);
 					publish(CoreChannel.COMMAND, ctrl);
 
+				}
+				else if(pkt instanceof NetworkPacket){
+					NetworkPacket netPkt = (NetworkPacket) pkt;
+					String src = netPkt.getSource();
+					Packet p1 = netPkt.getPackets().get(0);
+					if(p1 instanceof LocalPosePacket){
+						Kernel.syslog.debug(this.getClass().getSimpleName() + ": add neighbor's local pose.");
+					}
 				}
 			}
 
 		};
 		subscribe(CoreChannel.SYSTEM, cbk);
 		
-		Callback<Packet> batteryPkt = new  Callback<Packet>(){
+		Callback<Packet> batteryCbk = new  Callback<Packet>(){
 
 			public void onMessage(Packet message) {
 				if(message instanceof ControlPacket){
 					
 					Kernel.syslog.debug("************* Changing params *************");
-					RADIUS = 35.0f;
-					MAX_VEL = 0.08f;
+					radius = radius + 20f;
+					maxVel = 0.5f * maxVel;
+					Kernel.syslog.debug(" vel=" + maxVel + " rad=" + radius);
 					
 				}
 			}
 			
 		};
-		subscribe(ClientService.BATTERY_UPDATE, batteryPkt);
+		subscribe(ClientService.BATTERY_UPDATE, batteryCbk);
+		
 	}
 
 	private final Point2D.Float rotate(Point2D.Float vec, float angle){

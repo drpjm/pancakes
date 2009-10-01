@@ -2,28 +2,33 @@ package edu.gatech.grits.pancakes.client.util;
 
 import java.awt.geom.Point2D;
 
+import javolution.util.*;
+
 import edu.gatech.grits.pancakes.lang.LocalPosePacket;
 import edu.gatech.grits.pancakes.lang.MotorPacket;
 
 public class TrackBoundary {
 
-	private float radius = 30.0f;                                                                                                                        
-	private float circGain = 4f;                                                                                                                       
+	private float radius = 35.0f;                                                                                                                        
+	private float circGain = 3f; 
+	private float formGain = 1f;
+	private float maxVel = 0.2f;
+	private Point2D.Float targetPt;
 
-	private float maxVel = 0.12f;
-
-
-	public TrackBoundary(float vel, float gain, float rad){
+	public TrackBoundary(float vel, float gain, float rad, float targx, float targy){
 		this.radius = rad;
 		this.circGain = gain;
 		this.maxVel = vel;
+		targetPt = new Point2D.Float(targx, targy);
 	}
 
-	public final MotorPacket calculate(LocalPosePacket localPose){
+	public final MotorPacket calculate(LocalPosePacket localPose, FastMap<String, Point2D.Float> neighborPoints){
+		
 		float k;
-
+		float v;
+		
 		// hard wired target point
-		Point2D.Float r1 = new Point2D.Float(1.8f,-9.0f);
+		Point2D.Float r1 = targetPt;
 		Point2D.Float r2 = new Point2D.Float(localPose.getPositionX(), localPose.getPositionY());
 
 		float theta = localPose.getTheta();
@@ -48,10 +53,59 @@ public class TrackBoundary {
 		else{
 			k = 0;
 		}
-
+		v = maxVel;
+		
+		// spacing control adjust
+		int numOfNeighbors = neighborPoints.size();
+		if(numOfNeighbors > 0){
+			float desiredArcSeparation = (float) (2 * Math.PI * radius / (numOfNeighbors + 1));
+			
+			float closestNeighborDist = desiredArcSeparation / radius;
+			
+			float myAngle = (float) Math.atan2(localPose.getPositionY() - targetPt.getY(), 
+					localPose.getPositionX() - targetPt.getX());
+			
+			boolean isFirst = true;
+			for(FastMap.Entry<String, Point2D.Float> curr = neighborPoints.head(), end = neighborPoints.tail(); (curr = curr.getNext()) != end;){
+				
+				Point2D.Float neighbor = curr.getValue();
+				Point2D.Float neighborToCenter = new Point2D.Float();
+				neighborToCenter.setLocation(targetPt.getX() - neighbor.getX(),
+						targetPt.getY() - neighbor.getY());
+				
+				float thresholdRadius = radius + 5f;
+				if( norm(neighborToCenter) < thresholdRadius ){
+					
+					float neighborAngle = (float) Math.atan2(neighbor.getY() - targetPt.getY(), neighbor.getX() - targetPt.getX());
+					float angleDiff = neighborAngle - myAngle;
+					if(angleDiff < 0){
+						angleDiff = (float) (angleDiff + 2*Math.PI);
+					}else if(angleDiff >= 2*Math.PI){
+						angleDiff = (float) (angleDiff - 2*Math.PI);
+					}
+					
+					// Save this agent distance temporarily if it is currently the closest
+					if(isFirst || angleDiff <= closestNeighborDist){
+						closestNeighborDist = angleDiff;
+						isFirst = false;
+					}
+					
+				}
+				
+			}
+			v = maxVel + formGain * (desiredArcSeparation - radius * closestNeighborDist);
+			if(v > maxVel){
+				v = maxVel;
+			}
+			else if (v < -maxVel){
+				v = -maxVel;
+			}
+			
+		}
+		
 		MotorPacket ctrl = new MotorPacket();
-		ctrl.setVelocity(maxVel);
-		ctrl.setRotationalVelocity(k*maxVel);
+		ctrl.setVelocity(v);
+		ctrl.setRotationalVelocity(k*v);
 
 		return ctrl;
 	}

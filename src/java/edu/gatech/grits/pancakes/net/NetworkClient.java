@@ -38,9 +38,11 @@ public class NetworkClient extends Task {
 						oout.writeObject(packet);
 						oout.flush();
 						socket.close();
+					} catch (ConnectException ce){
+						Kernel.syslog.error("Failed to connect to: " + n.getHostname());
+						neighbors.remove(n.getID());
 					} catch(IOException e) {
-						System.out.println("send failed!");
-						e.printStackTrace();
+						Kernel.syslog.error("Send failed.");
 					}	
 				} else {
 					Kernel.syslog.error("Destination not in the reachable network neighborhood");

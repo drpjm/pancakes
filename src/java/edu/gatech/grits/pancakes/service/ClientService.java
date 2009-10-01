@@ -2,7 +2,6 @@ package edu.gatech.grits.pancakes.service;
 
 import javolution.util.FastList;
 import edu.gatech.grits.pancakes.core.Kernel;
-import edu.gatech.grits.pancakes.client.ScanThreat;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.Task;
 import edu.gatech.grits.pancakes.util.Properties;
@@ -23,6 +22,7 @@ public class ClientService extends Service {
 		// search in file name list
 		for(String taskName : tasks){
 			try {
+				Kernel.syslog.debug(CLASSPATH + "." + taskName);
 				Task t = (Task) Class.forName(CLASSPATH + "." + taskName).newInstance();
 				
 				
