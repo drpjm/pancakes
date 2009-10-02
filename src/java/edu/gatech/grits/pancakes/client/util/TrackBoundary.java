@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 
 import javolution.util.*;
 
+import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.lang.LocalPosePacket;
 import edu.gatech.grits.pancakes.lang.MotorPacket;
 
@@ -55,7 +56,9 @@ public class TrackBoundary {
 		}
 		v = maxVel;
 		
-		// spacing control adjust
+		/*
+		 * spacing control adjust
+		 */
 		int numOfNeighbors = neighborPoints.size();
 		if(numOfNeighbors > 0){
 			float desiredArcSeparation = (float) (2 * Math.PI * radius / (numOfNeighbors + 1));
@@ -73,7 +76,7 @@ public class TrackBoundary {
 				neighborToCenter.setLocation(targetPt.getX() - neighbor.getX(),
 						targetPt.getY() - neighbor.getY());
 				
-				float thresholdRadius = radius + 5f;
+				float thresholdRadius = radius + 1f;
 				if( norm(neighborToCenter) < thresholdRadius ){
 					
 					float neighborAngle = (float) Math.atan2(neighbor.getY() - targetPt.getY(), neighbor.getX() - targetPt.getX());
@@ -100,7 +103,7 @@ public class TrackBoundary {
 			else if (v < -maxVel){
 				v = -maxVel;
 			}
-			
+			Kernel.syslog.debug("Linear speed: " + v);
 		}
 		
 		MotorPacket ctrl = new MotorPacket();

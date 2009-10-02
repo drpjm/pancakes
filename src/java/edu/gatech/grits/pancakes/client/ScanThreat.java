@@ -54,7 +54,10 @@ public class ScanThreat extends Task {
 					String src = netPkt.getSource();
 					Packet p1 = netPkt.getPackets().get(0);
 					if(p1 instanceof LocalPosePacket){
-						Kernel.syslog.debug(this.getClass().getSimpleName() + ": add neighbor's local pose.");
+//						Kernel.syslog.debug(this.getClass().getSimpleName() + ": add neighbor's local pose.");
+						Point2D.Float newPt = new Point2D.Float();
+						newPt.setLocation(((LocalPosePacket)p1).getPositionX(), ((LocalPosePacket)p1).getPositionY());
+						neighborPoints.put(src, newPt);
 					}
 				}
 			}
