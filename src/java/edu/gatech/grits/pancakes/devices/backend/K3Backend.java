@@ -42,7 +42,7 @@ public class K3Backend extends Backend {
 //		return parse(execute("k3i -f"));
 //	}
 	
-	public final void update() {
+	public final synchronized void update() {
 		k3i.k3Update();
 	}
 	
