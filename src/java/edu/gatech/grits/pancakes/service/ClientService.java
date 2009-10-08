@@ -24,9 +24,6 @@ public class ClientService extends Service {
 			try {
 				Kernel.syslog.debug(CLASSPATH + "." + taskName);
 				Task t = (Task) Class.forName(CLASSPATH + "." + taskName).newInstance();
-				
-				
-				
 				addTask(taskName.toLowerCase(), t);
 				scheduleTask(taskName.toLowerCase());
 				Kernel.syslog.debug(taskName + " task started.");
@@ -41,9 +38,7 @@ public class ClientService extends Service {
 				Kernel.syslog.error(taskName + " task not found! Skipping.");
 			}
 
-			//			}
 		}
-//		addTask("scanThreat", new ScanThreat());
 	}
 
 	@Override
@@ -54,7 +49,7 @@ public class ClientService extends Service {
 
 	@Override
 	public void process(Packet pkt) {
-		// TODO Auto-generated method stub
+		// TODO: do this for client tasks that need rescheduling
 
 	}
 

@@ -14,13 +14,17 @@ import edu.gatech.grits.pancakes.service.ClientService;
 
 public class BatteryWatchdog extends Task {
 	
-	private float BATTERY_LEVEL = 7.6f;
-	private long DELAY = 250l;
+	private final float HIGH_LEVEL = 7.9f;
+	private final float MED_LEVEL = 7.5f;
+	private final float LOW_LEVEL = 7.4f;
+	private long localPoseDelay = 250l;
+//	private boolean switched;
+	private boolean isMed = false;
+	private boolean isLow = false;
 		
 	public BatteryWatchdog() {
-		
+//		switched = false;
 		setDelay(0l);
-		
 		
 		Callback<Packet> data = new Callback<Packet>(){
 
@@ -30,14 +34,24 @@ public class BatteryWatchdog extends Task {
 					
 					//battery.debug();
 					Kernel.syslog.record(battery);
-					
-					if(battery.getVoltage() < BATTERY_LEVEL) {
-						Kernel.syslog.debug("Battery below threshold -- RESCHEDULE!");
-						BATTERY_LEVEL -= 0.5f;
-						DELAY += 500l;
-						publish(CoreChannel.CONTROL, new ControlPacket("devices", ControlPacket.RESCHEDULE, "localpose", DELAY));
-						publish(ClientService.BATTERY_UPDATE, new ControlPacket(getClass().getSimpleName(), "new", "duh"));
+					float level = battery.getVoltage();
+					if(!isMed && level < HIGH_LEVEL && level > MED_LEVEL ) {
+						isMed = true;
+						Kernel.syslog.debug("Battery threshold: MED");
+//						HIGH_LEVEL -= 0.5f;
+						localPoseDelay = 500l;
+						publish(CoreChannel.CONTROL, new ControlPacket("devices", ControlPacket.RESCHEDULE, "localpose", localPoseDelay));
+						publish(ClientService.BATTERY_UPDATE, new ControlPacket(getClass().getSimpleName(), "MED", ""));
+//						switched = true;
 					}
+					else if(!isLow && level < MED_LEVEL && level > LOW_LEVEL ){
+						isLow = true;
+						Kernel.syslog.debug("Battery threshold: LOW");
+						publish(ClientService.BATTERY_UPDATE, new ControlPacket(getClass().getSimpleName(), "LOW", ""));
+					}
+//					else{
+//						Kernel.syslog.debug("Battery is WAY LOW!");
+//					}
 					
 				}
 			}
@@ -56,4 +70,9 @@ public class BatteryWatchdog extends Task {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	private enum BatteryLevel{
+		HIGH,MED,LOW;
+	}
+	
 }

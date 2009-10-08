@@ -24,5 +24,12 @@ public class BatteryPacket extends Packet {
 	public void setCurrent(float current) {
 		add("current", current);
 	}
-
+	
+//	public void setAvgCurrent(float avgCurrent){
+//		add("avgcurrent", avgCurrent);
+//	}
+//
+//	public float getAvgCurrent(){
+//		return new Float(get("avgcurrent"));
+//	}
 }
