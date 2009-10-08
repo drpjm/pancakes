@@ -39,8 +39,9 @@ public class BatteryDriver implements HardwareDriver<BatteryPacket> {
 		//System.err.println("Voltage (int): " + k3i.batteryVoltage());
 		//System.err.println("Voltage (float): " + ((float) k3i.batteryVoltage())/10000);
 		
-		pkt.setCurrent(((float) k3i.batteryCurrent())/10000);
-		pkt.setVoltage(((float) k3i.batteryVoltage())/10000);
+		pkt.setCurrent(( (float) k3i.batteryCurrent())/10000 );
+		pkt.setVoltage(( (float) k3i.batteryVoltage())/10000 );
+//		pkt.setAvgCurrent(( (float) k3i.batteryCurrentAverage()) / 10000 );
 		
 		
 		return pkt;
