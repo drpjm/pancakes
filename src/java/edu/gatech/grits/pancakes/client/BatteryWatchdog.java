@@ -40,7 +40,7 @@ public class BatteryWatchdog extends Task {
 						Kernel.syslog.debug("Battery threshold: MED");
 //						HIGH_LEVEL -= 0.5f;
 						localPoseDelay = 500l;
-						publish(CoreChannel.CONTROL, new ControlPacket("devices", ControlPacket.RESCHEDULE, "localpose", localPoseDelay));
+						publish(CoreChannel.CONTROL, new ControlPacket("device", ControlPacket.RESCHEDULE, "localpose", localPoseDelay));
 						publish(ClientService.BATTERY_UPDATE, new ControlPacket(getClass().getSimpleName(), "MED", ""));
 //						switched = true;
 					}
@@ -69,10 +69,6 @@ public class BatteryWatchdog extends Task {
 	public void run() {
 		// TODO Auto-generated method stub
 		
-	}
-	
-	private enum BatteryLevel{
-		HIGH,MED,LOW;
 	}
 	
 }

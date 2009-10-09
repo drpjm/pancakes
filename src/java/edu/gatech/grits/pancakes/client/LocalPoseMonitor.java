@@ -19,7 +19,7 @@ public class LocalPoseMonitor extends Task {
 	private LocalPosePacket currLocalPose;
 	
 	public LocalPoseMonitor(){
-		setDelay(1000l);
+		setDelay(500l);
 		neighborIds = new FastList<String>();
 		currLocalPose = new LocalPosePacket();
 		

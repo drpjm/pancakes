@@ -24,10 +24,10 @@ public class TrackBoundary {
 	}
 
 	public final MotorPacket calculate(LocalPosePacket localPose, FastMap<String, Point2D.Float> neighborPoints){
-		
+
 		float k;
-		float v;
-		
+		float v = 0;
+
 		// hard wired target point
 		Point2D.Float r1 = targetPt;
 		Point2D.Float r2 = new Point2D.Float(localPose.getPositionX(), localPose.getPositionY());
@@ -54,31 +54,38 @@ public class TrackBoundary {
 		else{
 			k = 0;
 		}
-		v = maxVel;
-		
-		/*
-		 * spacing control adjust
-		 */
+		v = spacingController(v, localPose, neighborPoints);
+
+		MotorPacket ctrl = new MotorPacket();
+		ctrl.setVelocity(v);
+		ctrl.setRotationalVelocity(k*v);
+
+		return ctrl;
+	}
+
+	public float spacingController(float currVel, LocalPosePacket localPose, FastMap<String, Point2D.Float> neighborPoints){
+
+		float newVel = currVel;
 		int numOfNeighbors = neighborPoints.size();
 		if(numOfNeighbors > 0){
 			float desiredArcSeparation = (float) (2 * Math.PI * radius / (numOfNeighbors + 1));
-			
+
 			float closestNeighborDist = desiredArcSeparation / radius;
-			
+
 			float myAngle = (float) Math.atan2(localPose.getPositionY() - targetPt.getY(), 
 					localPose.getPositionX() - targetPt.getX());
-			
+
 			boolean isFirst = true;
 			for(FastMap.Entry<String, Point2D.Float> curr = neighborPoints.head(), end = neighborPoints.tail(); (curr = curr.getNext()) != end;){
-				
+
 				Point2D.Float neighbor = curr.getValue();
 				Point2D.Float neighborToCenter = new Point2D.Float();
 				neighborToCenter.setLocation(targetPt.getX() - neighbor.getX(),
 						targetPt.getY() - neighbor.getY());
-				
+
 				float thresholdRadius = radius + 1f;
 				if( norm(neighborToCenter) < thresholdRadius ){
-					
+
 					float neighborAngle = (float) Math.atan2(neighbor.getY() - targetPt.getY(), neighbor.getX() - targetPt.getX());
 					float angleDiff = neighborAngle - myAngle;
 					if(angleDiff < 0){
@@ -86,33 +93,28 @@ public class TrackBoundary {
 					}else if(angleDiff >= 2*Math.PI){
 						angleDiff = (float) (angleDiff - 2*Math.PI);
 					}
-					
+
 					// Save this agent distance temporarily if it is currently the closest
 					if(isFirst || angleDiff <= closestNeighborDist){
 						closestNeighborDist = angleDiff;
 						isFirst = false;
 					}
-					
-				}
-				
-			}
-			v = maxVel + formGain * (desiredArcSeparation - radius * closestNeighborDist);
-			if(v > maxVel){
-				v = maxVel;
-			}
-			else if (v < -maxVel){
-				v = -maxVel;
-			}
-			Kernel.syslog.debug("Linear speed: " + v);
-		}
-		
-		MotorPacket ctrl = new MotorPacket();
-		ctrl.setVelocity(v);
-		ctrl.setRotationalVelocity(k*v);
 
-		return ctrl;
+				}
+
+			}
+			newVel = maxVel + formGain * (desiredArcSeparation - radius * closestNeighborDist);
+			if(newVel > maxVel){
+				newVel = maxVel;
+			}
+			else if (newVel < -maxVel){
+				newVel = -maxVel;
+			}
+			Kernel.syslog.debug("Linear speed: " + newVel);
+		}
+		return newVel;
 	}
-	
+
 	private final Point2D.Float rotate(Point2D.Float vec, float angle){
 
 		float xp = (float) (vec.getX()*Math.cos(angle) + vec.getY()*Math.sin(angle));
@@ -162,6 +164,6 @@ public class TrackBoundary {
 	public final void setMaxVel(float maxVel) {
 		this.maxVel = maxVel;
 	}
-	
-	
+
+
 }

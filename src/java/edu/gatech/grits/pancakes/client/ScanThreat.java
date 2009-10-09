@@ -5,13 +5,14 @@ import java.awt.geom.Point2D.Float;
 
 import org.jetlang.core.Callback;
 
-import javolution.util.FastMap;   
+import javolution.util.*;
 
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.lang.ControlPacket;
 import edu.gatech.grits.pancakes.lang.CoreChannel;
 import edu.gatech.grits.pancakes.lang.LocalPosePacket;
 import edu.gatech.grits.pancakes.lang.MotorPacket;
+import edu.gatech.grits.pancakes.lang.NetworkPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.PacketType;
 import edu.gatech.grits.pancakes.lang.Task;
@@ -20,33 +21,54 @@ import edu.gatech.grits.pancakes.util.Properties;
 
 public class ScanThreat extends Task {                                                                                                               
 
-	private float radius = 55.0f;                                                                                                                        
-	private float circGain = 2f;                                                                                                                       
-	private float maxVel = 0.13f;
+//	private float radius = 55.0f;	// k3
+	private float radius = 4f;	// player
+	private float circGain = 2f;   
+	private float formGain = 1f;
+
+	private float maxVel = 0.7f;	// player
+//	private float maxVel = 0.13f;	// k3
 	private float maxRotation = maxVel * 0.8f;
 
 	private boolean switched;
 	private Point2D.Float goal = new Point2D.Float(160.0f,(-80.0f + (float)(Math.random()*30)));
-	private Point2D.Float center = new Point2D.Float(10.0f,-9.0f);
+//	private Point2D.Float center = new Point2D.Float(10.0f,-9.0f);	// k3
+	private Point2D.Float center = new Point2D.Float(0,0);	// player
+	
+	private FastMap<String, Point2D.Float> neighborPoints;
 
 	public ScanThreat() {
 		setDelay(0l);
 		switched = false;
-
+		neighborPoints = new FastMap<String, Point2D.Float>();
+		
 		Callback<Packet> cbk = new Callback<Packet>(){
 
 			public void onMessage(Packet pkt) {
-				if(pkt.getPacketType().equals(PacketType.LOCAL_POSE)) {
+				
+//				Kernel.syslog.debug("Received message: ");
+				pkt.debug();
+				// new neighbor update!
+				if(pkt.getPacketType().equals(PacketType.NETWORK)){
+					NetworkPacket np = (NetworkPacket) pkt;
+					Kernel.syslog.debug(np.getSource());
+					if(np.getPackets().getFirst() instanceof LocalPosePacket){
+						LocalPosePacket lpp = (LocalPosePacket) np.getPackets().getFirst();
+						Point2D.Float point = new Point2D.Float();
+						point.setLocation(lpp.getPositionX(), lpp.getPositionY());
+						neighborPoints.put(np.getSource(), point);
+					}
+				}
+				// execute algorithm
+				else if(pkt.getPacketType().equals(PacketType.LOCAL_POSE)) {
 
 					LocalPosePacket localData = (LocalPosePacket) pkt;
 					if(localData.getPositionX() != 0 && localData.getPositionY() != 0 && localData.getTheta() != 0){
 
-						Kernel.syslog.record(localData);
-						
 						if(!switched){
 
 							float k;
-
+							float v = maxVel;
 							// hard wired target point
 							Point2D.Float r1 = center;
 							Point2D.Float r2 = new Point2D.Float(localData.getPositionX(), localData.getPositionY());
@@ -74,11 +96,12 @@ public class ScanThreat extends Task {
 								k = 0;
 							}
 
-							MotorPacket ctrl = new MotorPacket();
-							ctrl.setVelocity(maxVel);
-							ctrl.setRotationalVelocity(k*maxVel);
+							v = spacingController(v, localData, neighborPoints);
 
-							Kernel.syslog.record(ctrl);
+							MotorPacket ctrl = new MotorPacket();
+							ctrl.setVelocity(v);
+							ctrl.setRotationalVelocity(k*v);
+
 							publish(CoreChannel.COMMAND, ctrl);
 						}
 						// GoToGoal
@@ -179,6 +202,57 @@ public class ScanThreat extends Task {
 		mp.setRotationalVelocity(rotation);
 		return mp;
 
+	}
+
+	private final float spacingController(float currVel, LocalPosePacket localPose, FastMap<String, Point2D.Float> neighborPoints){
+		float newVel = currVel;
+		int numOfNeighbors = neighborPoints.size();
+		if(numOfNeighbors > 0){
+			float desiredArcSeparation = (float) (2 * Math.PI * radius / (numOfNeighbors + 1));
+
+			float closestNeighborDist = desiredArcSeparation / radius;
+
+			float myAngle = (float) Math.atan2(localPose.getPositionY() - center.getY(), 
+					localPose.getPositionX() - center.getX());
+
+			boolean isFirst = true;
+			for(FastMap.Entry<String, Point2D.Float> curr = neighborPoints.head(), end = neighborPoints.tail(); (curr = curr.getNext()) != end;){
+
+				Point2D.Float neighbor = curr.getValue();
+				Point2D.Float neighborToCenter = new Point2D.Float();
+				neighborToCenter.setLocation(center.getX() - neighbor.getX(),
+						center.getY() - neighbor.getY());
+
+				float thresholdRadius = radius + 1f;
+				if( norm(neighborToCenter) < thresholdRadius ){
+
+					float neighborAngle = (float) Math.atan2(neighbor.getY() - center.getY(), neighbor.getX() - center.getX());
+					float angleDiff = neighborAngle - myAngle;
+					if(angleDiff < 0){
+						angleDiff = (float) (angleDiff + 2*Math.PI);
+					}else if(angleDiff >= 2*Math.PI){
+						angleDiff = (float) (angleDiff - 2*Math.PI);
+					}
+
+					// Save this agent distance temporarily if it is currently the closest
+					if(isFirst || angleDiff <= closestNeighborDist){
+						closestNeighborDist = angleDiff;
+						isFirst = false;
+					}
+
+				}
+
+			}
+			newVel = maxVel + formGain * (desiredArcSeparation - radius * closestNeighborDist);
+			if(newVel > maxVel){
+				newVel = maxVel;
+			}
+			else if (newVel < -maxVel){
+				newVel = -maxVel;
+			}
+//			Kernel.syslog.debug("Linear speed: " + newVel);
+		}
+		return newVel;
 	}
 
 	public void close() {

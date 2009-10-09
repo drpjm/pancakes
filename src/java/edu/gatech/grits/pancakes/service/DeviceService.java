@@ -12,10 +12,10 @@ import edu.gatech.grits.pancakes.util.Properties;
 public class DeviceService extends Service {
 
 	private Backend deviceBackend;
-	
+
 	public DeviceService(Properties props) {
 		super("devices");
-		
+
 		String backend = props.getBackend();
 
 		if(backend.equals("player"))
@@ -23,24 +23,24 @@ public class DeviceService extends Service {
 
 		if(backend.equals("k3"))
 			deviceBackend = new K3Backend();
-		
+
 		if(!backend.equals("none"))
 			buildDeviceRegistry(props);
-		
+
 		if(backend.equals("player"))
 			((PlayerBackend) deviceBackend).finalize();
 
 		for(String key : taskList()) {
 			scheduleTask(key);
 		}
-		
+
 	}
 
 	public void buildDeviceRegistry(Properties props) {
-		
+
 		FastList<String> devices = props.getDevices();
 		for(String s : devices){
-			
+
 			if(deviceBackend.getBackendType().equals("player")) {
 				((PlayerBackend) deviceBackend).update();
 			}
@@ -76,15 +76,20 @@ public class DeviceService extends Service {
 
 	@Override
 	public void process(Packet pkt) {
-		
-		ControlPacket ctrlPkt = (ControlPacket) pkt;
-		Device d = (Device) getTask(ctrlPkt.getTaskName());
-		
-		if(d != null) {
-			if(ctrlPkt.getControl().equals(ControlPacket.RESCHEDULE)) {
-				Kernel.syslog.debug("Reschedule " + d.getClass().getSimpleName() + ": " + ctrlPkt.getDelay());
-				rescheduleTask(ctrlPkt.getTaskName(), ctrlPkt.getDelay());
+
+		if(pkt instanceof ControlPacket){
+			ControlPacket ctrlPkt = (ControlPacket) pkt;
+			if(ctrlPkt.getPacketType().equals("device")){
+				Device d = (Device) getTask(ctrlPkt.getTaskName());
+
+				if(d != null) {
+					if(ctrlPkt.getControl().equals(ControlPacket.RESCHEDULE)) {
+						Kernel.syslog.debug("Reschedule " + d.getClass().getSimpleName() + ": " + ctrlPkt.getDelay());
+						rescheduleTask(ctrlPkt.getTaskName(), ctrlPkt.getDelay());
+					}
+				}
 			}
+
 		}
 	}
 

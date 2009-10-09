@@ -2,6 +2,7 @@ package edu.gatech.grits.pancakes.service;
 
 import javolution.util.FastList;
 import edu.gatech.grits.pancakes.core.Kernel;
+import edu.gatech.grits.pancakes.lang.ControlPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.Task;
 import edu.gatech.grits.pancakes.util.Properties;
@@ -49,7 +50,17 @@ public class ClientService extends Service {
 
 	@Override
 	public void process(Packet pkt) {
-		// TODO: do this for client tasks that need rescheduling
+		if(pkt instanceof ControlPacket){
+			ControlPacket ctrlPkt = (ControlPacket)pkt;
+			if(ctrlPkt.getPacketType().equals("client") && ctrlPkt.getControl().equals(ControlPacket.RESCHEDULE)){
+				
+				Task t = (Task) getTask(ctrlPkt.getTaskName());
+				if(t != null){
+					
+				}
+				
+			}
+		}
 
 	}
 
