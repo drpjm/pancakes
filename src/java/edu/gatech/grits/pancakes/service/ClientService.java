@@ -56,7 +56,8 @@ public class ClientService extends Service {
 				
 				Task t = (Task) getTask(ctrlPkt.getTaskName());
 				if(t != null){
-					
+					Kernel.syslog.debug("Reschedule " + t.getClass().getSimpleName());
+					rescheduleTask(ctrlPkt.getTaskName(), ctrlPkt.getDelay());
 				}
 				
 			}

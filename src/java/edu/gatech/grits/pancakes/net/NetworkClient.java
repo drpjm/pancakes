@@ -40,7 +40,9 @@ public class NetworkClient extends Task {
 						socket.close();
 					} catch (ConnectException ce){
 						Kernel.syslog.error("Failed to connect to: " + n.getHostname());
-						neighbors.remove(n.getID());
+						synchronized(this) {
+							neighbors.remove(n.getID());
+						}
 					} catch(IOException e) {
 						Kernel.syslog.error("Send failed.");
 					}	
@@ -58,11 +60,15 @@ public class NetworkClient extends Task {
 					if(!np.isExpired()){
 //						Kernel.syslog.debug("NC: Adding " + np.getNeighbor().getID());
 						String id = np.getNeighbor().getID();
-						neighbors.put(id, np.getNeighbor());
+						synchronized(this) {
+							neighbors.put(id, np.getNeighbor());
+						}
 					}
 					else{
 //						Kernel.syslog.debug("NC: Removing " + np.getNeighbor().getID());
-						neighbors.remove(np.getNeighbor().getID());
+						synchronized(this) {
+							neighbors.remove(np.getNeighbor().getID());
+						}
 					}
 				}
 			}

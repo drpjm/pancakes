@@ -22,7 +22,7 @@ public class DiscoveryListener extends Task {
 	private final String id;
 	private final String MCAST_ADDR = "224.224.224.224";
 	private final int DEST_PORT = 1337;
-	private final int BUFFER_LENGTH = 19;
+	private final int BUFFER_LENGTH = 32;
 	private MulticastSocket socket;
 	private boolean isRunning = false;
 	private Thread mainThread;
@@ -67,17 +67,15 @@ public class DiscoveryListener extends Task {
 
 						synchronized(this) {
 							expired = new FastList<String>(neighbors.size());
-						}
 
-						for(String key : neighbors.keySet()) {
-							NetworkNeighbor n;
-
-							synchronized(this) {
+							for(String key : neighbors.keySet()) {
+								NetworkNeighbor n;
+	
 								n = neighbors.get(key);
-							}
-
-							if(n.getTimestamp().before(d)) {
-								expired.add(key);
+	
+								if(n.getTimestamp().before(d)) {
+									expired.add(key);
+								}
 							}
 						}
 
@@ -115,15 +113,16 @@ public class DiscoveryListener extends Task {
 		ArrayList<String> p = parse(dgram.getData());
 		if(p != null) {
 			if(!p.get(1).equals(id)){
+				NetworkNeighbor n = new NetworkNeighbor(p.get(1), p.get(0), Integer.valueOf(p.get(2)), new Date(System.currentTimeMillis()));
 				if(!neighbors.containsKey(p.get(1))){
 					Kernel.syslog.debug("Adding neighbor: " + p);
-					NetworkNeighbor n = new NetworkNeighbor(p.get(1), p.get(0), Integer.valueOf(p.get(2)), new Date(System.currentTimeMillis()));
 					neighbors.put(p.get(1), n);
-					publish(NetworkService.NEIGHBORHOOD, new NetworkNeighborPacket(new Boolean(false), n));
+//					publish(NetworkService.NEIGHBORHOOD, new NetworkNeighborPacket(new Boolean(false), n));
 				}
 				else{
 					neighbors.get(p.get(1)).setTimestamp(new Date(System.currentTimeMillis()));
 				}
+				publish(NetworkService.NEIGHBORHOOD, new NetworkNeighborPacket(new Boolean(false), n));
 			}
 		}
 		return;

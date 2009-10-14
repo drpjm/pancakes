@@ -13,6 +13,7 @@ public class NetworkServer {
 	private ServerSocket listener;
 	private Thread mainThread;
 	private volatile boolean stopRequested = false;
+	private volatile boolean initialAccept = true;
 	
 	public NetworkServer(int port) {
 		try {
@@ -28,12 +29,21 @@ public class NetworkServer {
 						//System.out.println("Server waiting for client!");
 						final Socket client = listener.accept();
 						//System.out.println("Client found!");
-						Runnable task = new Runnable() {
-							public void run() {
-								handleConnection(client);
-							}
-						};
-						Kernel.scheduler.execute(task);
+						if(initialAccept) {
+							handleConnection(client);
+							Kernel.syslog.debug("Got initial connection.");
+							initialAccept = false;
+						} else {
+						
+							Runnable task = new Runnable() {
+								public void run() {
+									Kernel.syslog.debug("Handling an incoming packet.");
+									handleConnection(client);
+									Kernel.syslog.debug("Finished handling the packet.");
+								}
+							};
+							Kernel.scheduler.execute(task);
+						}
 					} catch (IOException e) {
 						System.out.println("Error receiving object or socket closed.");
 						//e.printStackTrace();
@@ -52,6 +62,8 @@ public class NetworkServer {
 			in = client.getInputStream();
 			ObjectInputStream oin = new ObjectInputStream(in);
 			Packet pkt = (Packet) oin.readObject();
+//			oin.close();
+//			in.close();
 			Kernel.stream.publish(CoreChannel.SYSTEM, pkt);
 		} catch (IOException e) {
 			System.err.println("Error receiving object.");
