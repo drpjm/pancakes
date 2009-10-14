@@ -130,14 +130,14 @@ public class LocalPoseShare extends Task {
 	}
 
 	public final void run() {
-		// eventually use for adding delays
+		
 		if(currentState == TaskState.SENDING){
 			NetworkPacket outNetPkt = new NetworkPacket(Kernel.id, neighborIds.getFirst());
 			outNetPkt.addPacket(currLocalPose);
-			publish(CoreChannel.NETWORK, outNetPkt);
 			synchronized(this){
 				currentState = TaskState.WAITING;
 			}
+			publish(CoreChannel.NETWORK, outNetPkt);
 		}
 	}
 

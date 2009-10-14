@@ -43,8 +43,8 @@ public class BatteryWatchdog extends Task {
 						publish(CoreChannel.CONTROL, new ControlPacket("device", ControlPacket.RESCHEDULE, 
 									"localpose", localPoseDelay));
 						// slow down neighbor updates
-						publish(CoreChannel.CONTROL, new ControlPacket("client", ControlPacket.RESCHEDULE, 
-									LocalPoseMonitor.class.getSimpleName().toLowerCase(), 1000l));
+//						publish(CoreChannel.CONTROL, new ControlPacket("client", ControlPacket.RESCHEDULE, 
+//									LocalPoseMonitor.class.getSimpleName().toLowerCase(), 1000l));
 						publish(ClientService.BATTERY_UPDATE, new ControlPacket(getClass().getSimpleName(), "MED", ""));
 //						switched = true;
 					}

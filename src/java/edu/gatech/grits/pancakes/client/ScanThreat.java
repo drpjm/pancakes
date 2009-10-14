@@ -36,6 +36,8 @@ public class ScanThreat extends Task {
 	private Point2D.Float center = new Point2D.Float(0,0);	// player
 	
 	private FastMap<String, Point2D.Float> neighborPoints;
+	private long lastUpdate;
+	private final long TIMEOUT = 5000l;
 
 	public ScanThreat() {
 		setDelay(0l);
@@ -55,6 +57,8 @@ public class ScanThreat extends Task {
 						Point2D.Float point = new Point2D.Float();
 						point.setLocation(lpp.getPositionX(), lpp.getPositionY());
 						neighborPoints.put(np.getSource(), point);
+						lastUpdate = System.currentTimeMillis();
+//						Kernel.syslog.debug("Update time " + lastUpdate);
 					}
 				}
 				// execute algorithm
@@ -95,13 +99,16 @@ public class ScanThreat extends Task {
 								k = 0;
 							}
 
+							if(System.currentTimeMillis() - lastUpdate > TIMEOUT){
+								neighborPoints.clear();
+							}
 							v = spacingController(v, localData, neighborPoints);
 
 							MotorPacket ctrl = new MotorPacket();
 							ctrl.setVelocity(v);
 							ctrl.setRotationalVelocity(k*v);
 //							Kernel.syslog.record(ctrl);
-//							ctrl.debug();
+							ctrl.debug();
 							publish(CoreChannel.COMMAND, ctrl);
 						}
 						// GoToGoal
@@ -223,8 +230,8 @@ public class ScanThreat extends Task {
 				neighborToCenter.setLocation(center.getX() - neighbor.getX(),
 						center.getY() - neighbor.getY());
 
-//				float thresholdRadius = radius + 1f;	// player
-				float thresholdRadius = radius + 5f;
+				float thresholdRadius = radius + 1f;	// player
+//				float thresholdRadius = radius + 5f;
 				if( norm(neighborToCenter) < thresholdRadius ){
 
 					float neighborAngle = (float) Math.atan2(neighbor.getY() - center.getY(), neighbor.getX() - center.getX());
