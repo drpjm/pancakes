@@ -27,7 +27,7 @@ public class ScanThreat extends Task {
 	private float formGain = 1f;
 
 	private float maxVel = 0.7f;	// player
-//	private float maxVel = 0.13f;	// k3
+//	private float maxVel = 0.09f;	// k3
 	private float maxRotation = maxVel * 0.8f;
 
 	private boolean switched;
@@ -46,12 +46,10 @@ public class ScanThreat extends Task {
 
 			public void onMessage(Packet pkt) {
 				
-//				Kernel.syslog.debug("Received message: ");
-				pkt.debug();
 				// new neighbor update!
 				if(pkt.getPacketType().equals(PacketType.NETWORK)){
 					NetworkPacket np = (NetworkPacket) pkt;
-					Kernel.syslog.debug(np.getSource());
+//					Kernel.syslog.debug(np.getSource());
 					if(np.getPackets().getFirst() instanceof LocalPosePacket){
 						LocalPosePacket lpp = (LocalPosePacket) np.getPackets().getFirst();
 						Point2D.Float point = new Point2D.Float();
@@ -65,6 +63,7 @@ public class ScanThreat extends Task {
 					LocalPosePacket localData = (LocalPosePacket) pkt;
 					if(localData.getPositionX() != 0 && localData.getPositionY() != 0 && localData.getTheta() != 0){
 
+//						Kernel.syslog.record(localData);
 						if(!switched){
 
 							float k;
@@ -101,13 +100,14 @@ public class ScanThreat extends Task {
 							MotorPacket ctrl = new MotorPacket();
 							ctrl.setVelocity(v);
 							ctrl.setRotationalVelocity(k*v);
-
+//							Kernel.syslog.record(ctrl);
+//							ctrl.debug();
 							publish(CoreChannel.COMMAND, ctrl);
 						}
 						// GoToGoal
 						else{
 							MotorPacket ctrl = goToGoal(localData);
-							Kernel.syslog.record(ctrl);
+//							Kernel.syslog.record(ctrl);
 							publish(CoreChannel.COMMAND, ctrl);
 						}
 
@@ -223,7 +223,8 @@ public class ScanThreat extends Task {
 				neighborToCenter.setLocation(center.getX() - neighbor.getX(),
 						center.getY() - neighbor.getY());
 
-				float thresholdRadius = radius + 1f;
+//				float thresholdRadius = radius + 1f;	// player
+				float thresholdRadius = radius + 5f;
 				if( norm(neighborToCenter) < thresholdRadius ){
 
 					float neighborAngle = (float) Math.atan2(neighbor.getY() - center.getY(), neighbor.getX() - center.getX());

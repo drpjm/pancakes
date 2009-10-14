@@ -9,6 +9,7 @@ public class ControlPacket extends Packet {
 	private final long delay;
 	
 	public static final String RESCHEDULE = "reschedule";
+	public static final String CANCEL = "cancel";
 
 	public ControlPacket(String serviceName, String ctrl, String taskToSchedule) {
 		super(serviceName);

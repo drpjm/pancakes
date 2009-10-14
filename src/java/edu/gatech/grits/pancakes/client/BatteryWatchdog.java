@@ -14,8 +14,8 @@ import edu.gatech.grits.pancakes.service.ClientService;
 
 public class BatteryWatchdog extends Task {
 	
-	private final float HIGH_LEVEL = 7.9f;
-	private final float MED_LEVEL = 7.5f;
+	private final float HIGH_LEVEL = 7.85f;
+	private final float MED_LEVEL = 7.65f;
 	private final float LOW_LEVEL = 7.4f;
 	private long localPoseDelay = 250l;
 //	private boolean switched;
@@ -40,7 +40,11 @@ public class BatteryWatchdog extends Task {
 						Kernel.syslog.debug("Battery threshold: MED");
 //						HIGH_LEVEL -= 0.5f;
 						localPoseDelay = 500l;
-						publish(CoreChannel.CONTROL, new ControlPacket("device", ControlPacket.RESCHEDULE, "localpose", localPoseDelay));
+						publish(CoreChannel.CONTROL, new ControlPacket("device", ControlPacket.RESCHEDULE, 
+									"localpose", localPoseDelay));
+						// slow down neighbor updates
+						publish(CoreChannel.CONTROL, new ControlPacket("client", ControlPacket.RESCHEDULE, 
+									LocalPoseMonitor.class.getSimpleName().toLowerCase(), 1000l));
 						publish(ClientService.BATTERY_UPDATE, new ControlPacket(getClass().getSimpleName(), "MED", ""));
 //						switched = true;
 					}

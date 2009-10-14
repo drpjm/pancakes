@@ -31,15 +31,15 @@ public class NetworkServer {
 						//System.out.println("Client found!");
 						if(initialAccept) {
 							handleConnection(client);
-							Kernel.syslog.debug("Got initial connection.");
+//							Kernel.syslog.debug("Got initial connection.");
 							initialAccept = false;
 						} else {
 						
 							Runnable task = new Runnable() {
 								public void run() {
-									Kernel.syslog.debug("Handling an incoming packet.");
+//									Kernel.syslog.debug("Handling an incoming packet.");
 									handleConnection(client);
-									Kernel.syslog.debug("Finished handling the packet.");
+//									Kernel.syslog.debug("Finished handling the packet.");
 								}
 							};
 							Kernel.scheduler.execute(task);

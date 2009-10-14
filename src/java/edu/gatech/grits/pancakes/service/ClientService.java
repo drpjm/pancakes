@@ -52,14 +52,19 @@ public class ClientService extends Service {
 	public void process(Packet pkt) {
 		if(pkt instanceof ControlPacket){
 			ControlPacket ctrlPkt = (ControlPacket)pkt;
-			if(ctrlPkt.getPacketType().equals("client") && ctrlPkt.getControl().equals(ControlPacket.RESCHEDULE)){
+			if(ctrlPkt.getPacketType().equals("client")){
 				
 				Task t = (Task) getTask(ctrlPkt.getTaskName());
 				if(t != null){
-					Kernel.syslog.debug("Reschedule " + t.getClass().getSimpleName());
-					rescheduleTask(ctrlPkt.getTaskName(), ctrlPkt.getDelay());
+					if(ctrlPkt.getControl().equals(ControlPacket.RESCHEDULE)){
+						Kernel.syslog.debug("Reschedule " + t.getClass().getSimpleName());
+						rescheduleTask(ctrlPkt.getTaskName(), ctrlPkt.getDelay());
+					}
+					else if(ctrlPkt.getControl().equals(ControlPacket.CANCEL)){
+						Kernel.syslog.debug("Cancel " + t.getClass().getSimpleName());
+						removeTask(ctrlPkt.getTaskName());
+					}
 				}
-				
 			}
 		}
 

@@ -20,11 +20,11 @@ public class Packet implements Serializable {
 		return typeOfPacket;
 	}
 	
-	protected final void add(String name, Object element) {
+	public final void add(String name, Object element) {
 		dataMap.put(name, element.toString());
 	}
 	
-	protected final String get(String name) {
+	public final String get(String name) {
 		return dataMap.get(name);
 	}
 	
