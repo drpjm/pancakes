@@ -21,19 +21,19 @@ import edu.gatech.grits.pancakes.util.Properties;
 
 public class ScanThreat extends Task {                                                                                                               
 
-//	private float radius = 55.0f;	// k3
-	private float radius = 4f;	// player
+	private float radius = 55.0f;	// k3
+//	private float radius = 4f;	// player
 	private float circGain = 2f;   
 	private float formGain = 1f;
 
-	private float maxVel = 0.7f;	// player
-//	private float maxVel = 0.09f;	// k3
+//	private float maxVel = 0.7f;	// player
+	private float maxVel = 0.06f;	// k3
 	private float maxRotation = maxVel * 0.8f;
 
 	private boolean switched;
 	private Point2D.Float goal = new Point2D.Float(160.0f,(-80.0f + (float)(Math.random()*30)));
-//	private Point2D.Float center = new Point2D.Float(10.0f,-9.0f);	// k3
-	private Point2D.Float center = new Point2D.Float(0,0);	// player
+	private Point2D.Float center = new Point2D.Float(10.0f,-9.0f);	// k3
+//	private Point2D.Float center = new Point2D.Float(0,0);	// player
 	
 	private FastMap<String, Point2D.Float> neighborPoints;
 	private long lastUpdate;
@@ -60,6 +60,14 @@ public class ScanThreat extends Task {
 						lastUpdate = System.currentTimeMillis();
 //						Kernel.syslog.debug("Update time " + lastUpdate);
 					}
+					
+					// change values if our neighbor switched too...
+					if(np.getPackets().getFirst().getPacketType().equals(LocalPoseShare.SWITCH)){
+						radius = 35.0f;
+						maxVel = 0.04f;
+						circGain = 3f;
+					}
+					
 				}
 				// execute algorithm
 				else if(pkt.getPacketType().equals(PacketType.LOCAL_POSE)) {
@@ -67,7 +75,7 @@ public class ScanThreat extends Task {
 					LocalPosePacket localData = (LocalPosePacket) pkt;
 					if(localData.getPositionX() != 0 && localData.getPositionY() != 0 && localData.getTheta() != 0){
 
-//						Kernel.syslog.record(localData);
+						Kernel.syslog.record(localData);
 						if(!switched){
 
 							float k;
@@ -107,8 +115,8 @@ public class ScanThreat extends Task {
 							MotorPacket ctrl = new MotorPacket();
 							ctrl.setVelocity(v);
 							ctrl.setRotationalVelocity(k*v);
-//							Kernel.syslog.record(ctrl);
-							ctrl.debug();
+							Kernel.syslog.record(ctrl);
+//							ctrl.debug();
 							publish(CoreChannel.COMMAND, ctrl);
 						}
 						// GoToGoal
@@ -133,7 +141,7 @@ public class ScanThreat extends Task {
 					if(((ControlPacket)message).getControl().equals("MED")){
 						Kernel.syslog.debug("************* Changing params *************");
 						radius = 35.0f;
-						maxVel = 0.06f;
+						maxVel = 0.04f;
 						circGain = 3f;
 					}
 					else if(((ControlPacket)message).getControl().equals("LOW")){
@@ -230,8 +238,8 @@ public class ScanThreat extends Task {
 				neighborToCenter.setLocation(center.getX() - neighbor.getX(),
 						center.getY() - neighbor.getY());
 
-				float thresholdRadius = radius + 1f;	// player
-//				float thresholdRadius = radius + 5f;
+//				float thresholdRadius = radius + 1f;	// player
+				float thresholdRadius = radius + 5f;
 				if( norm(neighborToCenter) < thresholdRadius ){
 
 					float neighborAngle = (float) Math.atan2(neighbor.getY() - center.getY(), neighbor.getX() - center.getX());

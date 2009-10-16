@@ -14,7 +14,7 @@ import edu.gatech.grits.pancakes.service.ClientService;
 
 public class BatteryWatchdog extends Task {
 	
-	private final float HIGH_LEVEL = 7.85f;
+	private final float HIGH_LEVEL = 7.9f;
 	private final float MED_LEVEL = 7.65f;
 	private final float LOW_LEVEL = 7.4f;
 	private long localPoseDelay = 250l;
@@ -43,8 +43,9 @@ public class BatteryWatchdog extends Task {
 						publish(CoreChannel.CONTROL, new ControlPacket("device", ControlPacket.RESCHEDULE, 
 									"localpose", localPoseDelay));
 						// slow down neighbor updates
-//						publish(CoreChannel.CONTROL, new ControlPacket("client", ControlPacket.RESCHEDULE, 
-//									LocalPoseMonitor.class.getSimpleName().toLowerCase(), 1000l));
+						publish(CoreChannel.CONTROL, new ControlPacket("client", ControlPacket.RESCHEDULE, 
+									LocalPoseShare.class.getSimpleName().toLowerCase(), 500l));
+						
 						publish(ClientService.BATTERY_UPDATE, new ControlPacket(getClass().getSimpleName(), "MED", ""));
 //						switched = true;
 					}
