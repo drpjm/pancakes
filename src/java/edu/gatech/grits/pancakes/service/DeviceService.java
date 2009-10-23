@@ -23,6 +23,9 @@ public class DeviceService extends Service {
 
 		if(backend.equals("k3"))
 			deviceBackend = new K3Backend();
+		
+		if(backend.equals("bug"))
+			deviceBackend = new BugBackend();
 
 		if(!backend.equals("none"))
 			buildDeviceRegistry(props);
@@ -63,6 +66,9 @@ public class DeviceService extends Service {
 			}
 			else if(currSensor.equals("motor")){
 				addTask("motor", new MotorDevice(deviceBackend));
+			}
+			else if(currSensor.equals("motion")) {
+				addTask("motion", new MotionDevice(deviceBackend));
 			}
 		}
 	}

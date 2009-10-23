@@ -5,6 +5,7 @@ import edu.gatech.grits.pancakes.devices.backend.Backend;
 import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
 import edu.gatech.grits.pancakes.devices.driver.net.ViconRTEDriver;
 import edu.gatech.grits.pancakes.lang.LocalPosePacket;
+import edu.gatech.grits.pancakes.net.NetworkServer;
 
 public class LocalPoseDriver implements HardwareDriver<LocalPosePacket> {
 	

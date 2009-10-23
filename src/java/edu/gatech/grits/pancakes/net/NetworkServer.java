@@ -26,9 +26,9 @@ public class NetworkServer {
 			public void run() {
 				while(!stopRequested) {
 					try {
-						//System.out.println("Server waiting for client!");
+						//System.out.println("Server waiting for client on port " + listener.getLocalPort() + "!");
 						final Socket client = listener.accept();
-						//System.out.println("Client found!");
+						
 						if(initialAccept) {
 							handleConnection(client);
 //							Kernel.syslog.debug("Got initial connection.");

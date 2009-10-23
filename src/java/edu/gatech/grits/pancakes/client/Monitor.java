@@ -1,5 +1,7 @@
 package edu.gatech.grits.pancakes.client;
 
+import javolution.util.FastList;
+
 import org.jetlang.core.Callback;
 
 import edu.gatech.grits.pancakes.core.Kernel;
@@ -16,6 +18,8 @@ import edu.gatech.grits.pancakes.service.NetworkService;
 import edu.gatech.grits.pancakes.util.Properties;
 
 public class Monitor extends Task {
+	
+	private FastList<String> neighborIDs = new FastList<String>();
 
 	private long startTime;
 	private boolean rescheduled;
@@ -27,10 +31,11 @@ public class Monitor extends Task {
 		rescheduled = false;
 		setDelay(0l);
 		// looks like Java Swing listeners!
+		
 		Callback<Packet> data = new Callback<Packet>(){
 
 			public void onMessage(Packet message) {
-				Kernel.syslog.record(message);
+//				Kernel.syslog.record(message);
 				
 				if(message.getPacketType().equals(PacketType.LOCAL_POSE)){
 					LocalPosePacket local = (LocalPosePacket) message;
@@ -63,6 +68,8 @@ public class Monitor extends Task {
 						if(!target.equals(id)){
 							NetworkPacket np = new NetworkPacket(Kernel.id, target);
 							publish(CoreChannel.NETWORK, np);
+							if(!neighborIDs.contains(target))
+								neighborIDs.add(target);
 						}
 					}
 					
@@ -81,6 +88,10 @@ public class Monitor extends Task {
 
 	public void run() {
 		// do nothing
+		for(String id : neighborIDs) {
+			NetworkPacket np = new NetworkPacket(Kernel.id, id);
+			publish(CoreChannel.NETWORK, np);
+		}
 	}
 
 }

@@ -26,7 +26,7 @@ public abstract class Backend {
 	        Object arglist = this;
 	        return ct.newInstance(arglist);
 		} catch (Throwable e) {
-			System.err.println(e);
+			//System.err.println(e);
 			return null;
 		}
 	}
