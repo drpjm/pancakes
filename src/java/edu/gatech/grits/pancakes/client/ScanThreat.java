@@ -32,13 +32,22 @@ public class ScanThreat extends Task {
 
 	private boolean switched;
 	private Point2D.Float goal = new Point2D.Float(160.0f,(-80.0f + (float)(Math.random()*30)));
-	private Point2D.Float center = new Point2D.Float(10.0f,-9.0f);	// k3
-//	private Point2D.Float center = new Point2D.Float(0,0);	// player
+//	private Point2D.Float center = new Point2D.Float(10.0f,-9.0f);	// k3
+	private Point2D.Float center = new Point2D.Float(0,0);	// player
 	
 	private FastMap<String, Point2D.Float> neighborPoints;
 	private long lastUpdate;
 	private final long TIMEOUT = 5000l;
 
+	private void updateCenter(LocalPosePacket t) {
+		Point2D.Float target = new Point2D.Float(t.getPositionX(), t.getPositionY());
+		if(target.x > (center.x + 10.0f) || target.x < (center.x - 10.0f)) {
+			center = target;
+		} else if(target.y > (center.y + 10.0f) || target.y < (center.y - 10.0f)) {
+			center = target;
+		}
+	}
+	
 	public ScanThreat() {
 		setDelay(0l);
 		switched = false;
@@ -52,28 +61,31 @@ public class ScanThreat extends Task {
 				if(pkt.getPacketType().equals(PacketType.NETWORK)){
 					NetworkPacket np = (NetworkPacket) pkt;
 //					Kernel.syslog.debug(np.getSource());
-					if(np.getPackets().getFirst() instanceof LocalPosePacket){
-						LocalPosePacket lpp = (LocalPosePacket) np.getPackets().getFirst();
-						Point2D.Float point = new Point2D.Float();
-						point.setLocation(lpp.getPositionX(), lpp.getPositionY());
-						neighborPoints.put(np.getSource(), point);
-						lastUpdate = System.currentTimeMillis();
-//						Kernel.syslog.debug("Update time " + lastUpdate);
+					if(np.getSource().equals("32")) {
+						updateCenter((LocalPosePacket) np.getPackets().getFirst());
+					} else {	
+						if(np.getPackets().getFirst() instanceof LocalPosePacket){
+							LocalPosePacket lpp = (LocalPosePacket) np.getPackets().getFirst();
+							Point2D.Float point = new Point2D.Float();
+							point.setLocation(lpp.getPositionX(), lpp.getPositionY());
+							neighborPoints.put(np.getSource(), point);
+							lastUpdate = System.currentTimeMillis();
+	//						Kernel.syslog.debug("Update time " + lastUpdate);
+						}
+						
+						// change values if our neighbor switched too...
+						if(np.getPackets().getFirst().getPacketType().equals(LocalPoseShare.SWITCH)){
+							radius = 35.0f;
+							maxVel = 0.04f;
+							circGain = 3f;
+						}
 					}
-					
-					// change values if our neighbor switched too...
-					if(np.getPackets().getFirst().getPacketType().equals(LocalPoseShare.SWITCH)){
-						radius = 35.0f;
-						maxVel = 0.04f;
-						circGain = 3f;
-					}
-					
 				}
 				// execute algorithm
 				else if(pkt.getPacketType().equals(PacketType.LOCAL_POSE)) {
 
 					LocalPosePacket localData = (LocalPosePacket) pkt;
-					if(localData.getPositionX() != 0 && localData.getPositionY() != 0 && localData.getTheta() != 0){
+					if(localData.getPositionX() != 0 && localData.getPositionY() != 0 && localData.getTheta() != 0 && center.x != 0.0f && center.y != 0.0f){
 
 						Kernel.syslog.record(localData);
 						if(!switched){
