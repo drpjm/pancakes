@@ -31,7 +31,7 @@ public abstract class Service {
 					process(pkt);
 			}
 		};
-		subscription = new Subscription(CoreChannel.CONTROL, fiber, callback);
+		subscription = new Subscription(CoreChannel.SYSCTRL, fiber, callback);
 		
 		try {
 			Kernel.stream.subscribe(subscription);

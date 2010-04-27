@@ -16,9 +16,9 @@ public class Stream {
 	public Stream() {
 		channels.put(CoreChannel.SYSTEM, new MemoryChannel<Packet>());
 		channels.put(CoreChannel.NETWORK, new MemoryChannel<Packet>());
-		channels.put(CoreChannel.COMMAND, new MemoryChannel<Packet>());
+		channels.put(CoreChannel.CTRL, new MemoryChannel<Packet>());
 		channels.put(CoreChannel.LOG, new MemoryChannel<Packet>());
-		channels.put(CoreChannel.CONTROL, new MemoryChannel<Packet>());
+		channels.put(CoreChannel.SYSCTRL, new MemoryChannel<Packet>());
 	}
 	
 	public final void createChannel(String channel) {

@@ -7,6 +7,6 @@ import edu.gatech.grits.pancakes.lang.MotorPacket;
 public class MotorDevice extends Device<MotorPacket> {
 	
 	public MotorDevice(Backend backend) {
-		super(backend, "Motor", CoreChannel.COMMAND, 0l);
+		super(backend, "Motor", CoreChannel.CTRL, 0l);
 	}
 }

@@ -33,17 +33,17 @@ public class BatteryWatchdog extends Task {
 					BatteryPacket battery = (BatteryPacket) message;
 					
 					//battery.debug();
-					Kernel.syslog.record(battery);
+//					Kernel.syslog.record(battery);
 					float level = battery.getVoltage();
 					if(!isMed && level < HIGH_LEVEL && level > MED_LEVEL ) {
 						isMed = true;
 						Kernel.syslog.debug("Battery threshold: MED");
 //						HIGH_LEVEL -= 0.5f;
 						localPoseDelay = 500l;
-						publish(CoreChannel.CONTROL, new ControlPacket("device", ControlPacket.RESCHEDULE, 
+						publish(CoreChannel.SYSCTRL, new ControlPacket("device", ControlPacket.RESCHEDULE, 
 									"localpose", localPoseDelay));
 						// slow down neighbor updates
-						publish(CoreChannel.CONTROL, new ControlPacket("client", ControlPacket.RESCHEDULE, 
+						publish(CoreChannel.SYSCTRL, new ControlPacket("client", ControlPacket.RESCHEDULE, 
 									LocalPoseShare.class.getSimpleName().toLowerCase(), 500l));
 						
 						publish(ClientService.BATTERY_UPDATE, new ControlPacket(getClass().getSimpleName(), "MED", ""));

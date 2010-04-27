@@ -5,7 +5,7 @@ public class CoreChannel {
 	public static final String SYSTEM = "sys";
 	public static final String NETWORK = "net";
 	public static final String LOG = "log";
-	public static final String CONTROL = "ctrl";
-	public static final String COMMAND = "cmd";
+	public static final String SYSCTRL = "ctrl";
+	public static final String CTRL = "cmd";
 	
 }

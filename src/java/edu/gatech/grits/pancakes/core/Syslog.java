@@ -45,4 +45,8 @@ public class Syslog {
 	public final void record(Packet p) {
 		log(new LogPacket("data", Level.INFO, Kernel.id + ":" + p.toString()));
 	}
+	
+	public final void record(Packet p, String id){
+		log(new LogPacket("data", Level.INFO, id + ":" + p.toString()));
+	}
 }

@@ -40,7 +40,7 @@ public class MotionDetection extends Task {
 				if(message instanceof MotionPacket) {
 				
 					MotionPacket pkt = (MotionPacket) message;
-					//pkt.debug();
+					pkt.debug();
 					if(System.currentTimeMillis() > lastUpdate + timeout) {
 						synchronized(this) {
 							if(currLocation != null) {
@@ -48,6 +48,7 @@ public class MotionDetection extends Task {
 									NetworkPacket net = new NetworkPacket(Kernel.id, id);
 									net.addPacket(currLocation);
 									publish(CoreChannel.NETWORK, net);
+									System.out.println("*** Sent motion update! ***");
 								}
 							}
 						}
@@ -57,6 +58,7 @@ public class MotionDetection extends Task {
 					LocalPosePacket pkt = (LocalPosePacket) message;
 					synchronized(this) {
 						currLocation = pkt;
+						System.out.println("*** I have a new location! ***");
 					}
 				}
 			}
@@ -91,7 +93,7 @@ public class MotionDetection extends Task {
 		subscribe(NetworkService.NEIGHBORHOOD, neighborCbk);
 		subscribe(CoreChannel.SYSTEM, callback);
 		
-		Kernel.syslog.debug("Ready to detect motion!");
+		System.out.println("Ready to detect motion!");
 	}
 
 }

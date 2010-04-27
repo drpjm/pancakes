@@ -42,10 +42,13 @@ public class ScanThreat extends Task {
 	private void updateCenter(LocalPosePacket t) {
 		Point2D.Float target = new Point2D.Float(t.getPositionX(), t.getPositionY());
 		if(target.x > (center.x + 10.0f) || target.x < (center.x - 10.0f)) {
+			Kernel.syslog.debug("*** Received a new target! ***");
 			center = target;
 		} else if(target.y > (center.y + 10.0f) || target.y < (center.y - 10.0f)) {
+			Kernel.syslog.debug("*** Received a new target! ***");
 			center = target;
 		}
+		Kernel.syslog.debug("*** Target location: " + center.toString() + "***");
 	}
 	
 	public ScanThreat() {
@@ -63,6 +66,7 @@ public class ScanThreat extends Task {
 //					Kernel.syslog.debug(np.getSource());
 					if(np.getSource().equals("32")) {
 						updateCenter((LocalPosePacket) np.getPackets().getFirst());
+						Kernel.syslog.record((LocalPosePacket) np.getPackets().getFirst(), "32");
 					} else {	
 						if(np.getPackets().getFirst() instanceof LocalPosePacket){
 							LocalPosePacket lpp = (LocalPosePacket) np.getPackets().getFirst();
@@ -122,20 +126,20 @@ public class ScanThreat extends Task {
 							if(System.currentTimeMillis() - lastUpdate > TIMEOUT){
 								neighborPoints.clear();
 							}
-							v = spacingController(v, localData, neighborPoints);
+//							v = spacingController(v, localData, neighborPoints);
 
 							MotorPacket ctrl = new MotorPacket();
 							ctrl.setVelocity(v);
 							ctrl.setRotationalVelocity(k*v);
 							Kernel.syslog.record(ctrl);
 //							ctrl.debug();
-							publish(CoreChannel.COMMAND, ctrl);
+							publish(CoreChannel.CTRL, ctrl);
 						}
 						// GoToGoal
 						else{
 							MotorPacket ctrl = goToGoal(localData);
 //							Kernel.syslog.record(ctrl);
-							publish(CoreChannel.COMMAND, ctrl);
+							publish(CoreChannel.CTRL, ctrl);
 						}
 
 					}
