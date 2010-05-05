@@ -24,7 +24,7 @@ public class LocalPoseDriver implements HardwareDriver<LocalPosePacket> {
 			Kernel.syslog.debug("Trying to get an interface for the LocalPoseDevice.");
 			device = ((PlayerBackend) backend).getHandle().requestInterfacePosition2D(0, PlayerConstants.PLAYER_OPEN_MODE);
 		}
-		Kernel.syslog.debug("Received an inteface!");
+		Kernel.syslog.debug("Received an interface!");
 		
 		device.setControlMode(PlayerConstants.PLAYER_POSITION2D_REQ_VELOCITY_MODE);
 	}

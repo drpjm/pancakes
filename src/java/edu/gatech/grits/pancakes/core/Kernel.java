@@ -30,8 +30,6 @@ public class Kernel {
 	
 	public void startServices(Properties properties) {
 		
-		// TODO: consider always starting the network and device services...
-		
 		// logging should be started first since we use it in all other services!		
 		if(properties.getServices().contains("log4j")){
 			int logIndex = properties.getServices().indexOf("log4j");

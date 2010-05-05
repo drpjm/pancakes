@@ -27,9 +27,11 @@ public class DeviceService extends Service {
 		if(backend.equals("bug"))
 			deviceBackend = new BugBackend();
 
-		if(!backend.equals("none"))
-			buildDeviceRegistry(props);
+		if(backend.equals("empty"))
+			deviceBackend = new EmptyBackend();
 
+		buildDeviceRegistry(props);
+		
 		if(backend.equals("player"))
 			((PlayerBackend) deviceBackend).finalize();
 
