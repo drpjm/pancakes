@@ -1,8 +1,8 @@
 package edu.gatech.grits.pancakes.social.twitter;
 
+import winterwell.jtwitter.Twitter;
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.util.Properties;
-import winterwell.jtwitter.Twitter;
 
 public class Tweeter {
 	

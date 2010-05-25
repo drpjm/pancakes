@@ -3,7 +3,6 @@ package edu.gatech.grits.pancakes.client;
 import org.jetlang.core.Callback;
 
 import edu.gatech.grits.pancakes.core.Kernel;
-import edu.gatech.grits.pancakes.core.Syslog;
 import edu.gatech.grits.pancakes.lang.BatteryPacket;
 import edu.gatech.grits.pancakes.lang.ControlPacket;
 import edu.gatech.grits.pancakes.lang.CoreChannel;

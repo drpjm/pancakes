@@ -3,7 +3,6 @@ package edu.gatech.grits.pancakes.devices.driver.player;
 import javaclient2.SonarInterface;
 import javaclient2.structures.PlayerConstants;
 import javaclient2.structures.sonar.PlayerSonarData;
-
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.devices.backend.Backend;
 import edu.gatech.grits.pancakes.devices.backend.PlayerBackend;

@@ -1,11 +1,14 @@
 package edu.gatech.grits.pancakes.service;
 
+import edu.gatech.grits.pancakes.core.Kernel;
+import edu.gatech.grits.pancakes.core.Scheduler.SchedulingException;
 import edu.gatech.grits.pancakes.lang.ControlPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.Task;
-import edu.gatech.grits.pancakes.net.*;
-import edu.gatech.grits.pancakes.core.Kernel;
-import edu.gatech.grits.pancakes.core.Scheduler.SchedulingException;
+import edu.gatech.grits.pancakes.net.DiscoveryListener;
+import edu.gatech.grits.pancakes.net.DiscoverySpeaker;
+import edu.gatech.grits.pancakes.net.NetworkClient;
+import edu.gatech.grits.pancakes.net.NetworkServer;
 import edu.gatech.grits.pancakes.util.Properties;
 
 public class NetworkService extends Service {

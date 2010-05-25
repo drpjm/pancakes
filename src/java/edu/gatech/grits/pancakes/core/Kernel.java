@@ -1,7 +1,12 @@
 package edu.gatech.grits.pancakes.core;
 
 import javolution.util.FastMap;
-import edu.gatech.grits.pancakes.service.*;
+import edu.gatech.grits.pancakes.service.ClientService;
+import edu.gatech.grits.pancakes.service.DeviceService;
+import edu.gatech.grits.pancakes.service.Log4jService;
+import edu.gatech.grits.pancakes.service.NetworkService;
+import edu.gatech.grits.pancakes.service.Service;
+import edu.gatech.grits.pancakes.service.TwitterService;
 import edu.gatech.grits.pancakes.util.Properties;
 
 public class Kernel {

@@ -3,7 +3,6 @@ package edu.gatech.grits.pancakes.service;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-
 import org.jetlang.core.Callback;
 import org.jetlang.fibers.Fiber;
 

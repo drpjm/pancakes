@@ -1,11 +1,10 @@
 package edu.gatech.grits.pancakes.devices.driver.k3;
 
-import edu.gatech.grits.pancakes.core.Kernel;
+import org.swig.k3i.k3i;
+
 import edu.gatech.grits.pancakes.devices.backend.Backend;
 import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
 import edu.gatech.grits.pancakes.lang.MotorPacket;
-
-import org.swig.k3i.k3i;
 
 public class MotorDriver implements HardwareDriver<MotorPacket> {
 		

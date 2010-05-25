@@ -5,7 +5,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,8 +12,10 @@ import java.util.StringTokenizer;
 
 import javolution.util.FastList;
 import javolution.util.FastMap;
-import edu.gatech.grits.pancakes.core.*;
-import edu.gatech.grits.pancakes.lang.*;
+import edu.gatech.grits.pancakes.core.Kernel;
+import edu.gatech.grits.pancakes.lang.NetworkNeighbor;
+import edu.gatech.grits.pancakes.lang.NetworkNeighborPacket;
+import edu.gatech.grits.pancakes.lang.Task;
 import edu.gatech.grits.pancakes.service.NetworkService;
 
 public class DiscoveryListener extends Task {

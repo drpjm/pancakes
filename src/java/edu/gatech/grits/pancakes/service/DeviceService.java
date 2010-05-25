@@ -1,10 +1,19 @@
 package edu.gatech.grits.pancakes.service;
 
 import javolution.util.FastList;
-
 import edu.gatech.grits.pancakes.core.Kernel;
-import edu.gatech.grits.pancakes.devices.*;
-import edu.gatech.grits.pancakes.devices.backend.*;
+import edu.gatech.grits.pancakes.devices.BatteryDevice;
+import edu.gatech.grits.pancakes.devices.Device;
+import edu.gatech.grits.pancakes.devices.IRDevice;
+import edu.gatech.grits.pancakes.devices.LocalPoseDevice;
+import edu.gatech.grits.pancakes.devices.MotionDevice;
+import edu.gatech.grits.pancakes.devices.MotorDevice;
+import edu.gatech.grits.pancakes.devices.SonarDevice;
+import edu.gatech.grits.pancakes.devices.backend.Backend;
+import edu.gatech.grits.pancakes.devices.backend.BugBackend;
+import edu.gatech.grits.pancakes.devices.backend.EmptyBackend;
+import edu.gatech.grits.pancakes.devices.backend.K3Backend;
+import edu.gatech.grits.pancakes.devices.backend.PlayerBackend;
 import edu.gatech.grits.pancakes.lang.ControlPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.util.Properties;

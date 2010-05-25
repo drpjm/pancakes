@@ -5,7 +5,13 @@ import javolution.util.FastList;
 import org.jetlang.core.Callback;
 
 import edu.gatech.grits.pancakes.core.Kernel;
-import edu.gatech.grits.pancakes.lang.*;
+import edu.gatech.grits.pancakes.lang.CoreChannel;
+import edu.gatech.grits.pancakes.lang.LocalPosePacket;
+import edu.gatech.grits.pancakes.lang.NetworkNeighbor;
+import edu.gatech.grits.pancakes.lang.NetworkNeighborPacket;
+import edu.gatech.grits.pancakes.lang.NetworkPacket;
+import edu.gatech.grits.pancakes.lang.Packet;
+import edu.gatech.grits.pancakes.lang.Task;
 import edu.gatech.grits.pancakes.service.NetworkService;
 
 /**

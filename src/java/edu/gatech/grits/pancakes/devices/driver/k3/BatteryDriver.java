@@ -6,7 +6,6 @@ import edu.gatech.grits.pancakes.devices.backend.Backend;
 import edu.gatech.grits.pancakes.devices.backend.K3Backend;
 import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
 import edu.gatech.grits.pancakes.lang.BatteryPacket;
-import edu.gatech.grits.pancakes.lang.Packet;
 
 public class BatteryDriver implements HardwareDriver<BatteryPacket> {
 

@@ -1,11 +1,8 @@
 package edu.gatech.grits.pancakes.devices.driver.player;
 
-import java.lang.Math;
-
 import javaclient2.Position2DInterface;
 import javaclient2.structures.PlayerConstants;
 import javaclient2.structures.PlayerPose;
-
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.devices.backend.Backend;
 import edu.gatech.grits.pancakes.devices.backend.PlayerBackend;

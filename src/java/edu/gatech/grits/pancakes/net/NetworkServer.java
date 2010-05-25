@@ -1,7 +1,10 @@
 package edu.gatech.grits.pancakes.net;
 
-import java.net.*;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;

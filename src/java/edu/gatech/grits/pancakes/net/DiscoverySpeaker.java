@@ -8,7 +8,6 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 
-import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.lang.Task;
 
 public class DiscoverySpeaker extends Task {

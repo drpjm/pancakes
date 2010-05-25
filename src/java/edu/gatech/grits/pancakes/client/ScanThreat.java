@@ -1,11 +1,10 @@
 package edu.gatech.grits.pancakes.client;
 
-import java.awt.geom.Point2D;                                                                                                                                     
-import java.awt.geom.Point2D.Float;                                                                                                                               
+import java.awt.geom.Point2D;
+
+import javolution.util.FastMap;
 
 import org.jetlang.core.Callback;
-
-import javolution.util.*;
 
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.lang.ControlPacket;
@@ -17,7 +16,6 @@ import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.PacketType;
 import edu.gatech.grits.pancakes.lang.Task;
 import edu.gatech.grits.pancakes.service.ClientService;
-import edu.gatech.grits.pancakes.util.Properties;
 
 public class ScanThreat extends Task {                                                                                                               
 

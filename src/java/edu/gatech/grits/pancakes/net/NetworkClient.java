@@ -1,7 +1,10 @@
 package edu.gatech.grits.pancakes.net;
 
-import java.net.*;
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.net.ConnectException;
+import java.net.Socket;
 
 import javolution.util.FastMap;
 
@@ -9,8 +12,8 @@ import org.jetlang.core.Callback;
 
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.lang.CoreChannel;
-import edu.gatech.grits.pancakes.lang.NetworkNeighborPacket;
 import edu.gatech.grits.pancakes.lang.NetworkNeighbor;
+import edu.gatech.grits.pancakes.lang.NetworkNeighborPacket;
 import edu.gatech.grits.pancakes.lang.NetworkPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.PacketType;

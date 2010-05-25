@@ -2,8 +2,7 @@ package edu.gatech.grits.pancakes.client.util;
 
 import java.awt.geom.Point2D;
 
-import javolution.util.*;
-
+import javolution.util.FastMap;
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.lang.LocalPosePacket;
 import edu.gatech.grits.pancakes.lang.MotorPacket;

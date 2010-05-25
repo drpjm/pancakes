@@ -9,10 +9,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import javolution.util.FastMap;
+
 import org.jetlang.fibers.Fiber;
 import org.jetlang.fibers.PoolFiberFactory;
-
-import javolution.util.FastMap;
 
 public class Scheduler {
 	

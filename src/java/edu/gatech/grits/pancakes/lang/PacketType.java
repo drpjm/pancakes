@@ -12,6 +12,7 @@ public class PacketType {
 	public static final String CONTROL = "control";
 	public static final String NEIGHBOR = "neighbor";
 	public static final String MOTION = "motion";
+	public static final String JOYSTICK = "joystick";
 
 	
 }

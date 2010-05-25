@@ -12,10 +12,8 @@ import edu.gatech.grits.pancakes.lang.NetworkNeighborPacket;
 import edu.gatech.grits.pancakes.lang.NetworkPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.PacketType;
-import edu.gatech.grits.pancakes.lang.SonarPacket;
 import edu.gatech.grits.pancakes.lang.Task;
 import edu.gatech.grits.pancakes.service.NetworkService;
-import edu.gatech.grits.pancakes.util.Properties;
 
 public class Monitor extends Task {
 	

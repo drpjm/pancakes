@@ -3,7 +3,6 @@ package edu.gatech.grits.pancakes.social.twitter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.Set;
 
 import edu.gatech.grits.pancakes.core.Kernel;
 
