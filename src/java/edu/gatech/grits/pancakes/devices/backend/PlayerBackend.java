@@ -27,7 +27,7 @@ public class PlayerBackend extends Backend {
 		handle.readAll();
 	}
 	
-	public void finalize() {
+	public void complete() {
 		handle.runThreaded(-1, -1);
 	}
 	

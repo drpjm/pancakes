@@ -5,6 +5,7 @@ import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.devices.BatteryDevice;
 import edu.gatech.grits.pancakes.devices.Device;
 import edu.gatech.grits.pancakes.devices.IRDevice;
+import edu.gatech.grits.pancakes.devices.JoystickDevice;
 import edu.gatech.grits.pancakes.devices.LocalPoseDevice;
 import edu.gatech.grits.pancakes.devices.MotionDevice;
 import edu.gatech.grits.pancakes.devices.MotorDevice;
@@ -27,6 +28,8 @@ public class DeviceService extends Service {
 
 		String backend = props.getBackend();
 
+		Kernel.syslog.debug("Initializing " + backend + " backend.");
+		
 		if(backend.equals("player"))
 			deviceBackend = new PlayerBackend(props.getBackendPort());
 
@@ -38,11 +41,13 @@ public class DeviceService extends Service {
 
 		if(backend.equals("empty"))
 			deviceBackend = new EmptyBackend();
+		
+		Kernel.syslog.debug("Finished initializing " + backend + " backend.");
 
 		buildDeviceRegistry(props);
 		
 		if(backend.equals("player"))
-			((PlayerBackend) deviceBackend).finalize();
+			((PlayerBackend) deviceBackend).complete();
 
 		for(String key : taskList()) {
 			scheduleTask(key);
@@ -80,6 +85,10 @@ public class DeviceService extends Service {
 			}
 			else if(currSensor.equals("motion")) {
 				addTask("motion", new MotionDevice(deviceBackend));
+			}
+			else if(currSensor.equals("joystick")) {
+				addTask("joystick", new JoystickDevice(deviceBackend));
+				Kernel.syslog.debug("Added joystick.");
 			}
 		}
 	}

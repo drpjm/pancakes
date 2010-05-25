@@ -6,6 +6,7 @@ import java.util.StringTokenizer;
 
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
+import edu.gatech.grits.pancakes.devices.backend.Backend;
 import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
 import edu.gatech.grits.pancakes.lang.CoreChannel;
 import edu.gatech.grits.pancakes.lang.JoystickPacket;
@@ -17,8 +18,14 @@ import gnu.io.SerialPortEventListener;
 
 public class JoystickDriver implements HardwareDriver<JoystickPacket> {
 	
-	public JoystickDriver() {
-		super();
+	public JoystickDriver(Backend backend) {
+		Kernel.syslog.debug("Loading joystick driver...");
+		try {
+			this.connect("/dev/ttyUSB0");
+			Kernel.syslog.debug("done.");
+		} catch (Exception e) {
+			Kernel.syslog.error("Unable to connect to serial joystick.");
+		}
 	}
 	
     public void connect ( String portName ) throws Exception
@@ -80,12 +87,12 @@ public class JoystickDriver implements HardwareDriver<JoystickPacket> {
                     }
                     buffer[len++] = (byte) data;
                 }
-                System.out.print(new String(buffer,0,len));
+                Kernel.syslog.debug(new String(buffer,0,len-1));
                 
                 // parse & publish
-                String output = new String(buffer,0,len);
+                String output = new String(buffer,0,len-1);
                 output.trim();
-                StringTokenizer st = new StringTokenizer(",");
+                StringTokenizer st = new StringTokenizer(output, ",");
                 if(st.countTokens() == 4) {
                 	JoystickPacket pkt = new JoystickPacket();
                 	pkt.setPositionX(Integer.parseInt(st.nextToken()));
@@ -94,7 +101,7 @@ public class JoystickDriver implements HardwareDriver<JoystickPacket> {
                 	pkt.setPushButton2(Integer.parseInt(st.nextToken()));
                 	
                 	try {
-						Kernel.stream.publish(CoreChannel.SYSCTRL, pkt);
+						Kernel.stream.publish(CoreChannel.SYSTEM, pkt);
 					} catch (CommunicationException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

@@ -2,6 +2,8 @@ package edu.gatech.grits.pancakes.devices.backend;
 
 import java.lang.reflect.Constructor;
 
+import edu.gatech.grits.pancakes.core.Kernel;
+
 public abstract class Backend {
 
 	private String backendType = null;
@@ -20,6 +22,7 @@ public abstract class Backend {
 	@SuppressWarnings("unchecked")
 	public Object getDriver(String driverName) {
 		try {
+			Kernel.syslog.debug("edu.gatech.grits.pancakes.devices.driver." + backendType + "." + driverName);
 			Class cls = Class.forName("edu.gatech.grits.pancakes.devices.driver." + backendType + "." + driverName);
 			Class partypes = Backend.class;
 	        Constructor ct = cls.getConstructor(partypes);
@@ -27,6 +30,7 @@ public abstract class Backend {
 	        return ct.newInstance(arglist);
 		} catch (Throwable e) {
 			//System.err.println(e);
+			Kernel.syslog.error("Unable to find driver.");
 			return null;
 		}
 	}

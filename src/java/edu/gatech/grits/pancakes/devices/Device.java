@@ -31,7 +31,10 @@ public abstract class Device<T> extends Task {
 			subscribe(channel, cbk);
 		}
 //		super(channel, delay);
-		driver = (HardwareDriver<T>) backend.getDriver(type + "Driver");		
+		driver = (HardwareDriver<T>) backend.getDriver(type + "Driver");
+		if(driver == null) {
+			Kernel.syslog.error("Failed to load " + type + " driver.");
+		}
 		device = type.toLowerCase();
 	}
 	
