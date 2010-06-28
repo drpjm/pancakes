@@ -87,7 +87,7 @@ public class JoystickDriver implements HardwareDriver<JoystickPacket> {
                     }
                     buffer[len++] = (byte) data;
                 }
-                Kernel.syslog.debug(new String(buffer,0,len-1));
+//                Kernel.syslog.debug(new String(buffer,0,len-1));
                 
                 // parse & publish
                 String output = new String(buffer,0,len-1);

@@ -75,13 +75,31 @@ public class JoystickNetworkControl extends Task {
 		//Kernel.syslog.debug("Firing!");
 		for(String id : neighborIDs) {
 			NetworkPacket pkt = new NetworkPacket(Kernel.id, id);
-			pkt.addPacket(jsPkt);
+			pkt.addPacket(packit());
 			try {
 				Kernel.stream.publish(CoreChannel.NETWORK, pkt);
 			} catch (CommunicationException e) {
 				Kernel.syslog.error("Unable to send packet to agent (" + id + ").");
 			}
 		}
+	}
+	
+	private MotorPacket packit() {
+		MotorPacket pkt = new MotorPacket();
+		if(jsPkt != null) {
+			int x = (int) jsPkt.getPositionX();
+			int y = (int) jsPkt.getPositionY();
+			int b1 = (int) jsPkt.getPushButton1();
+			int b2 = (int) jsPkt.getPushButton2();
+			
+			if((x > -1 && x < 170) && (y > -1 && y < 170)) {
+				
+				//pkt = new MotorPacket();
+				pkt.setVelocity(-0.3f*((float) (x-67))/(160-67));
+				pkt.setRotationalVelocity(-0.9f*((float) (y-71)/(165-71)));
+			}
+		}
+		return pkt;
 	}
 	
 	public void control() {
