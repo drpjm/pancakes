@@ -15,7 +15,7 @@ public class JoystickControl extends Task {
 	private volatile JoystickPacket jsPkt = null;
 	
 	public JoystickControl() {
-		setDelay(100);
+		setDelay(200);
 		Callback<Packet> jsCbk = new Callback<Packet>() {
 			
 			public void onMessage(Packet message) {
@@ -47,11 +47,11 @@ public class JoystickControl extends Task {
 			if((x > -1 && x < 170) && (y > -1 && y < 170)) {
 				
 				MotorPacket pkt = new MotorPacket();
-				pkt.setVelocity(-1.0f*((float) (x-67))/(160-67));
-				pkt.setRotationalVelocity(-1.0f*((float) (y-71)/(165-71)));
+				pkt.setVelocity(-0.3f*((float) (x-67))/(160-67));
+				pkt.setRotationalVelocity(-0.9f*((float) (y-71)/(165-71)));
 				
 				try {
-					Kernel.stream.publish(CoreChannel.CTRL, pkt);
+					Kernel.stream.publish(CoreChannel.SYSTEM, pkt);
 				} catch (CommunicationException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
