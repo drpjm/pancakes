@@ -57,7 +57,7 @@ public class Scheduler {
 	
 	public final synchronized void schedule(Runnable r, long delay) throws SchedulingException {
 		if(!taskList.keySet().contains(r)) {
-			taskList.put(r, scheduler.scheduleAtFixedRate(r, 0, delay, stdTimeUnit));
+			taskList.put(r, scheduler.scheduleAtFixedRate(r, 100, delay, stdTimeUnit));
 		} else {
 			throw new SchedulingException("Task has already been previously scheduled.");
 		}

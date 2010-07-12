@@ -1,35 +1,31 @@
 package edu.gatech.grits.pancakes.devices.driver.empty;
 
+import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.devices.backend.Backend;
-import edu.gatech.grits.pancakes.devices.backend.EmptyBackend;
 import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
+import edu.gatech.grits.pancakes.devices.driver.net.ViconRTEDriver;
 import edu.gatech.grits.pancakes.lang.LocalPosePacket;
 
 public class LocalPoseDriver implements HardwareDriver<LocalPosePacket> {
-
-	private EmptyBackend backend;
 	
-	public LocalPoseDriver(Backend backend){
-		this.backend = (EmptyBackend)backend;
+	private ViconRTEDriver device;
+	
+	public LocalPoseDriver(Backend backend) {
+		device = new ViconRTEDriver(1026, new Integer(Kernel.id)); // TODO ID needs to be properly passed here
 	}
 	
-	@Override
-	public void close() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public LocalPosePacket query() {
-		LocalPosePacket newPkt = new LocalPosePacket();
-		newPkt.setPose(0, 0, 0);
-		return newPkt;
-	}
-
-	@Override
 	public void request(LocalPosePacket pkt) {
-		// TODO Auto-generated method stub
-		
+		// returns nothing, since it's not an actuator
+		return;
 	}
-
+	
+	public LocalPosePacket query() {
+		return device.query();
+	}
+	
+	public void close() {
+		device.close();
+	}
+	
+	
 }

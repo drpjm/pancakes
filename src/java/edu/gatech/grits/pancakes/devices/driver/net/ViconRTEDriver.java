@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
+import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.devices.driver.NetworkDriver;
 import edu.gatech.grits.pancakes.lang.LocalPosePacket;
 
@@ -94,6 +95,7 @@ public class ViconRTEDriver implements NetworkDriver<LocalPosePacket> {
 //		System.out.println("Received ID: " + tokens[0]);
 		
 		if( (new Integer(ID)).equals(Integer.valueOf(tokens[0])) ) {
+//			Kernel.syslog.debug("Received '" + msg +"' from Vicon.");
 			data = msg;
 		}
 	}
