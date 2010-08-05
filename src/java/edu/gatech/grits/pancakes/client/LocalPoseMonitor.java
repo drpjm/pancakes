@@ -74,7 +74,7 @@ public class LocalPoseMonitor extends Task {
 //		Kernel.syslog.debug("Sending current pose to " + neighborIds.size() + " neighbor(s)");
 		for(String id : neighborIds){
 			NetworkPacket out = new NetworkPacket(Kernel.id, id);
-			out.addPacket(currLocalPose);
+			out.addPayloadPacket(currLocalPose);
 			publish(CoreChannel.NETWORK, out);
 		}
 

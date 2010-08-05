@@ -24,7 +24,7 @@ public class DiscoverySpeaker extends Task {
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
-		BROADCAST = hostname + ":" + id + ":" + network_port;
+		BROADCAST = "<" + hostname + ":" + id + ":" + network_port + ">";
 	}
 	
 	public void run() {

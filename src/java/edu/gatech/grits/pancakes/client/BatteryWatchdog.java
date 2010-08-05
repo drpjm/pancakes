@@ -3,6 +3,7 @@ package edu.gatech.grits.pancakes.client;
 import org.jetlang.core.Callback;
 
 import edu.gatech.grits.pancakes.core.Kernel;
+import edu.gatech.grits.pancakes.core.Syslog;
 import edu.gatech.grits.pancakes.lang.BatteryPacket;
 import edu.gatech.grits.pancakes.lang.ControlPacket;
 import edu.gatech.grits.pancakes.lang.CoreChannel;
@@ -39,19 +40,19 @@ public class BatteryWatchdog extends Task {
 						Kernel.syslog.debug("Battery threshold: MED");
 //						HIGH_LEVEL -= 0.5f;
 						localPoseDelay = 500l;
-						publish(CoreChannel.SYSCTRL, new ControlPacket("device", ControlPacket.RESCHEDULE, 
-									"localpose", localPoseDelay));
-						// slow down neighbor updates
-						publish(CoreChannel.SYSCTRL, new ControlPacket("client", ControlPacket.RESCHEDULE, 
-									LocalPoseShare.class.getSimpleName().toLowerCase(), 500l));
-						
-						publish(ClientService.BATTERY_UPDATE, new ControlPacket(getClass().getSimpleName(), "MED", ""));
+//						publish(CoreChannel.SYSCTRL, new ControlPacket("device", ControlPacket.RESCHEDULE, 
+//									"localpose", localPoseDelay));
+//						// slow down neighbor updates
+//						publish(CoreChannel.SYSCTRL, new ControlPacket("client", ControlPacket.RESCHEDULE, 
+//									LocalPoseShare.class.getSimpleName().toLowerCase(), 500l));
+//						
+//						publish(ClientService.BATTERY_UPDATE, new ControlPacket(getClass().getSimpleName(), "MED", ""));
 //						switched = true;
 					}
 					else if(!isLow && level < MED_LEVEL && level > LOW_LEVEL ){
 						isLow = true;
 						Kernel.syslog.debug("Battery threshold: LOW");
-						publish(ClientService.BATTERY_UPDATE, new ControlPacket(getClass().getSimpleName(), "LOW", ""));
+//						publish(ClientService.BATTERY_UPDATE, new ControlPacket(getClass().getSimpleName(), "LOW", ""));
 					}
 //					else{
 //						Kernel.syslog.debug("Battery is WAY LOW!");

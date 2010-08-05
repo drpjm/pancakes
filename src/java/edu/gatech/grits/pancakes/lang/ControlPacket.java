@@ -1,40 +1,52 @@
 package edu.gatech.grits.pancakes.lang;
 
-// TODO: this class needs a lot of work!
+import edu.gatech.grits.pancakes.service.ControlOption;
+
+/**
+ * This class provides the necessary data to send control signals to the Services
+ * or Tasks running on the deployed system.
+ * 
+ * @author patrickmartin
+ *
+ */
 public class ControlPacket extends Packet {
 	
 	private static final long serialVersionUID = 1761628700970106348L;
-	private final String control;
-	private final String taskName;
+	private final ControlOption ctrlOpt;
+	private final String componentToControl;
+	private final String reqComponent;
 	private final long delay;
 	
-	public static final String RESCHEDULE = "reschedule";
-	public static final String CANCEL = "cancel";
-
-	public ControlPacket(String serviceName, String ctrl, String taskToSchedule) {
-		super(serviceName);
-		control = ctrl;
-		taskName = taskToSchedule;
-		delay = 0l;
+	public ControlPacket(ControlOption ctrl, String targetComponent, String reqComponent) {
+		super("control");
+		this.ctrlOpt = ctrl;
+		this.componentToControl = targetComponent;
+		this.reqComponent = reqComponent;
+		this.delay = 0l;
 	}
 	
-	public ControlPacket(String serviceName, String ctrl, String taskToSchedule, long newDelay) {
-		super(serviceName);
-		control = ctrl;
-		taskName = taskToSchedule;
-		delay = newDelay;
+	public ControlPacket(ControlOption ctrl, String targetComponent, String reqComponent, long newDelay) {
+		super("control");
+		this.ctrlOpt = ctrl;
+		this.componentToControl = targetComponent;
+		this.reqComponent = reqComponent;
+		this.delay = newDelay;
 	}
 	
-	public final String getControl() {
-		return control;
+	public final ControlOption getControl() {
+		return ctrlOpt;
 	}
 	
 	public final long getDelay() {
 		return delay;
 	}
 
-	public final String getTaskName() {
-		return taskName;
+	public final String getComponentToControl() {
+		return componentToControl;
+	}
+
+	public String getReqComponent() {
+		return reqComponent;
 	}
 
 }

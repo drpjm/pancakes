@@ -53,7 +53,7 @@ public class JoystickNetworkControl extends Task {
 					jsPkt = (JoystickPacket) message;
 					//System.out.println("Got joystick!");
 				} else if(message instanceof NetworkPacket) {
-					jsPkt = (JoystickPacket) ((NetworkPacket) message).getPackets().getFirst();
+					jsPkt = (JoystickPacket) ((NetworkPacket) message).getPayloadPackets().getFirst();
 					control();
 				}
 			}
@@ -75,7 +75,7 @@ public class JoystickNetworkControl extends Task {
 		//Kernel.syslog.debug("Firing!");
 		for(String id : neighborIDs) {
 			NetworkPacket pkt = new NetworkPacket(Kernel.id, id);
-			pkt.addPacket(packit());
+			pkt.addPayloadPacket(packit());
 			try {
 				Kernel.stream.publish(CoreChannel.NETWORK, pkt);
 			} catch (CommunicationException e) {

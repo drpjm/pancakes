@@ -8,10 +8,7 @@ import org.jetlang.fibers.Fiber;
 
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
-import edu.gatech.grits.pancakes.lang.CoreChannel;
-import edu.gatech.grits.pancakes.lang.LogPacket;
-import edu.gatech.grits.pancakes.lang.Packet;
-import edu.gatech.grits.pancakes.lang.Subscription;
+import edu.gatech.grits.pancakes.lang.*;
 
 public class Log4jService extends Service {
 
@@ -19,7 +16,7 @@ public class Log4jService extends Service {
 	private final Subscription subscription;
 	
 	public Log4jService() {
-		super("log4j");
+		super(Log4jService.class.getSimpleName());
 		PropertyConfigurator.configure(CFG_FILE);
 		Fiber fiber = Kernel.scheduler.newFiber();
 		fiber.start();
@@ -44,8 +41,21 @@ public class Log4jService extends Service {
 	}
 
 	@Override
-	public void process(Packet pkt) {
+	protected void restartService() {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	protected void stopService() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void startTask(String taskName) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

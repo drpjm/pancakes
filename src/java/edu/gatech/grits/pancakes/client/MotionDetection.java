@@ -21,7 +21,7 @@ public class MotionDetection extends Task {
 	private long lastUpdate = System.currentTimeMillis();
 	private long timeout = 2000l;
 	private LocalPosePacket currLocation = null;
-	
+
 	public void close() {
 		// TODO Auto-generated method stub
 		unsubscribe();
@@ -31,39 +31,52 @@ public class MotionDetection extends Task {
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	public MotionDetection() {
 		setDelay(0l);
-		
-		Callback<Packet> callback = new Callback<Packet>() {
+
+		Callback<Packet> sysCbk = new Callback<Packet>() {
 			public void onMessage(Packet message) {
-				if(message instanceof MotionPacket) {
+
+				message.debug();
 				
-					MotionPacket pkt = (MotionPacket) message;
-					pkt.debug();
+				if(message instanceof MotionPacket) {
+
+					MotionPacket motionPkt = (MotionPacket) message;
+					//					pkt.debug();
 					if(System.currentTimeMillis() > lastUpdate + timeout) {
-						synchronized(this) {
-							if(currLocation != null) {
-								for(String id : neighborIds) {
-									NetworkPacket net = new NetworkPacket(Kernel.id, id);
-									net.addPacket(currLocation);
-									publish(CoreChannel.NETWORK, net);
-									System.out.println("*** Sent motion update! ***");
-								}
+
+//						Kernel.syslog.record(motionPkt);
+//						Kernel.syslog.debug("Motion detected @ " + currLocation);
+//						Kernel.syslog.debug(motionPkt.toString());
+						
+						if(currLocation != null) {
+							for(String id : neighborIds) {
+								NetworkPacket net = new NetworkPacket(Kernel.id, id);
+								net.addPayloadPacket(currLocation);
+								publish(CoreChannel.NETWORK, net);
+								
+								Kernel.syslog.debug("*** Sent motion update! ***");
+								Kernel.syslog.record(currLocation);
 							}
 						}
 						lastUpdate = System.currentTimeMillis();
 					}
-				} else if(message instanceof LocalPosePacket) {
+				} 
+				else if(message instanceof LocalPosePacket) {
+
+//					Kernel.syslog.debug("*** I have a new location! ***");
+					
 					LocalPosePacket pkt = (LocalPosePacket) message;
 					synchronized(this) {
 						currLocation = pkt;
-						System.out.println("*** I have a new location! ***");
 					}
+					
 				}
 			}
 		};
-		
+		subscribe(CoreChannel.SYSTEM, sysCbk);
+
 		Callback<Packet> neighborCbk = new Callback<Packet>(){
 
 			public void onMessage(Packet message) {
@@ -85,15 +98,14 @@ public class MotionDetection extends Task {
 						}
 					}
 				}
-				
+
 			}
 		};
-		
-		
+
+
 		subscribe(NetworkService.NEIGHBORHOOD, neighborCbk);
-		subscribe(CoreChannel.SYSTEM, callback);
-		
-		System.out.println("Ready to detect motion!");
+
+		//		Kernel.syslog.debug("Ready to detect motion!");
 	}
 
 }

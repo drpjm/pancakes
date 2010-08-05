@@ -1,14 +1,8 @@
 package edu.gatech.grits.pancakes.service;
 
+import edu.gatech.grits.pancakes.net.*;
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Scheduler.SchedulingException;
-import edu.gatech.grits.pancakes.lang.ControlPacket;
-import edu.gatech.grits.pancakes.lang.Packet;
-import edu.gatech.grits.pancakes.lang.Task;
-import edu.gatech.grits.pancakes.net.DiscoveryListener;
-import edu.gatech.grits.pancakes.net.DiscoverySpeaker;
-import edu.gatech.grits.pancakes.net.NetworkClient;
-import edu.gatech.grits.pancakes.net.NetworkServer;
 import edu.gatech.grits.pancakes.util.Properties;
 
 public class NetworkService extends Service {
@@ -17,14 +11,19 @@ public class NetworkService extends Service {
 	private NetworkClient client;
 	private DiscoveryListener listener;
 	private DiscoverySpeaker speaker;
+	//TODO: make the migrator an optional task...from property file
+	private TaskMigrator taskMigrator;
 	
 	public static final String NEIGHBORHOOD = "neighborhood";
+	public static final String MIGRATE = "migrate";
 	
 	public NetworkService(Properties properties) {
-		super("network");
+		super(NetworkService.class.getSimpleName());
 		
 		// make channel for passing neighbor information
 		Kernel.stream.createChannel(NEIGHBORHOOD);
+		// make channel for initiating task migration
+		Kernel.stream.createChannel(MIGRATE);
 		
 		client = new NetworkClient();
 		server = new NetworkServer(properties.getNetworkPort());
@@ -32,10 +31,15 @@ public class NetworkService extends Service {
 		
 		listener = new DiscoveryListener();
 		speaker = new DiscoverySpeaker(properties.getNetworkAddress(), properties.getNetworkPort(), properties.getID());		
-
-		addTask("speaker", speaker);
-		addTask("listener", listener);
-		addTask("client", client);
+		
+		// TODO: add migrator only if it is in property file
+		taskMigrator = new TaskMigrator();
+		
+		addTask(speaker.getClass().getSimpleName(), speaker);
+		addTask(listener.getClass().getSimpleName(), listener);
+		addTask(client.getClass().getSimpleName(), client);
+		
+		addTask(taskMigrator.getClass().getSimpleName(), taskMigrator);
 
 		for(String key : taskList()) {
 			scheduleTask(key);
@@ -60,17 +64,21 @@ public class NetworkService extends Service {
 	}
 
 	@Override
-	public void process(Packet pkt) {
-		
-		ControlPacket ctrlPkt = (ControlPacket) pkt;
-		Task t = (Task) getTask(ctrlPkt.getTaskName());
-		
-		if(t != null){
-			if(ctrlPkt.getControl().equals(ControlPacket.RESCHEDULE)) {
-				Kernel.syslog.debug("Reschedule " + t.getClass().getSimpleName() + ": " + ctrlPkt.getDelay());
-				rescheduleTask(ctrlPkt.getTaskName(), ctrlPkt.getDelay());
-			}
-		}
+	protected void restartService() {
+		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	protected void stopService() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void startTask(String taskName) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -40,6 +40,7 @@ public abstract class Device<T> extends Task {
 	
 	public final void run() {
 		try {
+			// TODO: only run if we have a delay > 0
 			Kernel.stream.publish(CoreChannel.SYSTEM, (Packet) driver.query());
 		} catch (CommunicationException e) {
 			// TODO Auto-generated catch block

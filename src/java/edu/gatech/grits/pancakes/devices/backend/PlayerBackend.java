@@ -12,6 +12,7 @@ public class PlayerBackend extends Backend {
 		
 		handle = new PlayerClient("127.0.0.1", port);
 		
+		// TODO: move to the finalize() method!
 		handle.requestDataDeliveryMode(PlayerConstants.PLAYER_DATAMODE_PULL);
 		handle.readAll();
 		handle.requestAddReplaceRule(-1, -1, PlayerConstants.PLAYER_MSGTYPE_DATA, -1, 1);

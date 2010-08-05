@@ -12,11 +12,13 @@ import javolution.util.FastList;
 
 public class Properties {
 	
-	private final String CFG_LOC = "/cfg/";
+	private String cfgLoc;
 
 	private HashMap<String, String> propertyTable = null;
 	
 	public Properties(String fileName) {
+		String fileSep = System.getProperty("file.separator");
+		cfgLoc = fileSep + "cfg" + fileSep;
 		if(fileName.endsWith(".props"))
 			this.loadFromPlainText(fileName);
 		else
@@ -67,7 +69,7 @@ public class Properties {
 	
 	private final String getPathToFile(String fileName){
 		String rootName = System.getProperty("user.dir");
-		return rootName + this.CFG_LOC + fileName;
+		return rootName + this.cfgLoc + fileName;
 	}
 
 	// accessors
@@ -161,5 +163,15 @@ public class Properties {
 	
 	public String getTwitterPasswd() {
 		return propertyTable.get("service.twitter.password");
+	}
+	
+	// Home location
+	public float[] getHomeLocation(){
+		String homeLoc = propertyTable.get("kernel.homeloc");
+		String[] stringLocs = homeLoc.split(",");
+		
+		float[] locs = { Float.parseFloat(stringLocs[0]), Float.parseFloat(stringLocs[1]) };
+		return locs;
+		
 	}
 }

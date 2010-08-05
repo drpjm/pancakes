@@ -19,9 +19,9 @@ import edu.gatech.grits.pancakes.lang.Task;
 import edu.gatech.grits.pancakes.service.ClientService;
 import edu.gatech.grits.pancakes.util.Properties;
 
-public class ScanThreat extends Task {                                                                                                               
+public class Encircle extends Task {                                                                                                               
 
-	private static String BUG_ID = "32";
+	private static String BUG = "32";
 	
 	private float radius = 55.0f;	// k3
 	//	private float radius = 4f;	// player
@@ -41,28 +41,29 @@ public class ScanThreat extends Task {
 	private long lastUpdate;
 	private final long TIMEOUT = 5000l;
 
-	public ScanThreat() {
+	public Encircle() {
+		
 		setDelay(0l);
-		//		switched = false;
-		neighborPoints = new FastMap<String, Point2D.Float>();
-
 		getRequiredDevices().add("localpose");
 		getRequiredDevices().add("motor");
+
+		neighborPoints = new FastMap<String, Point2D.Float>();
 
 		Callback<Packet> cbk = new Callback<Packet>(){
 
 			public void onMessage(Packet pkt) {
 
-//				Kernel.syslog.debug("Got message: " + pkt.getPacketType());
+				Kernel.syslog.debug("Got message: " + pkt.getPacketType());
 				
 				// new neighbor update!
 				if(pkt.getPacketType().equals(PacketType.NETWORK)){
+					
 					NetworkPacket np = (NetworkPacket) pkt;
-					//					Kernel.syslog.debug(np.getSource());
-					if(np.getSource().equals(BUG_ID)) {
+					Kernel.syslog.debug(np.getSource());
+					if(np.getSource().equals(BUG)) {
 						
 						updateCenter((LocalPosePacket) np.getPayloadPackets().getFirst());
-//						Kernel.syslog.record((LocalPosePacket) np.getPayloadPackets().getFirst(), BUG);
+						Kernel.syslog.record((LocalPosePacket) np.getPayloadPackets().getFirst(), BUG);
 						
 					} else {	
 						
@@ -75,23 +76,17 @@ public class ScanThreat extends Task {
 							//						Kernel.syslog.debug("Update time " + lastUpdate);
 						}
 
-						// change values if our neighbor switched too...
-//						if(np.getPayloadPackets().getFirst().getPacketType().equals(LocalPoseShare.SWITCH)){
-//							radius = 35.0f;
-//							maxVel = 0.04f;
-//							circGain = 3f;
-//						}
 					}
 				}
-				// execute tracking algorithm
+				// execute algorithm
 				else if(pkt.getPacketType().equals(PacketType.LOCAL_POSE)) {
 
 					LocalPosePacket localData = (LocalPosePacket) pkt;
+					Kernel.syslog.debug(localData.getPositionX() + ", " + localData.getPositionY());
 					
 					if(localData.getPositionX() != 0 && localData.getPositionY() != 0 && localData.getTheta() != 0 && center.x != 0.0f && center.y != 0.0f){
 
-						// record current position
-						Kernel.syslog.record(localData);
+//						Kernel.syslog.record(localData);
 
 						float k;
 						float v = maxVel;
@@ -140,7 +135,6 @@ public class ScanThreat extends Task {
 		};
 		subscribe(CoreChannel.SYSTEM, cbk);
 
-		
 	}
 
 	private final Point2D.Float rotate(Point2D.Float vec, float angle){
@@ -165,46 +159,7 @@ public class ScanThreat extends Task {
 
 	}
 
-//	private final MotorPacket goToGoal(LocalPosePacket localPose){
-//
-//		MotorPacket mp = new MotorPacket();
-//
-//		float xPos = localPose.getPositionX();
-//		float yPos = localPose.getPositionY();
-//		float theta = localPose.getTheta();
-//
-//		float diffX = (float) (goal.getX() - xPos);
-//		float diffY = (float) (goal.getY() - yPos);
-//		float distance = (float) Math.sqrt(diffX*diffX + diffY*diffY);
-//
-//		float targetTheta = (float) Math.atan2(diffY, diffX);
-//		float omega = targetTheta - theta;
-//
-//		float vel = 0;
-//		float rotation = omega;
-//
-//		if( Math.abs(omega) <  (float) (Math.PI/8) ){
-//			float velCalc = distance / 100f;
-//			if( Math.abs(velCalc) < maxVel ){
-//				vel = velCalc;
-//			}
-//			else {
-//				vel = maxVel;
-//			}
-//		}
-//
-//		if( omega < -maxRotation){
-//			omega = -maxRotation;
-//		}
-//		else if(omega > maxRotation){
-//			omega = maxRotation;
-//		}
-//
-//		mp.setVelocity(vel);
-//		mp.setRotationalVelocity(rotation);
-//		return mp;
-//
-//	}
+
 
 	private final float spacingController(float currVel, LocalPosePacket localPose, FastMap<String, Point2D.Float> neighborPoints){
 		float newVel = currVel;
@@ -258,8 +213,8 @@ public class ScanThreat extends Task {
 		return newVel;
 	}
 
-	private final void updateCenter(LocalPosePacket t) {
-		Point2D.Float target = new Point2D.Float(t.getPositionX(), t.getPositionY());
+	private final void updateCenter(final LocalPosePacket targ) {
+		Point2D.Float target = new Point2D.Float(targ.getPositionX(), targ.getPositionY());
 		if(target.x > (center.x + 10.0f) || target.x < (center.x - 10.0f)) {
 			Kernel.syslog.debug("*** Received a new target! ***");
 			center = target;

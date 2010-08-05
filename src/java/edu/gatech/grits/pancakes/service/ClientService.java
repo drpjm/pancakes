@@ -1,44 +1,32 @@
 package edu.gatech.grits.pancakes.service;
 
+import java.io.File;
+
 import javolution.util.FastList;
 import edu.gatech.grits.pancakes.core.Kernel;
-import edu.gatech.grits.pancakes.lang.ControlPacket;
-import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.Task;
+import edu.gatech.grits.pancakes.util.ClassFinder;
 import edu.gatech.grits.pancakes.util.Properties;
 
 public class ClientService extends Service {
 
-	private final String CLASSPATH = "edu.gatech.grits.pancakes.client";
-	public final static String BATTERY_UPDATE = "battery_update";
-
+	private final String CLIENT_CLASSPATH = "edu.gatech.grits.pancakes.client";
+//	private final ClassFinder classFinder;
 
 	public ClientService(Properties properties) {
-		super("Client");
+		super(ClientService.class.getSimpleName());
 
-		Kernel.stream.createChannel(BATTERY_UPDATE);
-		
 		FastList<String> tasks = properties.getClientTasks();
+//		classFinder = new ClassFinder(CLIENT_CLASSPATH);
+
+		
+		// TODO: get client task prop files and load their details
 
 		// search in file name list
 		for(String taskName : tasks){
-			try {
-				Kernel.syslog.debug(CLASSPATH + "." + taskName);
-				Task t = (Task) Class.forName(CLASSPATH + "." + taskName).newInstance();
-				addTask(taskName.toLowerCase(), t);
-				scheduleTask(taskName.toLowerCase());
-				Kernel.syslog.debug(taskName + " task started.");
-
-			} catch (InstantiationException e) {
-				Kernel.syslog.error(taskName + " not instantiated!");
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				Kernel.syslog.error(taskName + " task not found! Skipping.");
+			if(!taskName.isEmpty()){
+				startTask(taskName);
 			}
-
 		}
 	}
 
@@ -49,25 +37,39 @@ public class ClientService extends Service {
 	}
 
 	@Override
-	public void process(Packet pkt) {
-		if(pkt instanceof ControlPacket){
-			ControlPacket ctrlPkt = (ControlPacket)pkt;
-			if(ctrlPkt.getPacketType().equals("client")){
-				
-				Task t = (Task) getTask(ctrlPkt.getTaskName());
-				if(t != null){
-					if(ctrlPkt.getControl().equals(ControlPacket.RESCHEDULE)){
-						Kernel.syslog.debug("Reschedule " + t.getClass().getSimpleName());
-						rescheduleTask(ctrlPkt.getTaskName(), ctrlPkt.getDelay());
-					}
-					else if(ctrlPkt.getControl().equals(ControlPacket.CANCEL)){
-						Kernel.syslog.debug("Cancel " + t.getClass().getSimpleName());
-						removeTask(ctrlPkt.getTaskName());
-					}
-				}
-			}
-		}
-
+	protected void restartService() {
+		// TODO Auto-generated method stub
+		
 	}
+
+	@Override
+	protected void stopService() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void startTask(String taskName) {
+		Task t;
+		try {
+//			String qualifiedName = classFinder.findQualifiedClassname(taskName);
+			
+			t = (Task) Class.forName(CLIENT_CLASSPATH + "." + taskName).newInstance();
+			// TODO: new constructor calls using task properties
+			addTask(t.getClass().getSimpleName(), t);
+			scheduleTask(t.getClass().getSimpleName());
+			Kernel.syslog.debug(taskName + " task started.");
+			
+		} catch (InstantiationException e) {
+			Kernel.syslog.error(taskName + " not instantiated!");
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			Kernel.syslog.error(taskName + " task not found! Skipping.");
+		}
+	}
+	
 
 }

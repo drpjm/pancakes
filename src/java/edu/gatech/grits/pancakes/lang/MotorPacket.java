@@ -14,6 +14,14 @@ public class MotorPacket extends Packet { /**
 	
 	public MotorPacket() {
 		super(PacketType.MOTOR);
+		setVelocity(0);
+		setRotationalVelocity(0);
+	}
+	
+	public MotorPacket(float vel, float rotateVel){
+		this();
+		setVelocity(vel);
+		setRotationalVelocity(rotateVel);
 	}
 	
 	public final float getVelocity() {

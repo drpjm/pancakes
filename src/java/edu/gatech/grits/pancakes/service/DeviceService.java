@@ -1,20 +1,11 @@
 package edu.gatech.grits.pancakes.service;
 
 import javolution.util.FastList;
+import javolution.util.FastMap;
+
 import edu.gatech.grits.pancakes.core.Kernel;
-import edu.gatech.grits.pancakes.devices.BatteryDevice;
-import edu.gatech.grits.pancakes.devices.Device;
-import edu.gatech.grits.pancakes.devices.IRDevice;
-import edu.gatech.grits.pancakes.devices.JoystickDevice;
-import edu.gatech.grits.pancakes.devices.LocalPoseDevice;
-import edu.gatech.grits.pancakes.devices.MotionDevice;
-import edu.gatech.grits.pancakes.devices.MotorDevice;
-import edu.gatech.grits.pancakes.devices.SonarDevice;
-import edu.gatech.grits.pancakes.devices.backend.Backend;
-import edu.gatech.grits.pancakes.devices.backend.BugBackend;
-import edu.gatech.grits.pancakes.devices.backend.EmptyBackend;
-import edu.gatech.grits.pancakes.devices.backend.K3Backend;
-import edu.gatech.grits.pancakes.devices.backend.PlayerBackend;
+import edu.gatech.grits.pancakes.devices.*;
+import edu.gatech.grits.pancakes.devices.backend.*;
 import edu.gatech.grits.pancakes.lang.ControlPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.util.Properties;
@@ -22,30 +13,32 @@ import edu.gatech.grits.pancakes.util.Properties;
 public class DeviceService extends Service {
 
 	private Backend deviceBackend;
+	private FastMap<String, Long> deviceProps;
 
 	public DeviceService(Properties props) {
-		super("devices");
+		super(DeviceService.class.getSimpleName());
 
 		String backend = props.getBackend();
 
-		Kernel.syslog.debug("Initializing " + backend + " backend.");
-		
 		if(backend.equals("player"))
 			deviceBackend = new PlayerBackend(props.getBackendPort());
 
 		if(backend.equals("k3"))
 			deviceBackend = new K3Backend();
-		
+
 		if(backend.equals("bug"))
 			deviceBackend = new BugBackend();
 
 		if(backend.equals("empty"))
 			deviceBackend = new EmptyBackend();
-		
-		Kernel.syslog.debug("Finished initializing " + backend + " backend.");
 
-		buildDeviceRegistry(props);
-		
+		// initialize the device properties
+		deviceProps = new FastMap<String,Long>();
+		for(String s : props.getDevices()){
+			deviceProps.put(s, props.getDelayOf(s.toLowerCase()));
+		}
+		buildDeviceRegistry();
+
 		if(backend.equals("player"))
 			((PlayerBackend) deviceBackend).complete();
 
@@ -55,68 +48,66 @@ public class DeviceService extends Service {
 
 	}
 
-	public void buildDeviceRegistry(Properties props) {
+	public void buildDeviceRegistry() {
 
-		FastList<String> devices = props.getDevices();
-		for(String s : devices){
+		for(FastMap.Entry<String, Long> entry = deviceProps.head(), end = deviceProps.tail(); (entry = entry.getNext()) != end;){
 
-			if(deviceBackend.getBackendType().equals("player")) {
+			if(deviceBackend.getClass().getSimpleName().equals(PlayerBackend.class.getSimpleName())){
 				((PlayerBackend) deviceBackend).update();
 			}
 
-			String currSensor = s.toLowerCase();
-			Long deviceDelay = props.getDelayOf(currSensor);
-			Kernel.syslog.debug("Adding device: " + s + " with delay " + deviceDelay);
+			String currDevice = entry.getKey();
+			Long deviceDelay = entry.getValue();
+			Kernel.syslog.debug("Adding device: " + currDevice + " with delay " + deviceDelay);
 
-			if(currSensor.equals("sonar")){
-				addTask("sonar", new SonarDevice(deviceBackend, deviceDelay.longValue()));
+			// TODO: need to ditch hard coding the names here...
+			if(currDevice.equals("sonar")){
+				addTask(SonarDevice.class.getSimpleName(), new SonarDevice(deviceBackend, deviceDelay.longValue()));
 			}
-			else if(currSensor.equals("ir")){
-				addTask("ir", new IRDevice(deviceBackend, deviceDelay.longValue()));
+			else if(currDevice.equals("ir")){
+				addTask(IRDevice.class.getSimpleName(), new IRDevice(deviceBackend, deviceDelay.longValue()));
 			}
-			else if(currSensor.equals("localpose")){
-				addTask("localpose", new LocalPoseDevice(deviceBackend, deviceDelay.longValue()));
+			else if(currDevice.equals("localpose")){
+				addTask(LocalPoseDevice.class.getSimpleName(), new LocalPoseDevice(deviceBackend, deviceDelay.longValue()));
 			}
-			else if(currSensor.equals("battery")){
-				addTask("battery", new BatteryDevice(deviceBackend, deviceDelay.longValue()));
+			else if(currDevice.equals("battery")){
+				addTask(BatteryDevice.class.getSimpleName(), new BatteryDevice(deviceBackend, deviceDelay.longValue()));
 			}
-			else if(currSensor.equals("motor")){
-				addTask("motor", new MotorDevice(deviceBackend));
+			else if(currDevice.equals("motor")){
+				addTask(MotorDevice.class.getSimpleName(), new MotorDevice(deviceBackend));
 			}
-			else if(currSensor.equals("motion")) {
-				addTask("motion", new MotionDevice(deviceBackend));
-			}
-			else if(currSensor.equals("joystick")) {
-				addTask("joystick", new JoystickDevice(deviceBackend));
-				Kernel.syslog.debug("Added joystick.");
+			else if(currDevice.equals("motion")) {
+				addTask(MotionDevice.class.getSimpleName(), new MotionDevice(deviceBackend));
 			}
 		}
 	}
 
+	// TODO: need to improve the closing interface - should be more like a system termination
 	public void close() {
 		deviceBackend.close();
 		for(String key : taskList()) {
 			removeTask(key);
 		}
+		unsubscribe();
 	}
 
 	@Override
-	public void process(Packet pkt) {
-
-		if(pkt instanceof ControlPacket){
-			ControlPacket ctrlPkt = (ControlPacket) pkt;
-			if(ctrlPkt.getPacketType().equals("device")){
-				Device d = (Device) getTask(ctrlPkt.getTaskName());
-
-				if(d != null) {
-					if(ctrlPkt.getControl().equals(ControlPacket.RESCHEDULE)) {
-						Kernel.syslog.debug("Reschedule " + d.getClass().getSimpleName() + ": " + ctrlPkt.getDelay());
-						rescheduleTask(ctrlPkt.getTaskName(), ctrlPkt.getDelay());
-					}
-				}
-			}
-
-		}
+	protected void restartService() {
+		// TODO Auto-generated method stub
+		
 	}
+
+	@Override
+	protected void stopService() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void startTask(String taskName) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

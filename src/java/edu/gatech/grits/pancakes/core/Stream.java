@@ -1,6 +1,7 @@
 package edu.gatech.grits.pancakes.core;
 
 import javolution.util.FastMap;
+import javolution.util.FastMap.Entry;
 
 import org.jetlang.channels.Channel;
 import org.jetlang.channels.MemoryChannel;
@@ -80,12 +81,17 @@ public class Stream {
 		}
 	}
 
-//	@Override
-//	public String toString() {
-//		String str = "Stream:\n";
+	@Override
+	public String toString() {
+		String str = "Stream [ ";
 //		str += this.channels;
 //		return str;
-//	}
+		for(String name : channels.keySet()){
+			str += name + " ";
+		}
+		return str += " ]";
+		
+	}
 	
 	
 }

@@ -23,12 +23,14 @@ public abstract class Task implements Taskable {
 	
 	private FastList<Subscription> subscriptions;
 	private Fiber taskFiber;
+	private FastList<String> requiredDevices;
 	
 	public Task() {
 		taskFiber = Kernel.scheduler.newFiber();
 		taskFiber.start();
 
 		subscriptions = new FastList<Subscription>();
+		requiredDevices = new FastList<String>();
 	}
 	
 	public final void setDelay(long delay) {
@@ -51,6 +53,10 @@ public abstract class Task implements Taskable {
 	
 	public final boolean isTimeDriven() {
 		return isTimeDriven;
+	}
+
+	public FastList<String> getRequiredDevices() {
+		return requiredDevices;
 	}
 
 	public void subscribe(String chl, Callback cbk) {

@@ -9,10 +9,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import javolution.util.FastMap;
-
 import org.jetlang.fibers.Fiber;
 import org.jetlang.fibers.PoolFiberFactory;
+
+import javolution.util.FastMap;
 
 public class Scheduler {
 	
@@ -22,7 +22,7 @@ public class Scheduler {
 	private final PoolFiberFactory factory = new PoolFiberFactory(executor);
 	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(CORE_POOL_SIZE);
 	
-	private FastMap<Runnable, ScheduledFuture<?>> taskList = new FastMap<Runnable, ScheduledFuture<?>>();	
+	private FastMap<Runnable, ScheduledFuture<?>> scheduledTasks = new FastMap<Runnable, ScheduledFuture<?>>();	
 	
 	public synchronized String execute(String command) {
 
@@ -56,11 +56,17 @@ public class Scheduler {
 	}
 	
 	public final synchronized void schedule(Runnable r, long delay) throws SchedulingException {
-		if(!taskList.keySet().contains(r)) {
-			taskList.put(r, scheduler.scheduleAtFixedRate(r, 100, delay, stdTimeUnit));
-		} else {
-			throw new SchedulingException("Task has already been previously scheduled.");
+		// Schedule only if delay is > 0
+		if(delay > 0){
+
+			if(!scheduledTasks.keySet().contains(r)) {
+				scheduledTasks.put(r, scheduler.scheduleAtFixedRate(r, 0, delay, stdTimeUnit));
+			} else {
+				throw new SchedulingException("Task has already been previously scheduled.");
+			}
+			
 		}
+//		Kernel.syslog.debug(scheduledTasks.toString());
 	}
 	
 	public final void reschedule(Runnable r, long delay) throws SchedulingException{
@@ -72,7 +78,7 @@ public class Scheduler {
 		ScheduledFuture<?> sf = null;
 		
 		synchronized(this) {
-			sf = taskList.get(r);
+			sf = scheduledTasks.get(r);
 		}
 		
 		if(sf != null) {
@@ -86,13 +92,13 @@ public class Scheduler {
 		ScheduledFuture<?> sf = null;
 		
 		synchronized(this) {
-			sf = taskList.get(r);
+			sf = scheduledTasks.get(r);
 		}
 		
 		if(sf != null) {
 			sf.cancel(false);
 			synchronized(this) {
-				taskList.remove(r);
+				scheduledTasks.remove(r);
 			}
 		} else {
 			throw new SchedulingException("Task has not been previously scheduled.");

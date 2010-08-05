@@ -5,6 +5,7 @@ import org.jetlang.fibers.Fiber;
 
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
+import edu.gatech.grits.pancakes.lang.ControlPacket;
 import edu.gatech.grits.pancakes.lang.CoreChannel;
 import edu.gatech.grits.pancakes.lang.LogPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
@@ -19,7 +20,7 @@ public class TwitterService extends Service {
 	
 	
 	public TwitterService(Properties properties) {
-		super("twitter");
+		super(TwitterService.class.getSimpleName());
 		tweeter = new Tweeter(properties);
 		Fiber fiber = Kernel.scheduler.newFiber();
 		fiber.start();
@@ -49,8 +50,21 @@ public class TwitterService extends Service {
 	}
 
 	@Override
-	public void process(Packet pkt) {
+	protected void restartService() {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	protected void stopService() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void startTask(String taskName) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

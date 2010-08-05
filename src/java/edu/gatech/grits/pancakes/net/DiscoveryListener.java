@@ -9,6 +9,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javolution.util.FastList;
 import javolution.util.FastMap;
@@ -60,6 +62,10 @@ public class DiscoveryListener extends Task {
 				while(isRunning) {
 					try {
 						socket.receive(dgram);
+//						byte[] retBytes = dgram.getData();
+//						String outByteString = new String(retBytes);
+//						System.out.println(outByteString);
+						
 						addNetworkNeighbor(dgram);
 
 						Date d = new Date(System.currentTimeMillis()-TIMEOUT);
@@ -134,10 +140,11 @@ public class DiscoveryListener extends Task {
 
 		try {
 			String message = new String(data, "US-ASCII");
-			//System.out.println("Message :" + message);
-			StringTokenizer st = new StringTokenizer(message, ":");
-			while(st.hasMoreTokens()) {
-				parameters.add(st.nextToken().trim());
+			
+			StringTokenizer st = new StringTokenizer(message, "<>");
+			String msg = st.nextToken().trim();
+			for(String s : msg.split(":")){
+				parameters.add(s.trim());
 			}
 
 		} catch (UnsupportedEncodingException e) {

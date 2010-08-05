@@ -1,5 +1,6 @@
 package edu.gatech.grits.pancakes.core;
 
+import javolution.util.FastList;
 import javolution.util.FastMap;
 import edu.gatech.grits.pancakes.service.ClientService;
 import edu.gatech.grits.pancakes.service.DeviceService;
@@ -16,6 +17,10 @@ public class Kernel {
 	public static Syslog syslog;// = new Syslogp();
 	
 	public static String id;
+	public static FastList<String> devices;
+	// TODO: HACK for now...needs to be a Task prop!
+	public static float homeX;
+	public static float homeY;
 	
 	FastMap<String, Service> serviceList = new FastMap<String, Service>();
 	
@@ -24,8 +29,13 @@ public class Kernel {
 		stream = new Stream();
 		syslog = new Syslog();
 		
-		id = properties.getID();
+		id = properties.getID();		
+		devices = properties.getDevices();
 		
+		// TODO: get rid of this one day!
+		homeX = properties.getHomeLocation()[0];
+		homeY = properties.getHomeLocation()[1];
+			
 		startServices(properties);
 	}
 	
@@ -59,6 +69,8 @@ public class Kernel {
 				serviceList.put("client", new ClientService(properties));
 			}
 		}
+		
+		System.err.println("Pancakes system " + id + " created. \n" + Kernel.stream.toString());
 	}
 	
 	public void stopServices() {

@@ -10,6 +10,7 @@ import org.jetlang.fibers.Fiber;
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.core.Scheduler.SchedulingException;
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
+import edu.gatech.grits.pancakes.lang.ControlPacket;
 import edu.gatech.grits.pancakes.lang.CoreChannel;
 import edu.gatech.grits.pancakes.lang.Packet;
 import edu.gatech.grits.pancakes.lang.Subscription;
@@ -25,18 +26,18 @@ public abstract class Service {
 		serviceName = name;
 		Fiber fiber = Kernel.scheduler.newFiber();
 		fiber.start();
-		Callback<Packet> callback = new Callback<Packet>() {
+		Callback<Packet> sysCtrlCallback = new Callback<Packet>() {
 			public void onMessage(Packet pkt) {
-				if(pkt.getPacketType().equals(serviceName))
-					process(pkt);
+				if(pkt instanceof ControlPacket){
+					processSysCtrl((ControlPacket) pkt);
+				}
 			}
 		};
-		subscription = new Subscription(CoreChannel.SYSCTRL, fiber, callback);
+		subscription = new Subscription(CoreChannel.SYSCTRL, fiber, sysCtrlCallback);
 		
 		try {
 			Kernel.stream.subscribe(subscription);
 		} catch (CommunicationException e) {
-			// TODO Auto-generated catch block
 			System.err.println(e.getMessage());
 		}
 		
@@ -47,7 +48,7 @@ public abstract class Service {
 		return taskRegistry.get(key);
 	}
 	
-	public final Set<String> taskList() {
+	protected final Set<String> taskList() {
 		return taskRegistry.keySet();
 	}
 	
@@ -61,7 +62,6 @@ public abstract class Service {
 			try {
 				Kernel.scheduler.schedule(task, task.delay());
 			} catch (SchedulingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -76,7 +76,8 @@ public abstract class Service {
 				Kernel.syslog.error("Unable to cancel task.");
 			}
 		}
-		t.close();
+		t.close();			//closes any necessary resources
+		t.unsubscribe();	//un-subscribes from channels
 	}
 	
 	public final void rescheduleTask(String key, long delay) {
@@ -90,13 +91,88 @@ public abstract class Service {
 		}
 	}
 	
-	public void unsubscribe() {
+	protected final void unsubscribe() {
 		Kernel.stream.unsubscribe(subscription);
 		subscription.getFiber().dispose();
 	}
 	
-	public abstract void process(Packet pkt);
-	public abstract void close();
+	/**
+	 * Returns if the queried task name is currently in this service.
+	 * @param taskName
+	 * @return
+	 */
+	protected final boolean hasTask(String taskName){
+		if(taskList().contains(taskName)){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
 	
+	/**
+	 * This method stops the Service. It first removes all of its currently executing tasks, then
+	 * unsubscribes from the system control channel. Note: the Service does not die fully! It still listens
+	 * to be restarted.
+	 */
+	protected final void stop(){
+		// kill all tasks
+		for(FastMap.Entry<String, Taskable> entry = taskRegistry.head(), end = taskRegistry.tail(); (entry = entry.getNext())!= end; ){
+			removeTask(entry.getKey());
+		}
+	}
+	
+	protected abstract void restartService();
+	protected abstract void stopService();
+	
+	protected void processSysCtrl(ControlPacket ctrlPkt){
+		String targetComponent = ctrlPkt.getComponentToControl();
+
+		if(targetComponent.equals(this.serviceName)){
+			System.out.println(targetComponent + " requested to " + ctrlPkt.getControl() 
+					+ " by " + ctrlPkt.getReqComponent());
+			// services can only RESTART or STOP
+			switch(ctrlPkt.getControl()){
+			case RESCHEDULE: 
+				Kernel.syslog.error(this.getClass().getSimpleName() + " cannot " + ctrlPkt.getControl());
+				break;
+			case STOP:
+				Kernel.syslog.debug("Stopping " + this.getClass().getSimpleName());
+				stopService();
+				break;
+			case RESTART:
+				restartService();
+				break;
+			}
+		}
+		else{
+			// check if a device task needs to be controlled
+			if(this.hasTask(targetComponent)){
+				switch(ctrlPkt.getControl()){
+				case RESCHEDULE: 
+					Kernel.syslog.debug("Reschedule " + targetComponent + " with delay "
+							+ ctrlPkt.getDelay());
+					rescheduleTask(targetComponent, ctrlPkt.getDelay());
+					break;
+				case STOP:
+					Kernel.syslog.debug("Stopping " + targetComponent);
+					removeTask(targetComponent);
+					break;
+				case RESTART:
+					Kernel.syslog.debug("Restart " + targetComponent);
+					//TODO: implement the restarting of a task
+					break;
+				}
+			}
+			// new Task -- from migration!
+			if(ctrlPkt.getControl() == ControlOption.START){
+				startTask(targetComponent);
+			}
+		}
+
+	}
+	
+	public abstract void close();
+	public abstract void startTask(String taskName);
 	
 }

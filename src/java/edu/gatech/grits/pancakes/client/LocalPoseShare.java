@@ -63,7 +63,7 @@ public class LocalPoseShare extends Task {
 							NetworkPacket rollPkt = new NetworkPacket(Kernel.id, n.getID());
 							Packet p = new Packet(ROLL);
 							p.add("value", rollValue);
-							rollPkt.addPacket(p);
+							rollPkt.addPayloadPacket(p);
 							publish(CoreChannel.NETWORK, rollPkt);
 							currentState = TaskState.PLAY;
 						}
@@ -92,29 +92,29 @@ public class LocalPoseShare extends Task {
 					NetworkPacket inNetPkt = (NetworkPacket) message;
 					
 					// PLAY handshaking!
-					Packet firstPkt = inNetPkt.getPackets().getFirst();
+					Packet firstPkt = inNetPkt.getPayloadPackets().getFirst();
 					if(firstPkt.getPacketType().equals(ROLL) && currentState == TaskState.PLAY){
-						int neighborRoll = Integer.valueOf(firstPkt.get("value"));
-//						Kernel.syslog.debug("Received a " + firstPkt.getPacketType() + " packet: " + neighborRoll);
-						
-						if(neighborRoll > rollValue){
-							Kernel.syslog.debug(Kernel.id + " is waiting.");
-							currentState = TaskState.WAITING;
-						}
-						else if(neighborRoll < rollValue){
-							Kernel.syslog.debug(Kernel.id + " is starting.");
-							currentState = TaskState.SENDING;
-						}
-						else{
-							// roll again
-							Kernel.syslog.debug("Play again!");
-							rollValue = (int) Math.floor(Math.random()*20);
-						}
-						NetworkPacket rollPkt = new NetworkPacket(Kernel.id, inNetPkt.getSource());
-						Packet p = new Packet(ROLL);
-						p.add("value", rollValue);
-						rollPkt.addPacket(p);
-						publish(CoreChannel.NETWORK, rollPkt);
+//						int neighborRoll = Integer.valueOf(firstPkt.get("value"));
+////						Kernel.syslog.debug("Received a " + firstPkt.getPacketType() + " packet: " + neighborRoll);
+//						
+//						if(neighborRoll > rollValue){
+//							Kernel.syslog.debug(Kernel.id + " is waiting.");
+//							currentState = TaskState.WAITING;
+//						}
+//						else if(neighborRoll < rollValue){
+//							Kernel.syslog.debug(Kernel.id + " is starting.");
+//							currentState = TaskState.SENDING;
+//						}
+//						else{
+//							// roll again
+//							Kernel.syslog.debug("Play again!");
+//							rollValue = (int) Math.floor(Math.random()*20);
+//						}
+//						NetworkPacket rollPkt = new NetworkPacket(Kernel.id, inNetPkt.getSource());
+//						Packet p = new Packet(ROLL);
+//						p.add("value", rollValue);
+//						rollPkt.addPacket(p);
+//						publish(CoreChannel.NETWORK, rollPkt);
 					}
 					
 					// Exchange of information
@@ -142,7 +142,7 @@ public class LocalPoseShare extends Task {
 						// send message to my neighbor
 						NetworkPacket switchOut = new NetworkPacket(Kernel.id, neighborIds.getFirst());
 						Packet sw = new Packet(SWITCH);
-						switchOut.addPacket(sw);
+						switchOut.addPayloadPacket(sw);
 						publish(CoreChannel.NETWORK, switchOut);
 					}
 
@@ -150,7 +150,7 @@ public class LocalPoseShare extends Task {
 			}
 
 		};
-		subscribe(ClientService.BATTERY_UPDATE, batteryPkt);
+//		subscribe(ClientService.BATTERY_UPDATE, batteryPkt);
 
 	}
 	
@@ -163,7 +163,7 @@ public class LocalPoseShare extends Task {
 		
 		if(currentState == TaskState.SENDING){
 			NetworkPacket outNetPkt = new NetworkPacket(Kernel.id, neighborIds.getFirst());
-			outNetPkt.addPacket(currLocalPose);
+			outNetPkt.addPayloadPacket(currLocalPose);
 			synchronized(this){
 				currentState = TaskState.WAITING;
 			}
