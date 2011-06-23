@@ -26,7 +26,7 @@ public class Monitor extends Task {
 	private final String id;
 	
 	public Monitor() {
-		id = Kernel.id;
+		id = Kernel.getInstance().getId();
 		startTime = System.currentTimeMillis();
 		rescheduled = false;
 		setDelay(0l);
@@ -35,7 +35,7 @@ public class Monitor extends Task {
 		Callback<Packet> data = new Callback<Packet>(){
 
 			public void onMessage(Packet message) {
-//				Kernel.syslog.record(message);
+//				Kernel.getInstance().getSyslog().record(message);
 				
 				if(message.getPacketType().equals(PacketType.LOCAL_POSE)){
 					LocalPosePacket local = (LocalPosePacket) message;
@@ -43,7 +43,7 @@ public class Monitor extends Task {
 				}
 				
 				if(message.getPacketType().equals(PacketType.NETWORK)){
-					Kernel.syslog.debug("Received message from: " + ((NetworkPacket)message).getSource());
+					Kernel.getInstance().getSyslog().debug("Received message from: " + ((NetworkPacket)message).getSource());
 				}
 				
 				if(System.currentTimeMillis() - startTime > 10000 && !rescheduled){
@@ -61,12 +61,12 @@ public class Monitor extends Task {
 				if(message.getPacketType().equals(PacketType.NEIGHBOR)){
 					NetworkNeighborPacket npkt = (NetworkNeighborPacket) message;
 					if(!npkt.isExpired()){
-						Kernel.syslog.debug("Monitor: got a new neighbor!");
+						Kernel.getInstance().getSyslog().debug("Monitor: got a new neighbor!");
 						
 						//send a reply to the neighbor
 						String target = npkt.getNeighbor().getID();
 						if(!target.equals(id)){
-							NetworkPacket np = new NetworkPacket(Kernel.id, target);
+							NetworkPacket np = new NetworkPacket(Kernel.getInstance().getId(), target);
 							publish(CoreChannel.NETWORK, np);
 							if(!neighborIDs.contains(target))
 								neighborIDs.add(target);
@@ -89,7 +89,7 @@ public class Monitor extends Task {
 	public void run() {
 		// do nothing
 		for(String id : neighborIDs) {
-			NetworkPacket np = new NetworkPacket(Kernel.id, id);
+			NetworkPacket np = new NetworkPacket(Kernel.getInstance().getId(), id);
 			publish(CoreChannel.NETWORK, np);
 		}
 	}

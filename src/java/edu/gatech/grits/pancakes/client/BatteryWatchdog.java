@@ -2,8 +2,7 @@ package edu.gatech.grits.pancakes.client;
 
 import org.jetlang.core.Callback;
 
-import edu.gatech.grits.pancakes.core.Kernel;
-import edu.gatech.grits.pancakes.core.Syslog;
+import edu.gatech.grits.pancakes.core.*;
 import edu.gatech.grits.pancakes.lang.BatteryPacket;
 import edu.gatech.grits.pancakes.lang.ControlPacket;
 import edu.gatech.grits.pancakes.lang.CoreChannel;
@@ -33,11 +32,11 @@ public class BatteryWatchdog extends Task {
 					BatteryPacket battery = (BatteryPacket) message;
 					
 					//battery.debug();
-//					Kernel.syslog.record(battery);
+//					Kernel.getInstance().getSyslog().record(battery);
 					float level = battery.getVoltage();
 					if(!isMed && level < HIGH_LEVEL && level > MED_LEVEL ) {
 						isMed = true;
-						Kernel.syslog.debug("Battery threshold: MED");
+						Kernel.getInstance().getSyslog().debug("Battery threshold: MED");
 //						HIGH_LEVEL -= 0.5f;
 						localPoseDelay = 500l;
 //						publish(CoreChannel.SYSCTRL, new ControlPacket("device", ControlPacket.RESCHEDULE, 
@@ -51,11 +50,11 @@ public class BatteryWatchdog extends Task {
 					}
 					else if(!isLow && level < MED_LEVEL && level > LOW_LEVEL ){
 						isLow = true;
-						Kernel.syslog.debug("Battery threshold: LOW");
+						Kernel.getInstance().getSyslog().debug("Battery threshold: LOW");
 //						publish(ClientService.BATTERY_UPDATE, new ControlPacket(getClass().getSimpleName(), "LOW", ""));
 					}
 //					else{
-//						Kernel.syslog.debug("Battery is WAY LOW!");
+//						Kernel.getInstance().getSyslog().debug("Battery is WAY LOW!");
 //					}
 					
 				}

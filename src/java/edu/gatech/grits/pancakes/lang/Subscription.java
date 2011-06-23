@@ -11,9 +11,9 @@ public class Subscription {
 	private Disposable disposable;
 	private final String channel;
 	
-	public Subscription(String chl, Fiber f, Callback<Packet> c) {
+	public Subscription(String chl, Fiber f, Callback<Packet> cbk) {
 		fiber = f;
-		callback = c;
+		callback = cbk;
 		channel = chl;
 	}
 	

@@ -23,7 +23,7 @@ public class JoystickDriver implements HardwareDriver<JoystickPacket> {
 	public JoystickDriver(Backend backend) {
 
 		String osName = System.getProperty("os.name");
-		Kernel.syslog.debug("OS: " + osName);
+		Kernel.getInstance().getSyslog().debug("OS: " + osName);
 
 		try {
 
@@ -39,12 +39,12 @@ public class JoystickDriver implements HardwareDriver<JoystickPacket> {
 		} catch (Exception e) {
 			if(e instanceof PortInUseException){
 				PortInUseException piu = (PortInUseException) e;
-				Kernel.syslog.error("Port in use - owner: " + piu.currentOwner); 
+				Kernel.getInstance().getSyslog().error("Port in use - owner: " + piu.currentOwner); 
 			}
 			else{
 				e.printStackTrace();
 			}
-			Kernel.syslog.error("Unable to connect to serial joystick.");
+			Kernel.getInstance().getSyslog().error("Unable to connect to serial joystick.");
 		}
 	}
 
@@ -107,7 +107,7 @@ public class JoystickDriver implements HardwareDriver<JoystickPacket> {
 					}
 					buffer[len++] = (byte) data;
 				}
-//				Kernel.syslog.debug(new String(buffer,0,len-1));
+//				Kernel.getInstance().getSyslog().debug(new String(buffer,0,len-1));
 
 				// parse & publish
 				String output = new String(buffer,0,len-1);
@@ -121,7 +121,7 @@ public class JoystickDriver implements HardwareDriver<JoystickPacket> {
 					pkt.setPushButton2(Integer.parseInt(st.nextToken()));
 
 					try {
-						Kernel.stream.publish(CoreChannel.SYSTEM, pkt);
+						Kernel.getInstance().getStream().publish(CoreChannel.SYSTEM, pkt);
 					} catch (CommunicationException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

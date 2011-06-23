@@ -29,8 +29,8 @@ public class MotorDriver implements HardwareDriver<MotorPacket> {
 		int vel_l_k3 = (int) (vel_l * 1000.0f * 144.01f);
 		int vel_r_k3 = (int) (vel_r * 1000.0f * 144.01f);
 		
-//		Kernel.syslog.debug("Received MotorPacket");
-//		Kernel.syslog.debug("Pushing down (" + vel_l_k3 + "," + vel_r_k3 + ")");
+//		Kernel.getInstance().getSyslog().debug("Received MotorPacket");
+//		Kernel.getInstance().getSyslog().debug("Pushing down (" + vel_l_k3 + "," + vel_r_k3 + ")");
 		k3i.motorsSetSpeed(vel_l_k3, vel_r_k3);
 	}
 	

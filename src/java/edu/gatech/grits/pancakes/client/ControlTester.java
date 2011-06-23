@@ -2,8 +2,8 @@ package edu.gatech.grits.pancakes.client;
 
 import org.jetlang.core.Callback;
 
-import edu.gatech.grits.pancakes.core.Kernel;
-import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
+import edu.gatech.grits.pancakes.core.*;
+import edu.gatech.grits.pancakes.core.Stream.*;
 import edu.gatech.grits.pancakes.devices.LocalPoseDevice;
 import edu.gatech.grits.pancakes.devices.SonarDevice;
 import edu.gatech.grits.pancakes.lang.ControlPacket;
@@ -32,7 +32,7 @@ public class ControlTester extends Task {
 			@Override
 			public void onMessage(Packet message) {
 				if(message instanceof LocalPosePacket){
-					Kernel.syslog.debug(this.getClass().getSimpleName() + " received localpose data.");
+					Kernel.getInstance().getSyslog().debug(this.getClass().getSimpleName() + " received localpose data.");
 				}
 
 			}
@@ -52,7 +52,7 @@ public class ControlTester extends Task {
 		counter++;
 		//		ControlPacket ctrlPkt = new ControlPacket(ControlOption.RESCHEDULE, DeviceService.class.getSimpleName(), this.getClass().getSimpleName());
 		//		try {
-		//			Kernel.stream.publish(CoreChannel.SYSCTRL, ctrlPkt);
+		//			Kernel.getInstance().getStream().publish(CoreChannel.SYSCTRL, ctrlPkt);
 		//		} catch (CommunicationException e) {
 		//			e.printStackTrace();
 		//		}
@@ -60,7 +60,7 @@ public class ControlTester extends Task {
 		if(counter > 10 && !slowSpeaker){
 			ControlPacket discSpeakerCtrl = new ControlPacket(ControlOption.RESCHEDULE, DiscoverySpeaker.class.getSimpleName(), this.getClass().getSimpleName(), 2000);
 			try {
-				Kernel.stream.publish(CoreChannel.SYSCTRL, discSpeakerCtrl);
+				Kernel.getInstance().getStream().publish(CoreChannel.SYSCTRL, discSpeakerCtrl);
 				slowSpeaker = true;
 			} catch (CommunicationException e1) {
 				e1.printStackTrace();

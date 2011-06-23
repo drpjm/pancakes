@@ -1,8 +1,7 @@
 package edu.gatech.grits.pancakes.devices.driver.player;
 
-import javaclient2.Position2DInterface;
-import javaclient2.structures.PlayerConstants;
-import javaclient2.structures.PlayerPose;
+import javaclient3.Position2DInterface;
+import javaclient3.structures.*;
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.devices.backend.Backend;
 import edu.gatech.grits.pancakes.devices.backend.PlayerBackend;
@@ -15,10 +14,10 @@ public class MotorDriver implements HardwareDriver<MotorPacket> {
 	
 	public MotorDriver(Backend backend) {
 		while(!((PlayerBackend) backend).getHandle().isReadyRequestDevice()) {
-			Kernel.syslog.debug("Trying to get an interface for the MotorDevice.");
+			Kernel.getInstance().getSyslog().debug("Trying to get an interface for the MotorDevice.");
 			device = ((PlayerBackend) backend).getHandle().requestInterfacePosition2D(0, PlayerConstants.PLAYER_OPEN_MODE);
 		}
-		Kernel.syslog.debug("Received an interface.");
+		Kernel.getInstance().getSyslog().debug("Received an interface.");
 		device.setControlMode(PlayerConstants.PLAYER_POSITION2D_REQ_VELOCITY_MODE);
 		device.setMotorPower(1);
 	}
@@ -34,7 +33,7 @@ public class MotorDriver implements HardwareDriver<MotorPacket> {
 		
 		
 		if(device.isDataReady()) {
-			PlayerPose pose = device.getData().getVel();
+			PlayerPose2d pose = device.getData().getVel();
 			pkt.setVelocity((float) Math.sqrt(Math.pow(pose.getPx(),2) + Math.pow(pose.getPy(), 2)));
 			pkt.setRotationalVelocity((float) pose.getPa());
 		} else {

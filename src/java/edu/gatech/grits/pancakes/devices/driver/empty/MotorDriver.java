@@ -26,7 +26,7 @@ public class MotorDriver implements HardwareDriver<MotorPacket> {
 	@Override
 	public void request(MotorPacket pkt) {
 		
-		Kernel.syslog.debug("Issuing " + pkt + " to motors.");
+		Kernel.getInstance().getSyslog().debug("Issuing " + pkt + " to motors.");
 		
 	}
 

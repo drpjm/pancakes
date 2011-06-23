@@ -123,7 +123,7 @@ public class Properties {
 		return tasks;
 	}
 	
-	public String getID() {
+	public String getId() {
 		return propertyTable.get("kernel.id");
 	}
 	

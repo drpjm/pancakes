@@ -19,12 +19,12 @@ import gnu.io.SerialPortEventListener;
 public class JoystickDriver implements HardwareDriver<JoystickPacket> {
 	
 	public JoystickDriver(Backend backend) {
-		Kernel.syslog.debug("Loading joystick driver...");
+		Kernel.getInstance().getSyslog().debug("Loading joystick driver...");
 		try {
 			this.connect("/dev/ttyUSB0");
-			Kernel.syslog.debug("done.");
+			Kernel.getInstance().getSyslog().debug("done.");
 		} catch (Exception e) {
-			Kernel.syslog.error("Unable to connect to serial joystick.");
+			Kernel.getInstance().getSyslog().error("Unable to connect to serial joystick.");
 		}
 	}
 	
@@ -87,7 +87,7 @@ public class JoystickDriver implements HardwareDriver<JoystickPacket> {
                     }
                     buffer[len++] = (byte) data;
                 }
-//                Kernel.syslog.debug(new String(buffer,0,len-1));
+//                Kernel.getInstance().getSyslog().debug(new String(buffer,0,len-1));
                 
                 // parse & publish
                 String output = new String(buffer,0,len-1);
@@ -101,7 +101,7 @@ public class JoystickDriver implements HardwareDriver<JoystickPacket> {
                 	pkt.setPushButton2(Integer.parseInt(st.nextToken()));
                 	
                 	try {
-						Kernel.stream.publish(CoreChannel.SYSTEM, pkt);
+						Kernel.getInstance().getStream().publish(CoreChannel.SYSTEM, pkt);
 					} catch (CommunicationException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

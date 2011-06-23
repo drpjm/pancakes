@@ -34,18 +34,18 @@ public class NetworkServer {
 						
 						if(initialAccept) {
 							handleConnection(client);
-//							Kernel.syslog.debug("Got initial connection.");
+//							Kernel.getInstance().getSyslog().debug("Got initial connection.");
 							initialAccept = false;
 						} else {
 						
 							Runnable task = new Runnable() {
 								public void run() {
-//									Kernel.syslog.debug("Handling an incoming packet.");
+//									Kernel.getInstance().getSyslog().debug("Handling an incoming packet.");
 									handleConnection(client);
-//									Kernel.syslog.debug("Finished handling the packet.");
+//									Kernel.getInstance().getSyslog().debug("Finished handling the packet.");
 								}
 							};
-							Kernel.scheduler.execute(task);
+							Kernel.getInstance().getScheduler().execute(task);
 						}
 					} catch (IOException e) {
 						System.out.println("Error receiving object or socket closed.");
@@ -67,7 +67,7 @@ public class NetworkServer {
 			Packet pkt = (Packet) oin.readObject();
 //			oin.close();
 //			in.close();
-			Kernel.stream.publish(CoreChannel.SYSTEM, pkt);
+			Kernel.getInstance().getStream().publish(CoreChannel.SYSTEM, pkt);
 		} catch (IOException e) {
 			System.err.println("Error receiving object.");
 		} catch (ClassNotFoundException e) {

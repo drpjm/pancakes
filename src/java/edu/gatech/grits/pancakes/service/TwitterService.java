@@ -22,7 +22,7 @@ public class TwitterService extends Service {
 	public TwitterService(Properties properties) {
 		super(TwitterService.class.getSimpleName());
 		tweeter = new Tweeter(properties);
-		Fiber fiber = Kernel.scheduler.newFiber();
+		Fiber fiber = Kernel.getInstance().getScheduler().newFiber();
 		fiber.start();
 		
 		Callback<Packet> callback = new Callback<Packet>() {
@@ -37,7 +37,7 @@ public class TwitterService extends Service {
 		subscription = new Subscription(CoreChannel.LOG, fiber, callback);
 		
 		try {
-			Kernel.stream.subscribe(subscription);
+			Kernel.getInstance().getStream().subscribe(subscription);
 		} catch (CommunicationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -45,7 +45,7 @@ public class TwitterService extends Service {
 	}
 	
 	public void close() {
-		Kernel.stream.unsubscribe(subscription);
+		Kernel.getInstance().getStream().unsubscribe(subscription);
 		subscription.getFiber().dispose();
 	}
 

@@ -21,7 +21,7 @@ public class MigrationTester extends Task {
 	@Override
 	public void run() {
 		countDown--;
-		Kernel.syslog.debug(this.getClass().getSimpleName() + " count: " + countDown);
+		Kernel.getInstance().getSyslog().debug(this.getClass().getSimpleName() + " count: " + countDown);
 		if(countDown == 0){
 			MigrationPacket mp = new MigrationPacket();
 			mp.setTaskName(ControlTester.class.getSimpleName());

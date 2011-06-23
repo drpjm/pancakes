@@ -1,7 +1,5 @@
 package edu.gatech.grits.pancakes.core;
 
-import edu.gatech.grits.pancakes.util.Properties;
-
 /*
  * In computers, pressing a bootstrap button caused a hardwired program to read
  * a bootstrap program from an input unit and then execute the bootstrap program
@@ -18,7 +16,8 @@ public class Bootstrap {
 	public static void main(String[] args) throws InterruptedException {
 		if(args.length == 1 && args[0].endsWith(".props")) {
 			System.err.println("Handing off control to Kernel.");
-			Kernel kernel = new Kernel(new Properties(args[0]));
+			Kernel kernel = Kernel.newInstance(args[0]);
+			kernel.startUp();
 		} else {
 			System.err.println("usage: java -jar pancakes.jar pancakes.props");
 		}

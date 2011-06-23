@@ -6,7 +6,7 @@ public class BugBackend extends Backend {
 
 	public BugBackend() {
 		super("bug");
-		Kernel.stream.createChannel("bug");
+		Kernel.getInstance().getStream().createChannel("bug");
 		// TODO Auto-generated constructor stub
 	}
 

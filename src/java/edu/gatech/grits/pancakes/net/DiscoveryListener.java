@@ -34,7 +34,7 @@ public class DiscoveryListener extends Task {
 	private FastMap<String, NetworkNeighbor> neighbors = new FastMap<String, NetworkNeighbor>(10);
 
 	public DiscoveryListener() {
-		id = Kernel.id;
+		id = Kernel.getInstance().getId();
 		setDelay(0l);
 		try {
 			socket = new MulticastSocket(DEST_PORT);
@@ -87,7 +87,7 @@ public class DiscoveryListener extends Task {
 						}
 
 						for(String key : expired) {
-							Kernel.syslog.debug("Remove expired neighbor " + key);
+							Kernel.getInstance().getSyslog().debug("Remove expired neighbor " + key);
 							NetworkNeighbor expiredNeighbor;
 							expiredNeighbor = neighbors.remove(key);
 							NetworkNeighborPacket np = new NetworkNeighborPacket(new Boolean(true), expiredNeighbor);
@@ -122,7 +122,7 @@ public class DiscoveryListener extends Task {
 			if(!p.get(1).equals(id)){
 				NetworkNeighbor n = new NetworkNeighbor(p.get(1), p.get(0), Integer.valueOf(p.get(2)), new Date(System.currentTimeMillis()));
 				if(!neighbors.containsKey(p.get(1))){
-					Kernel.syslog.debug("Adding neighbor: " + p);
+					Kernel.getInstance().getSyslog().debug("Adding neighbor: " + p);
 					neighbors.put(p.get(1), n);
 //					publish(NetworkService.NEIGHBORHOOD, new NetworkNeighborPacket(new Boolean(false), n));
 				}

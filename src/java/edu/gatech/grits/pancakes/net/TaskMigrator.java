@@ -50,7 +50,7 @@ public class TaskMigrator extends Task {
 
 						// transmit migration packet to neighbors
 						for(NetworkNeighbor nn : neighbors.values()){
-							NetworkPacket outPkt = new NetworkPacket(Kernel.id, nn.getID());
+							NetworkPacket outPkt = new NetworkPacket(Kernel.getInstance().getId(), nn.getID());
 							outPkt.addPayloadPacket(message);
 							publish(CoreChannel.NETWORK, outPkt);
 						}
@@ -94,7 +94,7 @@ public class TaskMigrator extends Task {
 						// inspect network packet for migration stuff from neighbor
 						MigrationPacket mp = (MigrationPacket) firstPayloadPkt;
 						FastList<String> reqDevices = mp.getRequiredDevices();
-						NetworkPacket responsePkt = new NetworkPacket(Kernel.id, ((NetworkPacket)message).getSource());
+						NetworkPacket responsePkt = new NetworkPacket(Kernel.getInstance().getId(), ((NetworkPacket)message).getSource());
 						Packet answer;
 						if(!hasReqDevices(reqDevices)){
 							// send rejection to requesting agent
@@ -106,7 +106,7 @@ public class TaskMigrator extends Task {
 						}
 						answer.add("taskName", mp.getTaskName());
 						// TODO: need to have a better way to calculate cost -- this code is a HACK!
-						answer.add("cost", Integer.toString(Kernel.devices.size()));
+						answer.add("cost", Integer.toString(Kernel.getInstance().getDevices().size()));
 						responsePkt.addPayloadPacket(answer);
 						publish( CoreChannel.NETWORK, responsePkt );
 					}
@@ -135,7 +135,7 @@ public class TaskMigrator extends Task {
 					
 					if( firstPayloadPkt.getPacketType().equals(SCHEDULE) ){
 						String taskName = firstPayloadPkt.get("taskName");
-						Kernel.syslog.debug(Kernel.id + " scheduling " + taskName + "!");
+						Kernel.getInstance().getSyslog().debug(Kernel.getInstance().getId() + " scheduling " + taskName + "!");
 						ControlPacket ctrl = new ControlPacket(ControlOption.START, taskName, TaskMigrator.class.getSimpleName());
 						publish(CoreChannel.SYSCTRL, ctrl);
 					}
@@ -160,7 +160,7 @@ public class TaskMigrator extends Task {
 
 				//TODO: add in a timing limit to migrate
 				if(System.currentTimeMillis() - taskEntry.getValue().getTimeStamp() > this.MAX_TIME){
-					Kernel.syslog.debug("Migration window expired! Remove task.");
+					Kernel.getInstance().getSyslog().debug("Migration window expired! Remove task.");
 					ControlPacket ctrl = new ControlPacket(ControlOption.STOP, taskEntry.getKey(), TaskMigrator.class.getSimpleName());
 					publish(CoreChannel.SYSCTRL, ctrl);
 					tasksToMigrate.remove(taskEntry.getKey());
@@ -184,15 +184,15 @@ public class TaskMigrator extends Task {
 						
 					}
 					if(lowestCostAgent != null){
-						NetworkPacket outPkt = new NetworkPacket(Kernel.id, lowestCostAgent);
+						NetworkPacket outPkt = new NetworkPacket(Kernel.getInstance().getId(), lowestCostAgent);
 						Packet schedulePkt = new Packet(SCHEDULE);
 						schedulePkt.add("taskName", taskEntry.getKey());
 						outPkt.addPayloadPacket(schedulePkt);
-						Kernel.syslog.debug(this.getClass().getSimpleName() + " migrating " + taskEntry.getKey());
+						Kernel.getInstance().getSyslog().debug(this.getClass().getSimpleName() + " migrating " + taskEntry.getKey());
 						publish(CoreChannel.NETWORK, outPkt);
 					}
 					else{
-						Kernel.syslog.debug(TaskMigrator.class.getSimpleName() + " cannot migrate " + taskEntry.getKey());
+						Kernel.getInstance().getSyslog().debug(TaskMigrator.class.getSimpleName() + " cannot migrate " + taskEntry.getKey());
 					}
 								
 					// stop local task
@@ -296,12 +296,12 @@ public class TaskMigrator extends Task {
 
 	private final boolean hasReqDevices(FastList<String> reqDev){
 		// TODO: function needs to work for empty required devices
-		if(Kernel.devices.containsAll(reqDev) || reqDev.size() == 0){
-			Kernel.syslog.debug("I have required devices.");
+		if(Kernel.getInstance().getDevices().containsAll(reqDev) || reqDev.size() == 0){
+			Kernel.getInstance().getSyslog().debug("I have required devices.");
 			return true;
 		}
 		else{
-			Kernel.syslog.debug("I DO NOT have required devices.");
+			Kernel.getInstance().getSyslog().debug("I DO NOT have required devices.");
 			return false;
 		}
 

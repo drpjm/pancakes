@@ -3,6 +3,7 @@ package edu.gatech.grits.pancakes.core;
 import org.apache.log4j.Level;
 
 import edu.gatech.grits.pancakes.core.Stream.CommunicationException;
+import edu.gatech.grits.pancakes.lang.CoreChannel;
 import edu.gatech.grits.pancakes.lang.LogPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
 
@@ -10,7 +11,8 @@ public class Syslog {
 	
 	private final void log(LogPacket pkt) {
 		try {
-			Kernel.stream.publish("log", pkt);
+			Kernel.getInstance().getStream().publish(CoreChannel.LOG, pkt);
+//			Kernel.getInstance().getStream().publish("log", pkt);
 		} catch (CommunicationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -43,7 +45,7 @@ public class Syslog {
 	}
 	
 	public final void record(Packet p) {
-		log(new LogPacket("data", Level.INFO, Kernel.id + ":" + p.toString()));
+		log(new LogPacket("data", Level.INFO, Kernel.getInstance().getId() + ":" + p.toString()));
 	}
 	
 	public final void record(Packet p, String id){

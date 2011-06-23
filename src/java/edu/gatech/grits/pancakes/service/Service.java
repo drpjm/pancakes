@@ -24,7 +24,7 @@ public abstract class Service {
 	
 	public Service(String name) {
 		serviceName = name;
-		Fiber fiber = Kernel.scheduler.newFiber();
+		Fiber fiber = Kernel.getInstance().getScheduler().newFiber();
 		fiber.start();
 		Callback<Packet> sysCtrlCallback = new Callback<Packet>() {
 			public void onMessage(Packet pkt) {
@@ -36,7 +36,7 @@ public abstract class Service {
 		subscription = new Subscription(CoreChannel.SYSCTRL, fiber, sysCtrlCallback);
 		
 		try {
-			Kernel.stream.subscribe(subscription);
+			Kernel.getInstance().getStream().subscribe(subscription);
 		} catch (CommunicationException e) {
 			System.err.println(e.getMessage());
 		}
@@ -60,7 +60,7 @@ public abstract class Service {
 		Taskable task = taskRegistry.get(key);
 		if(task.isTimeDriven()) {
 			try {
-				Kernel.scheduler.schedule(task, task.delay());
+				Kernel.getInstance().getScheduler().schedule(task, task.delay());
 			} catch (SchedulingException e) {
 				e.printStackTrace();
 			}
@@ -71,9 +71,9 @@ public abstract class Service {
 		Taskable t = taskRegistry.remove(key);
 		if(t.isTimeDriven()) {
 			try {
-				Kernel.scheduler.cancel(t);
+				Kernel.getInstance().getScheduler().cancel(t);
 			} catch (SchedulingException e) {
-				Kernel.syslog.error("Unable to cancel task.");
+				Kernel.getInstance().getSyslog().error("Unable to cancel task.");
 			}
 		}
 		t.close();			//closes any necessary resources
@@ -84,15 +84,15 @@ public abstract class Service {
 		Taskable t = taskRegistry.get(key);
 		if(t.isTimeDriven()) {
 			try {
-				Kernel.scheduler.reschedule(t, delay);
+				Kernel.getInstance().getScheduler().reschedule(t, delay);
 			} catch (SchedulingException e) {
-				Kernel.syslog.error("Unable to reschedule task with a delay of " + delay + ".");
+				Kernel.getInstance().getSyslog().error("Unable to reschedule task with a delay of " + delay + ".");
 			}
 		}
 	}
 	
 	protected final void unsubscribe() {
-		Kernel.stream.unsubscribe(subscription);
+		Kernel.getInstance().getStream().unsubscribe(subscription);
 		subscription.getFiber().dispose();
 	}
 	
@@ -134,10 +134,10 @@ public abstract class Service {
 			// services can only RESTART or STOP
 			switch(ctrlPkt.getControl()){
 			case RESCHEDULE: 
-				Kernel.syslog.error(this.getClass().getSimpleName() + " cannot " + ctrlPkt.getControl());
+				Kernel.getInstance().getSyslog().error(this.getClass().getSimpleName() + " cannot " + ctrlPkt.getControl());
 				break;
 			case STOP:
-				Kernel.syslog.debug("Stopping " + this.getClass().getSimpleName());
+				Kernel.getInstance().getSyslog().debug("Stopping " + this.getClass().getSimpleName());
 				stopService();
 				break;
 			case RESTART:
@@ -150,16 +150,16 @@ public abstract class Service {
 			if(this.hasTask(targetComponent)){
 				switch(ctrlPkt.getControl()){
 				case RESCHEDULE: 
-					Kernel.syslog.debug("Reschedule " + targetComponent + " with delay "
+					Kernel.getInstance().getSyslog().debug("Reschedule " + targetComponent + " with delay "
 							+ ctrlPkt.getDelay());
 					rescheduleTask(targetComponent, ctrlPkt.getDelay());
 					break;
 				case STOP:
-					Kernel.syslog.debug("Stopping " + targetComponent);
+					Kernel.getInstance().getSyslog().debug("Stopping " + targetComponent);
 					removeTask(targetComponent);
 					break;
 				case RESTART:
-					Kernel.syslog.debug("Restart " + targetComponent);
+					Kernel.getInstance().getSyslog().debug("Restart " + targetComponent);
 					//TODO: implement the restarting of a task
 					break;
 				}

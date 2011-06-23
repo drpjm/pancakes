@@ -53,16 +53,16 @@ public class ScanThreat extends Task {
 
 			public void onMessage(Packet pkt) {
 
-//				Kernel.syslog.debug("Got message: " + pkt.getPacketType());
+//				Kernel.getInstance().getSyslog().debug("Got message: " + pkt.getPacketType());
 				
 				// new neighbor update!
 				if(pkt.getPacketType().equals(PacketType.NETWORK)){
 					NetworkPacket np = (NetworkPacket) pkt;
-					//					Kernel.syslog.debug(np.getSource());
+					//					Kernel.getInstance().getSyslog().debug(np.getSource());
 					if(np.getSource().equals(BUG_ID)) {
 						
 						updateCenter((LocalPosePacket) np.getPayloadPackets().getFirst());
-//						Kernel.syslog.record((LocalPosePacket) np.getPayloadPackets().getFirst(), BUG);
+//						Kernel.getInstance().getSyslog().record((LocalPosePacket) np.getPayloadPackets().getFirst(), BUG);
 						
 					} else {	
 						
@@ -72,7 +72,7 @@ public class ScanThreat extends Task {
 							point.setLocation(lpp.getPositionX(), lpp.getPositionY());
 							neighborPoints.put(np.getSource(), point);
 							lastUpdate = System.currentTimeMillis();
-							//						Kernel.syslog.debug("Update time " + lastUpdate);
+							//						Kernel.getInstance().getSyslog().debug("Update time " + lastUpdate);
 						}
 
 						// change values if our neighbor switched too...
@@ -91,7 +91,7 @@ public class ScanThreat extends Task {
 					if(localData.getPositionX() != 0 && localData.getPositionY() != 0 && localData.getTheta() != 0 && center.x != 0.0f && center.y != 0.0f){
 
 						// record current position
-						Kernel.syslog.record(localData);
+						Kernel.getInstance().getSyslog().record(localData);
 
 						float k;
 						float v = maxVel;
@@ -131,7 +131,7 @@ public class ScanThreat extends Task {
 						ctrl.setVelocity(v);
 						ctrl.setRotationalVelocity(k*v);
 						
-//						Kernel.syslog.record(ctrl);
+//						Kernel.getInstance().getSyslog().record(ctrl);
 						publish(CoreChannel.CTRL, ctrl);
 					}
 				}
@@ -253,7 +253,7 @@ public class ScanThreat extends Task {
 			else if (newVel < -maxVel){
 				newVel = -maxVel;
 			}
-			//			Kernel.syslog.debug("Linear speed: " + newVel);
+			//			Kernel.getInstance().getSyslog().debug("Linear speed: " + newVel);
 		}
 		return newVel;
 	}
@@ -261,13 +261,13 @@ public class ScanThreat extends Task {
 	private final void updateCenter(LocalPosePacket t) {
 		Point2D.Float target = new Point2D.Float(t.getPositionX(), t.getPositionY());
 		if(target.x > (center.x + 10.0f) || target.x < (center.x - 10.0f)) {
-			Kernel.syslog.debug("*** Received a new target! ***");
+			Kernel.getInstance().getSyslog().debug("*** Received a new target! ***");
 			center = target;
 		} else if(target.y > (center.y + 10.0f) || target.y < (center.y - 10.0f)) {
-			Kernel.syslog.debug("*** Received a new target! ***");
+			Kernel.getInstance().getSyslog().debug("*** Received a new target! ***");
 			center = target;
 		}
-		Kernel.syslog.debug("*** Target location: " + center.toString() + "***");
+		Kernel.getInstance().getSyslog().debug("*** Target location: " + center.toString() + "***");
 	}
 
 

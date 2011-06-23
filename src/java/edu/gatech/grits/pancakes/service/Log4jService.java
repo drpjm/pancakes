@@ -18,7 +18,7 @@ public class Log4jService extends Service {
 	public Log4jService() {
 		super(Log4jService.class.getSimpleName());
 		PropertyConfigurator.configure(CFG_FILE);
-		Fiber fiber = Kernel.scheduler.newFiber();
+		Fiber fiber = Kernel.getInstance().getScheduler().newFiber();
 		fiber.start();
 		Callback<Packet> callback = new Callback<Packet>() {
 			public void onMessage(Packet packet) {
@@ -30,14 +30,14 @@ public class Log4jService extends Service {
 		subscription = new Subscription(CoreChannel.LOG, fiber, callback);
 		
 		try {
-			Kernel.stream.subscribe(subscription);
+			Kernel.getInstance().getStream().subscribe(subscription);
 		} catch (CommunicationException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public void close() {
-		Kernel.stream.unsubscribe(subscription);
+		Kernel.getInstance().getStream().unsubscribe(subscription);
 	}
 
 	@Override

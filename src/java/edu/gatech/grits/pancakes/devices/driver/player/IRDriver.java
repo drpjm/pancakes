@@ -1,8 +1,8 @@
 package edu.gatech.grits.pancakes.devices.driver.player;
 
-import javaclient2.IRInterface;
-import javaclient2.structures.PlayerConstants;
-import javaclient2.structures.ir.PlayerIrData;
+import javaclient3.IRInterface;
+import javaclient3.structures.PlayerConstants;
+import javaclient3.structures.ir.PlayerIrData;
 import edu.gatech.grits.pancakes.devices.backend.Backend;
 import edu.gatech.grits.pancakes.devices.backend.PlayerBackend;
 import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;

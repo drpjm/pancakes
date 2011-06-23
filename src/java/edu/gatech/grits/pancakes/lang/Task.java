@@ -26,7 +26,7 @@ public abstract class Task implements Taskable {
 	private FastList<String> requiredDevices;
 	
 	public Task() {
-		taskFiber = Kernel.scheduler.newFiber();
+		taskFiber = Kernel.getInstance().getScheduler().newFiber();
 		taskFiber.start();
 
 		subscriptions = new FastList<Subscription>();
@@ -59,14 +59,19 @@ public abstract class Task implements Taskable {
 		return requiredDevices;
 	}
 
-	public void subscribe(String chl, Callback cbk) {
+	/*
+	 * (non-Javadoc)
+	 * @see edu.gatech.grits.pancakes.lang.Taskable#subscribe(java.lang.String, org.jetlang.core.Callback)
+	 */
+	public void subscribe(String chl, Callback<Packet> cbk) {
+		// Changed this method to use Callback<Packet> to make it type safe!
 		if(chl != null){
 			Subscription s = new Subscription(chl, taskFiber, cbk);
 			subscriptions.add(s);
 			try {
-				Kernel.stream.subscribe(s);
+				Kernel.getInstance().getStream().subscribe(s);
 			} catch (CommunicationException e) {
-				Kernel.syslog.error(e.getMessage());
+				Kernel.getInstance().getSyslog().error(e.getMessage());
 			}
 			if(subscriptions.size() > 0){
 				this.isEventDriven = true;
@@ -76,12 +81,12 @@ public abstract class Task implements Taskable {
 	
 	public final void unsubscribe() {
 		for(Subscription s : subscriptions){
-			Kernel.stream.unsubscribe(s);
+			Kernel.getInstance().getStream().unsubscribe(s);
 			s = null;
 		}
 		taskFiber.dispose();
 //		if(subscription != null) {
-//			Kernel.stream.unsubscribe(subscription);
+//			Kernel.getInstance().getStream().unsubscribe(subscription);
 //			subscription.getFiber().dispose();
 //			subscription = null;
 //		}
@@ -89,9 +94,9 @@ public abstract class Task implements Taskable {
 	
 	public final void publish(String channel, Packet packet) {
 		try {
-			Kernel.stream.publish(channel, packet);
+			Kernel.getInstance().getStream().publish(channel, packet);
 		} catch (CommunicationException e) {
-			Kernel.syslog.error("Unable to publish packet to " + channel + ".");
+			Kernel.getInstance().getSyslog().error("Unable to publish packet to " + channel + ".");
 		}
 	}
 }

@@ -46,18 +46,18 @@ public class MotionDetection extends Task {
 					//					pkt.debug();
 					if(System.currentTimeMillis() > lastUpdate + timeout) {
 
-//						Kernel.syslog.record(motionPkt);
-//						Kernel.syslog.debug("Motion detected @ " + currLocation);
-//						Kernel.syslog.debug(motionPkt.toString());
+//						Kernel.getInstance().getSyslog().record(motionPkt);
+//						Kernel.getInstance().getSyslog().debug("Motion detected @ " + currLocation);
+//						Kernel.getInstance().getSyslog().debug(motionPkt.toString());
 						
 						if(currLocation != null) {
 							for(String id : neighborIds) {
-								NetworkPacket net = new NetworkPacket(Kernel.id, id);
+								NetworkPacket net = new NetworkPacket(Kernel.getInstance().getId(), id);
 								net.addPayloadPacket(currLocation);
 								publish(CoreChannel.NETWORK, net);
 								
-								Kernel.syslog.debug("*** Sent motion update! ***");
-								Kernel.syslog.record(currLocation);
+								Kernel.getInstance().getSyslog().debug("*** Sent motion update! ***");
+								Kernel.getInstance().getSyslog().record(currLocation);
 							}
 						}
 						lastUpdate = System.currentTimeMillis();
@@ -65,7 +65,7 @@ public class MotionDetection extends Task {
 				} 
 				else if(message instanceof LocalPosePacket) {
 
-//					Kernel.syslog.debug("*** I have a new location! ***");
+//					Kernel.getInstance().getSyslog().debug("*** I have a new location! ***");
 					
 					LocalPosePacket pkt = (LocalPosePacket) message;
 					synchronized(this) {
@@ -105,7 +105,7 @@ public class MotionDetection extends Task {
 
 		subscribe(NetworkService.NEIGHBORHOOD, neighborCbk);
 
-		//		Kernel.syslog.debug("Ready to detect motion!");
+		//		Kernel.getInstance().getSyslog().debug("Ready to detect motion!");
 	}
 
 }

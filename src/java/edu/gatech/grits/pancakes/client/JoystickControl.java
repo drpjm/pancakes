@@ -37,7 +37,7 @@ public class JoystickControl extends Task {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		//Kernel.syslog.debug("Firing!");
+		//Kernel.getInstance().getSyslog().debug("Firing!");
 		if(jsPkt != null) {
 			int x = (int) jsPkt.getPositionX();
 			int y = (int) jsPkt.getPositionY();
@@ -51,7 +51,7 @@ public class JoystickControl extends Task {
 				pkt.setRotationalVelocity(-0.9f*((float) (y-71)/(165-71)));
 				
 				try {
-					Kernel.stream.publish(CoreChannel.SYSTEM, pkt);
+					Kernel.getInstance().getStream().publish(CoreChannel.SYSTEM, pkt);
 				} catch (CommunicationException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

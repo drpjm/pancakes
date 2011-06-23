@@ -58,16 +58,16 @@ public class ClientService extends Service {
 			// TODO: new constructor calls using task properties
 			addTask(t.getClass().getSimpleName(), t);
 			scheduleTask(t.getClass().getSimpleName());
-			Kernel.syslog.debug(taskName + " task started.");
+			Kernel.getInstance().getSyslog().debug(taskName + " task started.");
 			
 		} catch (InstantiationException e) {
-			Kernel.syslog.error(taskName + " not instantiated!");
+			Kernel.getInstance().getSyslog().error(taskName + " not instantiated!");
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			Kernel.syslog.error(taskName + " task not found! Skipping.");
+			Kernel.getInstance().getSyslog().error(taskName + " task not found! Skipping.");
 		}
 	}
 	

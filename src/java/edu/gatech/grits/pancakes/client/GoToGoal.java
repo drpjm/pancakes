@@ -25,17 +25,17 @@ public class GoToGoal extends Task {
 	public GoToGoal(){
 		setDelay(1000l);
 
-		goalX = Kernel.homeX;
-		goalY = Kernel.homeY;
+		goalX = 0;//Kernel.homeX;
+		goalY = 0;//Kernel.homeY;
 
-		Kernel.syslog.debug("Going home: " + goalX + ", " + goalY);
+		Kernel.getInstance().getSyslog().debug("Going home: " + goalX + ", " + goalY);
 
 		Callback<Packet> localPoseCbk = new Callback<Packet>(){
 
 			@Override
 			public void onMessage(Packet pkt) {
 
-//				Kernel.syslog.debug("Got message: " + pkt.getPacketType());
+//				Kernel.getInstance().getSyslog().debug("Got message: " + pkt.getPacketType());
 
 				if(pkt.getPacketType().equals(PacketType.LOCAL_POSE)){
 					try{
@@ -66,7 +66,7 @@ public class GoToGoal extends Task {
 
 	@Override
 	public void run() {
-		Kernel.syslog.debug(this.getClass().getSimpleName() + " running.");
+		Kernel.getInstance().getSyslog().debug(this.getClass().getSimpleName() + " running.");
 
 	}
 
@@ -88,7 +88,7 @@ public class GoToGoal extends Task {
 		// translational speed
 		float vel = 0;
 
-		//		Kernel.syslog.debug("Angle diff: " + angleDiff);
+		//		Kernel.getInstance().getSyslog().debug("Angle diff: " + angleDiff);
 		
 		// can we "see" the goal?
 		if(omega < SIGHT_ANGLE && omega > -SIGHT_ANGLE){
@@ -119,7 +119,7 @@ public class GoToGoal extends Task {
 
 		}
 
-//		Kernel.syslog.debug("Vel: " + vel + ", Rotation: " + omega);
+//		Kernel.getInstance().getSyslog().debug("Vel: " + vel + ", Rotation: " + omega);
 
 		return new MotorPacket(vel, omega);
 

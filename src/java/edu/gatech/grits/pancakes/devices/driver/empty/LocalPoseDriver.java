@@ -1,17 +1,17 @@
 package edu.gatech.grits.pancakes.devices.driver.empty;
 
-import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.devices.backend.Backend;
+import edu.gatech.grits.pancakes.devices.backend.EmptyBackend;
 import edu.gatech.grits.pancakes.devices.driver.HardwareDriver;
-import edu.gatech.grits.pancakes.devices.driver.net.ViconRTEDriver;
 import edu.gatech.grits.pancakes.lang.LocalPosePacket;
 
 public class LocalPoseDriver implements HardwareDriver<LocalPosePacket> {
 	
-	private ViconRTEDriver device;
+	private EmptyBackend backend;
 	
 	public LocalPoseDriver(Backend backend) {
-		device = new ViconRTEDriver(1026, new Integer(Kernel.id)); // TODO ID needs to be properly passed here
+		super();
+		this.backend = (EmptyBackend) backend;
 	}
 	
 	public void request(LocalPosePacket pkt) {
@@ -20,11 +20,15 @@ public class LocalPoseDriver implements HardwareDriver<LocalPosePacket> {
 	}
 	
 	public LocalPosePacket query() {
-		return device.query();
+		LocalPosePacket pkt = new LocalPosePacket();
+		
+		pkt.setPose((float)Math.random(), (float)Math.random(), (float)Math.random());
+		
+		return pkt;
 	}
 	
 	public void close() {
-		device.close();
+		//nothing to close
 	}
 	
 	

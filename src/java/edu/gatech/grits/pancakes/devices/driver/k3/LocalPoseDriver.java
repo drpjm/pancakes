@@ -11,7 +11,7 @@ public class LocalPoseDriver implements HardwareDriver<LocalPosePacket> {
 	private ViconRTEDriver device;
 	
 	public LocalPoseDriver(Backend backend) {
-		device = new ViconRTEDriver(1026, new Integer(Kernel.id)); // TODO ID needs to be properly passed here
+		device = new ViconRTEDriver(1026, new Integer(Kernel.getInstance().getId())); // TODO ID needs to be properly passed here
 	}
 	
 	public void request(LocalPosePacket pkt) {

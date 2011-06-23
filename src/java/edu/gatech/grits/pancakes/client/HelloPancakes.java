@@ -6,24 +6,22 @@ import org.jetlang.core.Callback;
 
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.lang.CoreChannel;
-import edu.gatech.grits.pancakes.lang.LocalPosePacket;
 import edu.gatech.grits.pancakes.lang.MotorPacket;
-import edu.gatech.grits.pancakes.lang.NetworkPacket;
 import edu.gatech.grits.pancakes.lang.Packet;
-import edu.gatech.grits.pancakes.lang.PacketType;
 import edu.gatech.grits.pancakes.lang.Task;
 
 public class HelloPancakes extends Task {
 
 	public HelloPancakes() {
-		// TODO Auto-generated constructor stub
+
 		setDelay(1000l);
 		
 		Callback<Packet> cbk = new Callback<Packet>(){
 
 			public void onMessage(Packet pkt) {
 
-				Kernel.syslog.debug("Got message: " + pkt.getPacketType());
+				Kernel.getInstance().getSyslog().debug("Got message: " + pkt.getPacketType());
+				Kernel.getInstance().getSyslog().debug(pkt.toString());
 				
 			}
 		};
@@ -38,7 +36,8 @@ public class HelloPancakes extends Task {
 	}
 
 	public void run() {
-		Kernel.syslog.info("Hello, Pancakes!");
+		
+		Kernel.getInstance().getSyslog().info("Hello, Pancakes!");
 
 	}
 

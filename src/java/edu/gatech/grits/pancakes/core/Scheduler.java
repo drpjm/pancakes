@@ -66,7 +66,7 @@ public class Scheduler {
 			}
 			
 		}
-//		Kernel.syslog.debug(scheduledTasks.toString());
+//		Kernel.getInstance().getSyslog().debug(scheduledTasks.toString());
 	}
 	
 	public final void reschedule(Runnable r, long delay) throws SchedulingException{

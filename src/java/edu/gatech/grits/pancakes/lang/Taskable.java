@@ -6,7 +6,7 @@ public interface Taskable extends Runnable {
 	
 	public void close();
 //	public void subscribe(String chl);
-	public void subscribe(String chl, Callback cbk);
+	public void subscribe(String chl, Callback<Packet> cbk);
 	public void publish(String chl, Packet pkt);
 	public void unsubscribe();
 //	public void process(Packet pkt);

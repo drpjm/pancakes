@@ -58,7 +58,7 @@ public class DeviceService extends Service {
 
 			String currDevice = entry.getKey();
 			Long deviceDelay = entry.getValue();
-			Kernel.syslog.debug("Adding device: " + currDevice + " with delay " + deviceDelay);
+			Kernel.getInstance().getSyslog().debug("Adding device: " + currDevice + " with delay " + deviceDelay);
 
 			// TODO: need to ditch hard coding the names here...
 			if(currDevice.equals("sonar")){

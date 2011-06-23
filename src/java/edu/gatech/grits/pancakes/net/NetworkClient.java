@@ -43,15 +43,15 @@ public class NetworkClient extends Task {
 						socket.close();
 					} catch (ConnectException ce){
 						// TODO: WHY DOES THIS FAIL FOR AGENT ID'S GREATER THAN 9?!?!
-						Kernel.syslog.error("Failed to connect to: " + n.getHostname());
+						Kernel.getInstance().getSyslog().error("Failed to connect to: " + n.getHostname());
 						synchronized(this) {
 							neighbors.remove(n.getID());
 						}
 					} catch(IOException e) {
-						Kernel.syslog.error("Send failed.");
+						Kernel.getInstance().getSyslog().error("Send failed.");
 					}	
 				} else {
-					Kernel.syslog.error("Destination not in the reachable network neighborhood");
+					Kernel.getInstance().getSyslog().error("Destination not in the reachable network neighborhood");
 				}
 			}
 		};

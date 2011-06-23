@@ -95,7 +95,7 @@ public class ViconRTEDriver implements NetworkDriver<LocalPosePacket> {
 //		System.out.println("Received ID: " + tokens[0]);
 		
 		if( (new Integer(ID)).equals(Integer.valueOf(tokens[0])) ) {
-//			Kernel.syslog.debug("Received '" + msg +"' from Vicon.");
+//			Kernel.getInstance().getSyslog().debug("Received '" + msg +"' from Vicon.");
 			data = msg;
 		}
 	}

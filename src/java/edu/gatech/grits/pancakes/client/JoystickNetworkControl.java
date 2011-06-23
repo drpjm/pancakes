@@ -33,12 +33,12 @@ public class JoystickNetworkControl extends Task {
 					if(!pkt.isExpired()) {
 						if(!neighborIDs.contains(n.getID())) {
 							neighborIDs.add(n.getID());
-							Kernel.syslog.debug("Detected agent (" + n.getID() + ") on network.");
+							Kernel.getInstance().getSyslog().debug("Detected agent (" + n.getID() + ") on network.");
 						}
 					} else {
 						neighborIDs.remove(n.getID());
 						//jsPkt = null;
-						Kernel.syslog.debug("No longer detecting agent (" + n.getID() + ") on network.");
+						Kernel.getInstance().getSyslog().debug("No longer detecting agent (" + n.getID() + ") on network.");
 					}
 				}
 			}
@@ -72,14 +72,14 @@ public class JoystickNetworkControl extends Task {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		//Kernel.syslog.debug("Firing!");
+		//Kernel.getInstance().getSyslog().debug("Firing!");
 		for(String id : neighborIDs) {
-			NetworkPacket pkt = new NetworkPacket(Kernel.id, id);
+			NetworkPacket pkt = new NetworkPacket(Kernel.getInstance().getId(), id);
 			pkt.addPayloadPacket(packit());
 			try {
-				Kernel.stream.publish(CoreChannel.NETWORK, pkt);
+				Kernel.getInstance().getStream().publish(CoreChannel.NETWORK, pkt);
 			} catch (CommunicationException e) {
-				Kernel.syslog.error("Unable to send packet to agent (" + id + ").");
+				Kernel.getInstance().getSyslog().error("Unable to send packet to agent (" + id + ").");
 			}
 		}
 	}
@@ -116,7 +116,7 @@ public class JoystickNetworkControl extends Task {
 				pkt.setRotationalVelocity(-0.9f*((float) (y-71)/(165-71)));
 				
 				try {
-					Kernel.stream.publish(CoreChannel.CTRL, pkt);
+					Kernel.getInstance().getStream().publish(CoreChannel.CTRL, pkt);
 				} catch (CommunicationException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

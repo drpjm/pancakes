@@ -109,7 +109,7 @@ public class TrackBoundary {
 			else if (newVel < -maxVel){
 				newVel = -maxVel;
 			}
-			Kernel.syslog.debug("Linear speed: " + newVel);
+			Kernel.getInstance().getSyslog().debug("Linear speed: " + newVel);
 		}
 		return newVel;
 	}

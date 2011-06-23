@@ -32,19 +32,19 @@ public class DynamicControlTask extends Task {
 
 				if(message instanceof BatteryPacket){
 					final float volts = ((BatteryPacket)message).getVoltage();
-//					Kernel.syslog.debug(Float.toString(volts));
+//					Kernel.getInstance().getSyslog().debug(Float.toString(volts));
 					if(!initBattLvlSet){
 						if(volts < MAX_VOLTAGE && volts > MIN_VOLTAGE){
 							initBattLvl = volts;
 							initBattLvlSet = true;
 							voltageRange = initBattLvl - MIN_VOLTAGE;
-							Kernel.syslog.debug(DynamicControlTask.class.getSimpleName() + ": battery levels set: " + initBattLvl + ", range: " + voltageRange);
+							Kernel.getInstance().getSyslog().debug(DynamicControlTask.class.getSimpleName() + ": battery levels set: " + initBattLvl + ", range: " + voltageRange);
 						}
 					}
 					else{
 						// calculate % power available - set current power mode
 						float percentAvail = ((volts - MIN_VOLTAGE) / voltageRange) * 100 ;
-						Kernel.syslog.debug(DynamicControlTask.class.getSimpleName() + ": battery @ " + percentAvail + " %");
+						Kernel.getInstance().getSyslog().debug(DynamicControlTask.class.getSimpleName() + ": battery @ " + percentAvail + " %");
 						
 						if(percentAvail > 90f){
 							currBatteryLevel = BatteryLevel.HIGH;
@@ -75,8 +75,8 @@ public class DynamicControlTask extends Task {
 	@Override
 	public void run() {
 
-		Kernel.syslog.debug("running state = " + currRunningState);
-//		Kernel.syslog.debug(DynamicControlTask.class.getSimpleName() + ": level = " + currBatteryLevel);
+		Kernel.getInstance().getSyslog().debug("running state = " + currRunningState);
+//		Kernel.getInstance().getSyslog().debug(DynamicControlTask.class.getSimpleName() + ": level = " + currBatteryLevel);
 		
 		switch(currBatteryLevel){
 

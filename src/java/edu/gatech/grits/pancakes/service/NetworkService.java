@@ -21,16 +21,16 @@ public class NetworkService extends Service {
 		super(NetworkService.class.getSimpleName());
 		
 		// make channel for passing neighbor information
-		Kernel.stream.createChannel(NEIGHBORHOOD);
+		Kernel.getInstance().getStream().createChannel(NEIGHBORHOOD);
 		// make channel for initiating task migration
-		Kernel.stream.createChannel(MIGRATE);
+		Kernel.getInstance().getStream().createChannel(MIGRATE);
 		
 		client = new NetworkClient();
 		server = new NetworkServer(properties.getNetworkPort());
-		Kernel.syslog.debug("Network Port: " + properties.getNetworkPort());
+		Kernel.getInstance().getSyslog().debug("Network Port: " + properties.getNetworkPort());
 		
 		listener = new DiscoveryListener();
-		speaker = new DiscoverySpeaker(properties.getNetworkAddress(), properties.getNetworkPort(), properties.getID());		
+		speaker = new DiscoverySpeaker(properties.getNetworkAddress(), properties.getNetworkPort(), properties.getId());		
 		
 		// TODO: add migrator only if it is in property file
 		taskMigrator = new TaskMigrator();
@@ -54,8 +54,8 @@ public class NetworkService extends Service {
 		listener.close();
 
 		try {
-			Kernel.scheduler.cancel(speaker);
-//			Kernel.scheduler.cancel(listener);
+			Kernel.getInstance().getScheduler().cancel(speaker);
+//			Kernel.getInstance().getScheduler().cancel(listener);
 		} catch (SchedulingException e) {
 			System.err.println("Unable to cancel runnables.");
 		}

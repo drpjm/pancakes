@@ -40,7 +40,7 @@ public class BugMotion extends NetworkServer implements HardwareDriver<MotionPac
 //			in.close();
 			MotionPacket pkt = new MotionPacket();
 			pkt.setMotionDetected(true);
-			Kernel.stream.publish(CoreChannel.SYSTEM, pkt);
+			Kernel.getInstance().getStream().publish(CoreChannel.SYSTEM, pkt);
 		} catch (IOException e) {
 			System.err.println("Error receiving object.");
 		} catch (ClassNotFoundException e) {

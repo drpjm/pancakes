@@ -13,7 +13,7 @@ public class SonarDriver implements HardwareDriver<SonarPacket> {
 	
 	public SonarDriver(Backend backend) {
 		this.backend = (K3Backend) backend;
-		//Kernel.scheduler.execute("ultrasound_enable --mask 31");
+		//Kernel.getInstance().getScheduler().execute("ultrasound_enable --mask 31");
 		k3i.sonarEnable();
 	}
 	
@@ -48,7 +48,7 @@ public class SonarDriver implements HardwareDriver<SonarPacket> {
 	}
 	
 	public void close() {
-		//Kernel.scheduler.execute("ultrasound_enable --mask 0");
+		//Kernel.getInstance().getScheduler().execute("ultrasound_enable --mask 0");
 		k3i.sonarDisable();
 	}
 }

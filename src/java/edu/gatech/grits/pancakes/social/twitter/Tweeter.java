@@ -21,8 +21,8 @@ public class Tweeter {
 	}
 	
 	public void tweet(String message) {
-		Kernel.syslog.info("Tweet: " + message);
-		Kernel.syslog.info("Message is " + message.length() + " character(s) long.");
+		Kernel.getInstance().getSyslog().info("Tweet: " + message);
+		Kernel.getInstance().getSyslog().info("Message is " + message.length() + " character(s) long.");
 		client.updateStatus(message);
 	}
 	

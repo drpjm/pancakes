@@ -12,38 +12,52 @@ import edu.gatech.grits.pancakes.util.Properties;
 
 public class Kernel {
 
-	public static Scheduler scheduler;// = new Scheduler();
-	public static Stream stream;// = new Stream();
-	public static Syslog syslog;// = new Syslogp();
+	private Scheduler scheduler;
+	private Stream stream;
+	private Syslog syslog;
 	
-	public static String id;
-	public static FastList<String> devices;
-	// TODO: HACK for now...needs to be a Task prop!
-	public static float homeX;
-	public static float homeY;
+	private Properties props;
 	
-	FastMap<String, Service> serviceList = new FastMap<String, Service>();
+	private String id;
+	private FastList<String> devices;
 	
-	public Kernel(Properties properties) {
+	private FastMap<String, Service> serviceList = new FastMap<String, Service>();
+	
+	private static Kernel KERNEL;
+	
+	private Kernel(Properties properties) {
+		
 		scheduler = new Scheduler();
 		stream = new Stream();
 		syslog = new Syslog();
 		
-		id = properties.getID();		
-		devices = properties.getDevices();
+		id = properties.getId();		
+		devices = properties.getDevices();	
 		
-		// TODO: get rid of this one day!
-		homeX = properties.getHomeLocation()[0];
-		homeY = properties.getHomeLocation()[1];
-			
-		startServices(properties);
+	}
+	
+	public static Kernel getInstance(){
+		return KERNEL;
+	}
+	
+	public static Kernel newInstance(String fileName){
+		if(KERNEL == null){
+			Properties props = new Properties(fileName);
+			KERNEL = new Kernel(props);
+			KERNEL.props = props;
+		}
+		return KERNEL;
 	}
 	
 	public void shutdown() {
-		stopServices();
+		KERNEL.stopServices();
 	}
 	
-	public void startServices(Properties properties) {
+	public void startUp(){
+		KERNEL.startServices(KERNEL.props);
+	}
+	
+	private void startServices(Properties properties) {
 		
 		// logging should be started first since we use it in all other services!		
 		if(properties.getServices().contains("log4j")){
@@ -70,12 +84,46 @@ public class Kernel {
 			}
 		}
 		
-		System.err.println("Pancakes system " + id + " created. \n" + Kernel.stream.toString());
+		System.err.println("Pancakes system " + id + " created. \n" + KERNEL.getId());
 	}
 	
-	public void stopServices() {
+	private void stopServices() {
 		for(String key : serviceList.keySet()) {
 			serviceList.get(key).close();
 		}
 	}
+
+	public String getId(){
+		return KERNEL.id;
+	}
+
+	private void setId(String id){
+		this.id = id;
+	}
+	
+	private void setDevices(FastList<String> devices) {
+		this.devices = devices;
+	}
+
+	public FastList<String> getDevices() {
+		return KERNEL.devices;
+	}
+
+	public FastMap<String, Service> getServiceList(){
+		return KERNEL.serviceList;
+	}
+	
+	public Scheduler getScheduler() {
+		return KERNEL.scheduler;
+	}
+
+	public Stream getStream() {
+		return KERNEL.stream;
+	}
+
+	public Syslog getSyslog() {
+		return KERNEL.syslog;
+	}
+
+	
 }

@@ -22,7 +22,7 @@ public abstract class Backend {
 	@SuppressWarnings("unchecked")
 	public Object getDriver(String driverName) {
 		try {
-			Kernel.syslog.debug("edu.gatech.grits.pancakes.devices.driver." + backendType + "." + driverName);
+			Kernel.getInstance().getSyslog().debug("edu.gatech.grits.pancakes.devices.driver." + backendType + "." + driverName);
 			Class cls = Class.forName("edu.gatech.grits.pancakes.devices.driver." + backendType + "." + driverName);
 			Class partypes = Backend.class;
 	        Constructor ct = cls.getConstructor(partypes);
@@ -30,7 +30,7 @@ public abstract class Backend {
 	        return ct.newInstance(arglist);
 		} catch (Throwable e) {
 			//System.err.println(e);
-			Kernel.syslog.error("Unable to find driver.");
+			Kernel.getInstance().getSyslog().error("Unable to find driver.");
 			return null;
 		}
 	}

@@ -12,7 +12,7 @@ public class Tweetbase {
 	private Random generator = new Random(System.currentTimeMillis());
 	
 	public Tweetbase() {
-		Kernel.syslog.info("Populating tweetBase");
+		Kernel.getInstance().getSyslog().info("Populating tweetBase");
 		loadManualDatabase();
 	}
 	
