@@ -29,9 +29,9 @@ public class SonarPacket extends Packet { /**
 		return readings;
 	}
 	
-	public final void setSonarReadings(float[] readings) {
-		for(int i=0; i<readings.length; i++) {
-			this.add("sonar" + Integer.valueOf(i).toString(), Float.valueOf(readings[i]));
+	public final void setSonarReadings(double[] ranges) {
+		for(int i=0; i<ranges.length; i++) {
+			this.add("sonar" + Integer.valueOf(i).toString(), Float.valueOf(ranges[i]));
 		}
 		
 		return;

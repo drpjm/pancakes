@@ -1,8 +1,8 @@
 package edu.gatech.grits.pancakes.devices.driver.player;
 
-import javaclient3.SonarInterface;
+import javaclient3.RangerInterface;
 import javaclient3.structures.PlayerConstants;
-import javaclient3.structures.sonar.PlayerSonarData;
+import javaclient3.structures.ranger.PlayerRangerData;
 import edu.gatech.grits.pancakes.core.Kernel;
 import edu.gatech.grits.pancakes.devices.backend.Backend;
 import edu.gatech.grits.pancakes.devices.backend.PlayerBackend;
@@ -11,14 +11,14 @@ import edu.gatech.grits.pancakes.lang.SonarPacket;
 
 public class SonarDriver implements HardwareDriver<SonarPacket> {
 
-	private SonarInterface device;
+	private RangerInterface device;
 	private PlayerBackend backend;
 	
 	public SonarDriver(Backend backend) {
 		this.backend = (PlayerBackend) backend;
 		while(!((PlayerBackend) backend).getHandle().isReadyRequestDevice()) {
 			Kernel.getInstance().getSyslog().debug("Trying to get an interface for the SonarDevice.");
-			device = ((PlayerBackend) backend).getHandle().requestInterfaceSonar(0, PlayerConstants.PLAYER_OPEN_MODE);
+			device = ((PlayerBackend) backend).getHandle().requestInterfaceRanger(0, PlayerConstants.PLAYER_OPEN_MODE);
 		}
 		Kernel.getInstance().getSyslog().debug("Received an interface!");
 //		if(device == null)
@@ -39,8 +39,8 @@ public class SonarDriver implements HardwareDriver<SonarPacket> {
 		
 		if(device.isDataReady()) {
 			//System.out.println("Sonar data ready!");
-			PlayerSonarData data = device.getData();
-			float[] ranges = data.getRanges();
+			PlayerRangerData data = device.getData();
+			double[] ranges = data.getRanges();
 			
 			// time for a sanity check
 			if(ranges.length != 16) {

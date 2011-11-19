@@ -26,9 +26,9 @@ public class IRPacket extends Packet { /**
 		return readings;
 	}
 	
-	public final void setIRReadings(float[] readings) {
-		for(int i=0; i<readings.length; i++) {
-			this.add("ir" + Integer.valueOf(i).toString(), Float.valueOf(readings[i]));
+	public final void setIRReadings(double[] ranges) {
+		for(int i=0; i<ranges.length; i++) {
+			this.add("ir" + Integer.valueOf(i).toString(), Double.valueOf(ranges[i]));
 		}
 		
 		return;
