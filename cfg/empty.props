@@ -1,0 +1,11 @@
+kernel.id = 8
+kernel.service.list = devices,network,log4j,client
+service.devices.backend.type = empty
+service.devices.backend.port = 6665
+service.devices.device.list = localpose,motor,battery
+service.devices.device.localpose.delay = 500
+service.devices.device.battery.delay = 500
+service.network.address = 127.0.0.1
+service.network.port = 2413
+service.client.list = HelloPancakes 
+service.log4j.enabled = true

@@ -1,0 +1,13 @@
+kernel.id = 8
+kernel.service.list = devices,network,log4j,twitter
+service.devices.enabled = true
+service.devices.backend = k3
+service.devices.device.list = battery,ir,sonar,motors
+service.devices.device.ir.delay = 250
+service.devices.device.sonar.delay = 500
+service.devices.device.battery.delay = 1000
+service.network.enabled = true
+service.network.address = 192.168.13.22
+service.network.address = 2413
+service.log4j.enabled = true
+service.twitter.enabled = false
